@@ -31,6 +31,13 @@ Ce code s'axe autour des codes cités ci-dessus. Nom de code: Ferme d'autoblog, 
 
 http://wiki.suumitsu.eu/doku.php?id=php:autoblog2
 
+Instances de développement:
+
+https://autoblog.suumitsu.eu/
+
+https://www.ecirtam.net/autoblogs/
+
+
 Ferme d'autoblog a pour objectif de faciliter et ergonomiser l'ajout d'autoblogs, grâce à des fonctions d'extraction d'infos à partir de flux, de contrôle et de validation, d'adaptations pour les réseaux sociaux Twitter, Identica et les StatusNet personnels, l'ajout via clic sur un bouton de la barre d'outils du navigateur, ainsi que l'échange entre fermes des informations des autoblogs pour une dissémination virale.
 
 Ferme d'autoblog est développé par Mitsu (aka Mitsukarenai) et Oros, mis à disposition dans le domaine public.
