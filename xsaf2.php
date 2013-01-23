@@ -1,5 +1,5 @@
 <?php
-// update 17/01/2013
+/* modtime 2013-01-23 */
 
 define('DEBUG', true);
 
@@ -29,6 +29,12 @@ function serverUrl()
     $serverport = ($_SERVER["SERVER_PORT"]=='80' || ($https && $_SERVER["SERVER_PORT"]=='443') ? '' : ':'.$_SERVER["SERVER_PORT"]);
     return 'http'.($https?'s':'').'://'.$_SERVER["SERVER_NAME"].$serverport;
 }
+function NoProtocolSiteURL($url)
+{
+	$siteurlnoprototypes = array("http://", "https://");
+	$siteurlnoproto = str_replace($siteurlnoprototypes, "", $url);
+	return $siteurlnoproto;
+}
 function xsafimport($xsafremote)
 { 
 	$json_import = file_get_contents($xsafremote);
@@ -42,24 +48,8 @@ function xsafimport($xsafremote)
 
 				// check done, writing out
 				$siteurl = escape($value[1]);
-				/*
-				// suppression du http et https
-				if(substr($siteurl, 0, 5)== 'https'){
-					$siteurl2 = substr($siteurl, 5);
-				}elseif(substr($siteurl, 0, 4)== 'http'){
-					$siteurl2 = substr($siteurl, 4);
-				}else{
-					$siteurl2 = $siteurl;
-				}
-				*/
-				$foldername = sha1($siteurl);
-
-				if(substr($siteurl, -1) == '/'){
-					$foldername2 = sha1(substr($siteurl, 0, -1));
-				}else{
-					$foldername2 = sha1($siteurl.'/');
-				}
-
+				$foldername = sha1(NoProtocolSiteURL($siteurl));
+				if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}
 				$sitename = $value[0];
 				$sitedomain1 = preg_split('/\//', $siteurl, 0);
 				$sitedomain2=$sitedomain1[2];
@@ -109,8 +99,8 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) ){
 
 /* And now, the XSAF links to be imported ! */
 
-#xsafimport('https://www.ecirtam.net/autoblogs/?export');
-#xsafimport('http://autoblog.suumitsu.eu/?export');
+//xsafimport('https://www.ecirtam.net/autoblogs/?export');
+xsafimport('http://autoblog.suumitsu.eu/?export');
 if(DEBUG){ echo "\n\nXSAF import finished\n\n"; }
 
 ?>
