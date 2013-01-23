@@ -443,7 +443,7 @@ if(!empty($autoblogs)){
 <div class="clear"></div>
 <?php echo "<br/>".count($autoblogs)." autoblogs d'hébergés"; ?>
 </div>
-Autoblogs propulsés par <a href="http://autoblog.kd2.org/source.txt">VroumVroumBlog 0.2.10</a> [SQLite] (Domaine Public)<br><a href="http://wiki.suumitsu.eu/doku.php?id=php:autoblog2">index 2-dev</a> inspiré par <a href="http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog">Arthur</a> et développé par <a href="https://www.suumitsu.eu/">Mitsu</a> et <a href="https://www.ecirtam.net/">Oros</a> (Domaine Public)
+Autoblogs propulsés par <a href="http://autoblog.kd2.org/source.txt">VroumVroumBlog 0.2.10</a> [SQLite] (Domaine Public)<br>index2 inspiré par <a href="http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog">Arthur</a> et développé par <a href="https://www.suumitsu.eu/">Mitsu</a> et <a href="https://www.ecirtam.net/">Oros</a> (Domaine Public)
 <br/><a href='https://github.com/mitsukarenai/ferme-autoblog'>Code source du projet</a>
 <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
 <iframe width="1" height="1" frameborder="0" src="xsaf2.php"></iframe>
