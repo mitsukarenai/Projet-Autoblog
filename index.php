@@ -115,7 +115,7 @@ $directory = "./";
 $subdirs = glob($directory . "*");
 foreach($subdirs as $unit)
 		{
- 		if(is_dir($unit))
+ 		if(is_dir($unit) && strpos($unit, 'twitter') === FALSE && strpos($unit, 'identica') === FALSE && strpos($unit, 'statusnet') === FALSE) /* Exclusion des automicroblogs, en attendant un traitement spécifique par XSAF  */
  			{
 			$unit=substr($unit, 2);
 			$ini = parse_ini_file($unit.'/vvb.ini');
