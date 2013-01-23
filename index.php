@@ -1,7 +1,13 @@
 <?php
 
-/* modtime 2013-01-21 */
+/* modtime 2013-01-23 */
 
+if(file_exists("config.php")){
+	include "config.php";
+}else{
+	define('ROOT_DIR', __DIR__);
+}
+echo ROOT_DIR;
 function get_title_from_feed($url)
   {
 	// get site title from feed
@@ -178,7 +184,6 @@ foreach($subdirs as $unit)
 die;
 }
 
-define('ROOT_DIR', __DIR__);
 function escape($str)
 {
     return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
@@ -372,7 +377,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 	<body>
 		<h1>Le Projet Autoblog</h1>
 		<div class="pbloc">
-			<img id="logo" src="./icon-logo.svg" alt="">
+			<img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
 			<b>Note</b><br>
 			Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i> (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).<br><br>
 			<b>Autres fermes</b><br>
@@ -440,6 +445,8 @@ if(!empty($autoblogs)){
 <?php echo "<br/>".count($autoblogs)." autoblogs d'hébergés"; ?>
 </div>
 Autoblogs propulsés par <a href="http://autoblog.kd2.org/source.txt">VroumVroumBlog 0.2.10</a> [SQLite] (Domaine Public)<br><a href="http://wiki.suumitsu.eu/doku.php?id=php:autoblog2">index 2-dev</a> inspiré par <a href="http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog">Arthur</a> et développé par <a href="https://www.suumitsu.eu/">Mitsu</a> et <a href="https://www.ecirtam.net/">Oros</a> (Domaine Public)
+<br/><a href='https://github.com/mitsukarenai/ferme-autoblog'>Code source du projet</a>
+<?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
 <iframe width="1" height="1" frameborder="0" src="xsaf2.php"></iframe>
 </body>
 </html>
