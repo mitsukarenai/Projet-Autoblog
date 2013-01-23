@@ -2,12 +2,11 @@
 
 /* modtime 2013-01-23 */
 
+define('ROOT_DIR', __DIR__);
 if(file_exists("config.php")){
 	include "config.php";
-}else{
-	define('ROOT_DIR', __DIR__);
 }
-echo ROOT_DIR;
+
 function get_title_from_feed($url)
   {
 	// get site title from feed

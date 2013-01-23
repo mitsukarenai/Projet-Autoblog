@@ -1,5 +1,8 @@
 <?php
-define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
+if(!defined('ROOT_DIR'))
+{
+    define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
+}
 define('LOCAL_URI', '');
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
