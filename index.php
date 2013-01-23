@@ -115,7 +115,7 @@ $directory = "./";
 $subdirs = glob($directory . "*");
 foreach($subdirs as $unit)
 		{
- 		if(is_dir($unit) && strpos($unit, 'twitter') === FALSE && strpos($unit, 'identica') === FALSE && strpos($unit, 'statusnet') === FALSE) /* Exclusion des automicroblogs, en attendant un traitement spécifique par XSAF  */
+ 		if(is_dir($unit))
  			{
 			$unit=substr($unit, 2);
 			$ini = parse_ini_file($unit.'/vvb.ini');
@@ -380,7 +380,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			<b>Note</b><br>
 			Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i> (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).<br><br>
 			<b>Autres fermes</b><br>
-			&rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a><br><br>
+			&rarr; <a href="https://duckduckgo.com/?q=!g %22Voici une liste d'autoblogs hébergés%22">Rechercher</a><br><br>
 			<b>Ajouter un compte social</b><br><br>
         <form method="POST">
             <input class="text" placeholder="identifiant compte" type="text" name="socialaccount" id="socialaccount"><br>
@@ -446,6 +446,6 @@ if(!empty($autoblogs)){
 Autoblogs propulsés par <a href="http://autoblog.kd2.org/source.txt">VroumVroumBlog 0.2.10</a> [SQLite] (Domaine Public)<br>index2 inspiré par <a href="http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog">Arthur</a> et développé par <a href="https://www.suumitsu.eu/">Mitsu</a> et <a href="https://www.ecirtam.net/">Oros</a> (Domaine Public)
 <br/><a href='https://github.com/mitsukarenai/ferme-autoblog'>Code source du projet</a>
 <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
-<iframe width="1" height="1" style="display:none" src="xsaf2.php"></iframe>
+<iframe width="1" height="1" frameborder="0" src="xsaf2.php"></iframe>
 </body>
 </html>

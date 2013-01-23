@@ -44,13 +44,20 @@ function xsafimport($xsafremote)
 	 		$infos="";
 	 		if(count($value)==3 && !empty($value[0]) && !empty($value[1]) && !empty($value[2])){
 
-	 			$rssurl = escape($value[2]);
-
-				// check done, writing out
-				$siteurl = escape($value[1]);
-				$foldername = sha1(NoProtocolSiteURL($siteurl));
-				if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}
 				$sitename = $value[0];
+				$siteurl = escape($value[1]);
+	 			$rssurl = escape($value[2]);
+					if(strpos($siteurl, 'twitter.com') !== FALSE or strpos($siteurl, 'identi.ca') !== FALSE or strpos($sitename, 'statusnet-') !== FALSE)	{$social=TRUE;} else {$social=FALSE;}
+				if($social==FALSE)
+					{
+					$foldername = sha1(NoProtocolSiteURL($siteurl));
+					if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}	
+					}
+				else
+					{
+					$foldername = $sitename;$foldername2 = $sitename;
+					}
+
 				$sitedomain1 = preg_split('/\//', $siteurl, 0);
 				$sitedomain2=$sitedomain1[2];
 				$sitedomain3=explode(".", $sitedomain2);
@@ -59,6 +66,10 @@ function xsafimport($xsafremote)
 				if(!file_exists($foldername) && !file_exists($foldername2)) { 
 					if ( mkdir('./'. $foldername, 0755, false) ) {
 		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
+
+/* autoblog */
+if($social==FALSE)
+{
 		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") ){
 		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
 		                    fclose($fp);
@@ -79,10 +90,36 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) ){
 								$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 							}
 						}
+}
+/* automicroblog */
+else
+{
+		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/automicroblog.php'; ?>") ){
+		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
+		                    fclose($fp);
+		                }else{
+			                fclose($fp);
+			                $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
+			                if( !fwrite($fp, '[VroumVroumBlogConfig]
+SITE_TITLE="'. $sitename .'"
+SITE_DESCRIPTION="AutoMicroblog automatis&eacute; de "
+SITE_URL="'. $siteurl .'"
+FEED_URL="'. $rssurl .'"') ){
+			                    fclose($fp);
+			                	$infos = "Impossible d'écrire le fichier vvb.ini dans ".$foldername;
+			               	}else{
+			                	fclose($fp);
+								$infos = "automicroblog crée avec succès : $foldername";
+								$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+							}
+						}
+
+}
+/* end of file writing */
 		            }else {
 		                $infos = "Impossible de créer le répertoire ".$foldername;
 					}
-				}
+				} /* else { $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; } */
 				if(DEBUG){ echo $infos."\n"; }
 	 		}
 	 	}
