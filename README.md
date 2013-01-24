@@ -29,8 +29,6 @@ voir: http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog
 
 Ce code s'axe autour des codes cités ci-dessus. Nom de code: Ferme d'autoblog, index2.
 
-http://wiki.suumitsu.eu/doku.php?id=php:autoblog2
-
 Instances de développement:
 
 https://autoblog.suumitsu.eu/
