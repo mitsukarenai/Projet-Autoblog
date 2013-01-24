@@ -21,6 +21,9 @@ function get_title_from_feed($url)
 function get_link_from_feed($url)
 	{
 	// get site link from feed
+		$validator = "http://validator.w3.org/feed/check.cgi";$validator .= "?url=".$url;$validator .= "&output=soap12";
+		$response = file_get_contents($validator);$a = strpos($response, '<m:validity>', 0)+12;$b = strpos($response, '</m:validity>', $a);$result = substr($response, $a, $b-$a);
+		if($result == "false") { die('le flux n\'a pas une syntaxe valide'); }
 	$data = file_get_contents("$url");
 		$check = substr($data, 0, 5);
 		if($check !== '<?xml') { die('n\'est pas un flux valide'); }
@@ -255,8 +258,8 @@ $socialaccount = strtolower(escape($_POST['socialaccount']));
         if(escape($_POST['socialinstance']) === 'statusnet') { $socialinstance = 'statusnet'; }
 	$folder = "$socialinstance-$socialaccount";if(file_exists($folder)) { die('Erreur: l\'autoblog <a href="./'.$folder.'/">existe déjà</a>.'); }
 		if($socialinstance === 'twitter') { $siteurl = "http://twitter.com/$socialaccount"; $rssurl = "http://api.twitter.com.nyud.net/1/statuses/user_timeline.rss?screen_name=$socialaccount"; } 
-		if($socialinstance === 'identica') { $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca.nyud.net/api/statuses/user_timeline/$socialaccount.atom"; } 
-		if($socialinstance === 'statusnet' && !empty($_POST['socialurl'])) { $siteurl = "http://".escape($_POST['socialurl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['socialurl'])."/api/statuses/user_timeline/$socialaccount.atom"; } 
+		if($socialinstance === 'identica') { $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca.nyud.net/api/statuses/user_timeline/$socialaccount.rss"; } 
+		if($socialinstance === 'statusnet' && !empty($_POST['socialurl'])) { $siteurl = "http://".escape($_POST['socialurl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['socialurl'])."/api/statuses/user_timeline/$socialaccount.rss"; } 
 		$headers = get_headers($rssurl, 1);
 		if (strpos($headers[0], '200') == FALSE) {$error[] = "Flux inaccessible (compte inexistant ?)";} else {  }
 if( empty($error) ) {

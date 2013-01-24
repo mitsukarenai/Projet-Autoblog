@@ -37,7 +37,7 @@ function NoProtocolSiteURL($url)
 }
 function xsafimport($xsafremote)
 { 
-	$json_import = file_get_contents($xsafremote);
+	$json_import = file_get_contents($xsafremote); 
 	if(!empty($json_import)){
 		$to_update=array();
 	 	foreach (json_decode($json_import) as $value) {
@@ -67,8 +67,11 @@ function xsafimport($xsafremote)
 					if ( mkdir('./'. $foldername, 0755, false) ) {
 		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
 
+		$validator = "http://validator.w3.org/feed/check.cgi";$validator .= "?url=".$rssurl;$validator .= "&output=soap12";
+		$response = file_get_contents($validator);$a = strpos($response, '<m:validity>', 0)+12;$b = strpos($response, '</m:validity>', $a);$result = substr($response, $a, $b-$a);
+
 /* autoblog */
-if($social==FALSE)
+if($social==FALSE and $result!=="false")
 {
 		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") ){
 		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
@@ -92,7 +95,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) ){
 						}
 }
 /* automicroblog */
-else
+else if($social!==FALSE and $result!=="false")
 {
 		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/automicroblog.php'; ?>") ){
 		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
@@ -114,12 +117,12 @@ FEED_URL="'. $rssurl .'"') ){
 							}
 						}
 
-}
+} else { $infos = "$rssurl -> flux invalide"; }
 /* end of file writing */
 		            }else {
 		                $infos = "Impossible de créer le répertoire ".$foldername;
 					}
-				} /* else { $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; } */
+				}  else { $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; } 
 				if(DEBUG){ echo $infos."\n"; }
 	 		}
 	 	}
@@ -135,9 +138,10 @@ FEED_URL="'. $rssurl .'"') ){
 }
 
 /* And now, the XSAF links to be imported ! */
-
+xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json');
 //xsafimport('https://www.ecirtam.net/autoblogs/?export');
-xsafimport('http://autoblog.suumitsu.eu/?export');
+//xsafimport('http://autoblog.suumitsu.eu/?export');
+
 if(DEBUG){ echo "\n\nXSAF import finished\n\n"; }
 
 ?>
