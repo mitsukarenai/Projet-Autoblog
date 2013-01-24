@@ -122,7 +122,7 @@ FEED_URL="'. $rssurl .'"') ){
 		            }else {
 		                $infos = "Impossible de créer le répertoire ".$foldername;
 					}
-				}  else { $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; } 
+				}  else { /* $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; */ } 
 				if(DEBUG){ echo $infos."\n"; }
 	 		}
 	 	}
@@ -140,7 +140,7 @@ FEED_URL="'. $rssurl .'"') ){
 /* And now, the XSAF links to be imported ! */
 xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json');
 //xsafimport('https://www.ecirtam.net/autoblogs/?export');
-//xsafimport('http://autoblog.suumitsu.eu/?export');
+//xsafimport('https://autoblog.suumitsu.eu/?export');
 
 if(DEBUG){ echo "\n\nXSAF import finished\n\n"; }
 
