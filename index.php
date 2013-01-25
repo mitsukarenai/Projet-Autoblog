@@ -1,6 +1,6 @@
 <?php
 
-/* modtime 2013-01-23 */
+/* modtime 2013-01-25 */
 
 define('ROOT_DIR', __DIR__);
 if(file_exists("config.php")){
@@ -363,6 +363,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			h2 { text-align:center;font-size: 16pt;margin:0 0 1em 0;font-style:italic;text-shadow: #ccc 0px 5px 5px; }
 			.pbloc {background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;text-align:justify;box-shadow:0px 5px 7px #aaa;}
 			input {width:30em;}
+			input[type="radio"] { width:1em; } 
 			input#socialaccount, input#socialurl, input#socialsub {width:12em;}
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
 			.vignette:hover { background-color:#fff;}
