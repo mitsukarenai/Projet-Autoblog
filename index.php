@@ -1,6 +1,6 @@
 <?php
 
-/* modtime 2013-01-25 */
+/* modtime 2013-01-23 */
 
 define('ROOT_DIR', __DIR__);
 if(file_exists("config.php")){
@@ -82,8 +82,8 @@ $svg_vert='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="
 $svg_jaune='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:#ffff00;stroke:#ffcc00"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">mv</tspan></text></svg>';
 $svg_rouge='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:#ff0000;stroke:#800000"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">err</tspan></text></svg>';
 $svg_twitter='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#3aaae1;stroke-width:4;stroke-miterlimit:4" /></svg>';
-$svg_identica='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#800000;stroke-width:4;stroke-miterlimit:4" /></svg>';
-$svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#829d25;stroke-width:4;stroke-miterlimit:4" /></svg>';
+$svg_identica='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#a00000;stroke-width:4;stroke-miterlimit:4" /></svg>';
+$svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#ff6a00;stroke-width:4;stroke-miterlimit:4" /></svg>';
 		
 		if(strpos($_GET['check'], 'twitter') !== FALSE) { header('Content-type: image/svg+xml');die($svg_twitter); }
 		if(strpos($_GET['check'], 'identica') !== FALSE) { header('Content-type: image/svg+xml');die($svg_identica); }
@@ -356,7 +356,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 		<meta charset="utf-8">
     <title>Le Projet Autoblog</title>
 		<style type="text/css">
-			body {background-color:#efefef;text-align:center;color:#333;}
+			body {background-color:#efefef;text-align:center;color:#333;font-family:sans-serif}
 			a {color:black;text-decoration:none;font-weight:bold;}
 			a:hover {color:darkred;}
 			h1 { text-align:center;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
@@ -378,7 +378,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 		</style>
 </head>
 	<body>
-		<h1>Le Projet Autoblog</h1>
+		<h1>LE PROJET AUTOBLOG</h1>
 		<div class="pbloc">
 			<img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
 			<b>Note</b><br>
