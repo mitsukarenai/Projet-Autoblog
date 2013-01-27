@@ -21,10 +21,17 @@ function get_title_from_feed($url)
 function get_link_from_feed($url)
 	{
 	// get site link from feed
-		$validator = "http://validator.w3.org/feed/check.cgi";$validator .= "?url=".$url;$validator .= "&output=soap12";
-		$response = file_get_contents($validator);$a = strpos($response, '<m:validity>', 0)+12;$b = strpos($response, '</m:validity>', $a);$result = substr($response, $a, $b-$a);
-		if($result == "false") { die('le flux n\'a pas une syntaxe valide'); }
 	$data = file_get_contents("$url");
+	$xml = simplexml_load_string($data); // quick feed check
+	if (isset($xml->entry)) // ATOM feed.
+		{$result="true";}  
+	elseif (isset($xml->item)) // RSS 1.0 /RDF
+		{$result="true";} 
+	elseif (isset($xml->channel->item)) // RSS 2.0
+		{$result="true";} 
+	else
+		{$result="false";}
+ 		if($result == "false") { die('le flux n\'a pas une syntaxe valide'); }
 		$check = substr($data, 0, 5);
 		if($check !== '<?xml') { die('n\'est pas un flux valide'); }
 	$xml = new SimpleXmlElement($data);

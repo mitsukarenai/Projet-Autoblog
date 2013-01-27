@@ -67,8 +67,15 @@ function xsafimport($xsafremote)
 					if ( mkdir('./'. $foldername, 0755, false) ) {
 		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
 
-		$validator = "http://validator.w3.org/feed/check.cgi";$validator .= "?url=".$rssurl;$validator .= "&output=soap12";
-		$response = file_get_contents($validator);$a = strpos($response, '<m:validity>', 0)+12;$b = strpos($response, '</m:validity>', $a);$result = substr($response, $a, $b-$a);
+$xml = simplexml_load_file($rssurl); // quick feed check
+if (isset($xml->entry)) // ATOM feed.
+	{$result="true";}  
+elseif (isset($xml->item)) // RSS 1.0 /RDF
+	{$result="true";} 
+elseif (isset($xml->channel->item)) // RSS 2.0
+	{$result="true";} 
+else
+	{$result="false";} 
 
 /* autoblog */
 if($social==FALSE and $result!=="false")
