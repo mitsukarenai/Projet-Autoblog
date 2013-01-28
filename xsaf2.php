@@ -1,5 +1,5 @@
 <?php
-/* modtime 2013-01-23 */
+/* modtime 2013-01-28 */
 
 define('DEBUG', true);
 
@@ -8,13 +8,12 @@ header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not a
 header('Content-type: text/plain');
 $expire = time() -7200 ; $lockfile = ".xsaflock";  /* defaut delay: 7200 (2 hours) */
 
-
 if (file_exists($lockfile)) 
 {
   if (filemtime($lockfile) > $expire)
 	{ echo "too early"; die; }
 	else
-	{ unlink($lockfile); }
+	{ unlink($lockfile); file_put_contents($lockfile, ''); }
 }
 else file_put_contents($lockfile, '');
 
@@ -35,10 +34,11 @@ function NoProtocolSiteURL($url)
 	$siteurlnoproto = str_replace($siteurlnoprototypes, "", $url);
 	return $siteurlnoproto;
 }
-function xsafimport($xsafremote)
-{ 
-	$json_import = file_get_contents($xsafremote); 
-	if(!empty($json_import)){
+function xsafimport($xsafremote, $iter)
+{
+echo "\n*Traitement $xsafremote avec $iter créations max";
+	$json_import = file_get_contents($xsafremote);
+	if(!empty($json_import)){ 
 		$to_update=array();
 	 	foreach (json_decode($json_import) as $value) {
 	 		$infos="";
@@ -63,10 +63,15 @@ function xsafimport($xsafremote)
 				$sitedomain3=explode(".", $sitedomain2);
 				$sitedomain3=array_reverse($sitedomain3);
 				$sitedomain = $sitedomain3[1].'.'.$sitedomain3[0];
-				if(!file_exists($foldername) && !file_exists($foldername2)) { 
+				if(!file_exists($foldername) && !file_exists($foldername2) and $iter > 0) { 
 					if ( mkdir('./'. $foldername, 0755, false) ) {
 		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
 
+$response = get_headers($rssurl, 1); // check for redirections
+if(!empty($response['Location']))
+	{ $result="false"; }
+else
+{
 $xml = simplexml_load_file($rssurl); // quick feed check
 if (isset($xml->entry)) // ATOM feed.
 	{$result="true";}  
@@ -76,12 +81,13 @@ elseif (isset($xml->channel->item)) // RSS 2.0
 	{$result="true";} 
 else
 	{$result="false";} 
+}
 
 /* autoblog */
 if($social==FALSE and $result!=="false")
-{
+{ $iter--;
 		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") ){
-		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
+		                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
 		                    fclose($fp);
 		                }else{
 			                fclose($fp);
@@ -93,19 +99,19 @@ SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 DOWNLOAD_MEDIA_FROM='.$sitedomain) ){
 			                    fclose($fp);
-			                	$infos = "Impossible d'écrire le fichier vvb.ini dans ".$foldername;
+			                	$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 			               	}else{
 			                	fclose($fp);
-								$infos = "autoblog crée avec succès : $foldername";
+								$infos = "\n$iter/autoblog crée avec succès : $foldername";
 								$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 							}
 						}
 }
 /* automicroblog */
 else if($social!==FALSE and $result!=="false")
-{
+{ $iter--;
 		                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/automicroblog.php'; ?>") ){
-		                    $infos = "Impossible d'écrire le fichier index.php dans ".$foldername;
+		                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
 		                    fclose($fp);
 		                }else{
 			                fclose($fp);
@@ -116,39 +122,40 @@ SITE_DESCRIPTION="AutoMicroblog automatis&eacute; de "
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"') ){
 			                    fclose($fp);
-			                	$infos = "Impossible d'écrire le fichier vvb.ini dans ".$foldername;
+			                	$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 			               	}else{
 			                	fclose($fp);
-								$infos = "automicroblog crée avec succès : $foldername";
+								$infos = "\n$iter/automicroblog crée avec succès : $foldername";
 								$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 							}
 						}
 
-} else { $infos = "$rssurl -> flux invalide"; }
+} else { $infos = "\n$rssurl -> flux invalide"; }
 /* end of file writing */
 		            }else {
-		                $infos = "Impossible de créer le répertoire ".$foldername;
+		                $infos = "\nImpossible de créer le répertoire ".$foldername;
 					}
-				}  else { /* $infos = "Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)"; */ } 
-				if(DEBUG){ echo $infos."\n"; }
+				}  else {  /*$infos = "\nFin d'itération ou Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)";*/  } 
+				if(DEBUG){ echo $infos; }
 	 		}
 	 	}
-	 	if(!empty($to_update)){
-	 		if(DEBUG){ echo "update of autoblogs ..."; }
+	 	/*if(!empty($to_update)){
+	 		if(DEBUG){ echo "\nupdate of autoblogs ..."; }
 	 		// because it's could be very long, we finish by updating new autoblogs
 	 		foreach ($to_update as $url) {
-	 			file_get_contents($url);
+	 			get_headers($url);
 	 		}
-	 		if(DEBUG){ echo "done"; }
-	 	}
+	 		if(DEBUG){ echo "done\n\n"; }
+	 	}*/
 	}
+$iter=''; return;
 }
 
-/* And now, the XSAF links to be imported ! */
-xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json');
-//xsafimport('https://www.ecirtam.net/autoblogs/?export');
-//xsafimport('https://autoblog.suumitsu.eu/?export');
+/* And now, the XSAF links to be imported, with maximal import per run ! */
+xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json', 2);
+//xsafimport('https://www.ecirtam.net/autoblogs/?export', 2);
+//xsafimport('https://autoblog.suumitsu.eu/?export', 1);
 
 if(DEBUG){ echo "\n\nXSAF import finished\n\n"; }
-
+die;
 ?>
