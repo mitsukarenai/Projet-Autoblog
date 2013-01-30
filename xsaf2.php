@@ -37,8 +37,12 @@ function NoProtocolSiteURL($url) {
 	return $siteurlnoproto;
 }
 
-function xsafimport($xsafremote, $iter) {
-	echo "\n*Traitement $xsafremote avec $iter créations max";
+libxml_use_internal_errors(true);
+// $max_exec_time = temps max d'exécution en seconde
+function xsafimport($xsafremote, $max_exec_time) {
+	echo "\n*Traitement $xsafremote en maximum $max_exec_time secondes";
+	$max_exec_time+=time()-1; // -1 car l'import prend environ 1 seconde
+	
 	$json_import = file_get_contents($xsafremote);
 	if(!empty($json_import)) {
 		$to_update=array();
@@ -61,7 +65,7 @@ function xsafimport($xsafremote, $iter) {
 				$sitedomain3=explode(".", $sitedomain2);
 				$sitedomain3=array_reverse($sitedomain3);
 				$sitedomain = $sitedomain3[1].'.'.$sitedomain3[0];
-				if(!file_exists($foldername) && !file_exists($foldername2) and $iter > 0) { 
+				if(!file_exists($foldername) && !file_exists($foldername2)) { 
 					if ( mkdir('./'. $foldername, 0755, false) ) {
 		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
 
@@ -70,7 +74,10 @@ function xsafimport($xsafremote, $iter) {
 							$result="false";
 						}else{
 							$xml = simplexml_load_file($rssurl); // quick feed check
-							if (isset($xml->entry)) { // ATOM feed.
+
+							if($xml === FALSE){
+								$result="false";
+							}elseif (isset($xml->entry)) { // ATOM feed.
 								$result="true";
 							}elseif (isset($xml->item)) { // RSS 1.0 /RDF
 								$result="true";
@@ -83,7 +90,6 @@ function xsafimport($xsafremote, $iter) {
 
 						/* autoblog */
 						if($social==FALSE and $result!=="false") {
-							$iter--;
 			                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") ) {
 			                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
 			                    fclose($fp);
@@ -100,14 +106,13 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) ){
 			                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 				               	}else{
 				                	fclose($fp);
-									$infos = "\n$iter/autoblog crée avec succès : $foldername";
+									$infos = "\nautoblog crée avec succès : $foldername";
 									$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 								}
 							}
 						}
 							/* automicroblog */
 						else if($social!==FALSE and $result!=="false"){
-							$iter--;
 			                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/automicroblog.php'; ?>") ){
 			                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
 			                    fclose($fp);
@@ -123,7 +128,7 @@ FEED_URL="'. $rssurl .'"') ){
 			                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 			               		}else{
 			                		fclose($fp);
-									$infos = "\n$iter/automicroblog crée avec succès : $foldername";
+									$infos = "\nautomicroblog crée avec succès : $foldername";
 									$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 								}
 							}
@@ -141,6 +146,10 @@ FEED_URL="'. $rssurl .'"') ){
 					echo $infos;
 				}
 	 		}
+	 		echo "\n time : ".(time() - $max_exec_time);
+	 		if(time() >= $max_exec_time){
+	 			break;
+	 		}
 	 	}
 	 	/*if(!empty($to_update)){
 	 		if(DEBUG){
@@ -155,13 +164,13 @@ FEED_URL="'. $rssurl .'"') ){
 	 		}
 	 	}*/
 	}
-	$iter=''; return;
+	return;
 }
 
-/* And now, the XSAF links to be imported, with maximal import per run ! */
-xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json', 2);
-//xsafimport('https://www.ecirtam.net/autoblogs/?export', 2);
-//xsafimport('https://autoblog.suumitsu.eu/?export', 1);
+/* And now, the XSAF links to be imported, with maximal execusion time for import in second ! */
+xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json', 5);
+//xsafimport('https://www.ecirtam.net/autoblogs/?export', 5);
+//xsafimport('https://autoblog.suumitsu.eu/?export', 5);
 
 if(DEBUG) {
 	echo "\n\nXSAF import finished\n\n";
