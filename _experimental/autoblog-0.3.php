@@ -620,7 +620,7 @@ if($site_type == 'generic')
 	a { text-decoration: none; color: #000;font-weight:bold; }
     .header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
     .header a { text-decoration: none; color: #000;font-weight:bold; }
-    .header { text-align:center; padding: 1% 3%; max-width:70em;margin:0 auto; }
+    .header { text-align:center; padding: 30px 3%; max-width:70em;margin:0 auto; }
     .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
     .article .title h2 a { color:#000; text-decoration:none; }
     .article .title h2 a:hover { color:#403976; }
@@ -658,7 +658,7 @@ if($site_type == 'generic')
 	a { text-decoration: none; color: #000;font-weight:bold; }
     .header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
     .header a { text-decoration: none; color: #000;font-weight:bold; }
-    .header { text-align:center; padding: 1% 3%; max-width:70em;margin:0 auto; }
+    .header { text-align:center; padding: 30px 3%; max-width:70em;margin:0 auto; }
     .article .title h2 { width: 10em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 0.7em;margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
     .article .title h2 a { color:#333; text-decoration:none; }
     .article .title h2 a:hover { color:#403976; }
