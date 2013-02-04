@@ -610,88 +610,63 @@ if (!$search && !empty($_SERVER['QUERY_STRING']) && !is_numeric($_SERVER['QUERY_
     }
 }
 
-//  CSS
-$css='';
-if($site_type == 'generic')
-	{
-    $css = '    * { margin: 0; padding: 0; }
+//  common CSS
+$css='    * { margin: 0; padding: 0; }
     body { font-family:sans-serif; background-color: #efefef; padding: 1%; color: #333; }
     img { max-width: 100%; height: auto; }
-	a { text-decoration: none; color: #000;font-weight:bold; }
-    .header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
-    .header a { text-decoration: none; color: #000;font-weight:bold; }
+	a { text-decoration: none; color: #000;font-weight:bold; } 
+   .header a { text-decoration: none; color: #000;font-weight:bold; }
     .header { text-align:center; padding: 30px 3%; max-width:70em;margin:0 auto; }
+	.article .title { margin-bottom: 1em; }
+    .article .title h2 a:hover { color:#403976; }
+	.article h4 { font-weight: normal; font-size: small; color: #666; }
+	.article .source a { color: #666; }
+	.searchForm { float:right; }
+	.searchForm input { }
+    .pagination {  background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
+    .pagination b { font-size: 1.2em; color: #333; }
+    .pagination a { color:#000; margin: 0 0.5em; }
+    .pagination a:hover { color:#333; }
+    .footer a { color:#000; }
+    .footer a:hover { color:#333; }
+    .content ul, .content ol { margin-left: 2em; }
+    .content h1, .content h2, .content h3, .content h4, .content h5, .content h6,
+        .content ul, .content ol, .content p, .content object, .content div, .content blockquote,
+        .content dl, .content pre { margin-bottom: 0.8em; }
+    .content pre, .content blockquote { background: #ddd; border: 1px solid #999; padding: 0.2em; max-width: 100%; overflow: auto; }
+    .content h1 { font-size: 1.5em; }
+    .content h2 { font-size: 1.4em;color:#000; }
+    .result h3 a { color: darkblue; text-decoration: none; text-shadow: 1px 1px 1px #fff; }
+    #error { position: fixed; top: 0; left: 0; right: 0; padding: 1%; background: #fff; border-bottom: 2px solid red; color: darkred; }
+';
+
+if($site_type == 'generic') // custom CSS for generic
+	{
+    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
     .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
     .article .title h2 a { color:#000; text-decoration:none; }
-    .article .title h2 a:hover { color:#403976; }
-
-    .pagination {  background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
-    .pagination b { font-size: 1.2em; color: #333; }
-    .pagination a { color:#000; margin: 0 0.5em; }
-    .pagination a:hover { color:#333; }
-
+	.article .source { font-size: 0.8em; color: #666; }
     .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
-    .article h4 { font-weight: normal; font-size: small; color: #666; }
-    .article .title { margin-bottom: 1em; }
-    .article .source { font-size: 0.8em; color: #666; }
-    .article .source a { color: #666; }
-    .searchForm { float:right;  }
-    .searchForm input {  }
-    .footer { text-align:center; font-size: small; color:#333; clear: both; }
-    .footer a { color:#000; }
-    .footer a:hover { color:#333; }
-    .content ul, .content ol { margin-left: 2em; }
-    .content h1, .content h2, .content h3, .content h4, .content h5, .content h6,
-        .content ul, .content ol, .content p, .content object, .content div, .content blockquote,
-        .content dl, .content pre { margin-bottom: 0.8em; }
-    .content pre, .content blockquote { background: #ddd; border: 1px solid #999; padding: 0.2em; max-width: 100%; overflow: auto; }
-    .content h1 { font-size: 1.5em; }
-    .content h2 { font-size: 1.4em;color:#000; }
-    .result h3 a { color: darkblue; text-decoration: none; text-shadow: 1px 1px 1px #fff; }
-    #error { position: fixed; top: 0; left: 0; right: 0; padding: 1%; background: #fff; border-bottom: 2px solid red; color: darkred; }';
+    .footer { text-align:center; font-size: small; color:#333; clear: both; }';
     }
-	else if($site_type == 'microblog')
+	else if($site_type == 'microblog') // custom CSS for microblog
 	{
-    $css = '    * { margin: 0; padding: 0; }
-    body { font-family:sans-serif; background-color: #efefef; padding: 1%; color: #333; }
-    img { max-width: 100%; height: auto; }
-	a { text-decoration: none; color: #000;font-weight:bold; }
-    .header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
-    .header a { text-decoration: none; color: #000;font-weight:bold; }
-    .header { text-align:center; padding: 30px 3%; max-width:70em;margin:0 auto; }
+    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
     .article .title h2 { width: 10em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 0.7em;margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
     .article .title h2 a { color:#333; text-decoration:none; }
-    .article .title h2 a:hover { color:#403976; }
-
-    .pagination {  background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
-    .pagination b { font-size: 1.2em; color: #333; }
-    .pagination a { color:#000; margin: 0 0.5em; }
-    .pagination a:hover { color:#333; }
-
     .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:0 auto;box-shadow:0px 5px 7px #aaa; }
-    .article h4 { font-weight: normal; font-size: small; color: #666; }
-    .article .title { margin-bottom: 1em; }
     .article .source { font-size: 0.8em; color: #666; }
-    .article .source a { color: #666; }
-    .searchForm { float:right;  }
-    .searchForm input {  }
     .footer { margin-top:1em;text-align:center; font-size: small; color:#333; clear: both; }
-    .footer a { color:#000; }
-    .footer a:hover { color:#333; }
-	.content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
-    .content ul, .content ol { margin-left: 2em; }
-    .content h1, .content h2, .content h3, .content h4, .content h5, .content h6,
-        .content ul, .content ol, .content p, .content object, .content div, .content blockquote,
-        .content dl, .content pre { margin-bottom: 0.8em; }
-    .content pre, .content blockquote { background: #ddd; border: 1px solid #999; padding: 0.2em; max-width: 100%; overflow: auto; }
-    .content h1 { font-size: 1.5em; }
-    .content h2 { font-size: 1.4em;color:#000; }
-    .result h3 a { color: darkblue; text-decoration: none; text-shadow: 1px 1px 1px #fff; }
-    #error { position: fixed; top: 0; left: 0; right: 0; padding: 1%; background: #fff; border-bottom: 2px solid red; color: darkred; }';
+	.content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}';
 	}
-	else if($site_type == 'shaarli')
+	else if($site_type == 'shaarli') // custom CSS for shaarli
 	{
-// TODO
+    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
+    .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
+    .article .title h2 a { color:#000; text-decoration:none; }
+    .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
+    .article .source { margin-top:1em;font-size: 0.8em; color: #666; }
+    .footer { text-align:center; font-size: small; color:#333; clear: both; }';
 	}
 
 
