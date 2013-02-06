@@ -40,10 +40,6 @@ function __($str)
         case 'configuration':
         case 'articles':
             return $str;
-        case 'Media export':
-            return 'Export fichiers media';
-        default:
-            return $str;
     }
 }
 

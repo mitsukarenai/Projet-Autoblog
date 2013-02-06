@@ -225,6 +225,7 @@ class VroumVroum_Blog
         $create_articles_db = file_exists(ARTICLES_DB_FILE) ? false : true;
 
         $this->articles = new SQLite3(ARTICLES_DB_FILE);
+
         if ($create_articles_db)
         {
             $this->articles->exec('
@@ -322,13 +323,7 @@ class VroumVroum_Blog
         if (isset($_GET['update']))
             return true;
 
-        if($this->articles->busyTimeout(2000)){
-            $last_update = $this->articles->querySingle('SELECT date FROM update_log ORDER BY date DESC LIMIT 1;');
-        }else{
-            return false;
-        }
-
-        $this->articles->busyTimeout(0);
+        $last_update = $this->articles->querySingle('SELECT date FROM update_log ORDER BY date DESC LIMIT 1;');
 
         if (!empty($last_update) && (int) $last_update > (time() - $this->config->update_interval))
             return false;
@@ -595,20 +590,6 @@ if (isset($_GET['feed'])) // FEED
     exit;
 }
 
-
-if (isset($_GET['media'])) // MEDIA
-{
-    header('Content-Type: application/json');
-    if(is_dir(MEDIA_DIR))
-    {
-        $files = scandir(MEDIA_DIR);
-        unset($files[0]); // .
-        unset($files[1]); // ..
-        echo json_encode(array("url"=> LOCAL_URL.substr(MEDIA_DIR, strlen(ROOT_DIR)+1).'/', "files" => $files));
-    }
-    exit;
-}
-
 if (isset($_GET['update']))
 {
     $_SERVER['QUERY_STRING'] = '';
@@ -810,8 +791,7 @@ echo '
 <div class="footer">
     <p>Powered by VroumVroumBlog '.$vvbversion.' - <a href="?feed">'.__('RSS Feed').'</a></p>
     <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a>
-        - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
-    <p><a href="'.LOCAL_URL.'?media">'.__('Media export').' <sup> JSON</sup></a></p>
+        - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a></p>
 </div>';
 
 if ($vvb->mustUpdate())
