@@ -2,6 +2,8 @@
 
 /* modtime 2013-01-23 */
 
+define('XSAF_VERSION', 3);
+
 define('ROOT_DIR', __DIR__);
 if(file_exists("config.php")){
 	include "config.php";
@@ -136,13 +138,15 @@ foreach($subdirs as $unit)
 				$config->$key = $value;
 				}
 			unset($ini);
+			$type=$config->site_type;
 			$title=$config->site_title;
 			$url=$config->site_url;
 			$feed=$config->feed_url;
-			$reponse[$unit] = array("$title", "$url", "$feed");
+			$reponse[$unit] = array("SITE_TYPE"=>"$type", "SITE_TITLE"=>"$title", "SITE_URL"=>"$url", "FEED_URL"=>"$feed");
  			}
 		}
-echo json_encode($reponse);
+		echo json_encode( array( "meta"=> array("xsaf-version"=>XSAF_VERSION),
+								"autoblogs"=>$reponse));
 die;
 }
 
