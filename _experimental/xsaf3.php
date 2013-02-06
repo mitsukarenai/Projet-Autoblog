@@ -2,6 +2,8 @@
 /* modtime 2013-02-04 */
 
 define('DEBUG', true);
+define('XSAF_VERSION', 3);
+define('AUTOBLOG_FILE_NAME', 'autoblog-0.3.php');
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
@@ -46,83 +48,96 @@ function xsafimport($xsafremote, $max_exec_time) {
 	$json_import = file_get_contents($xsafremote);
 	if(!empty($json_import)) {
 		$to_update=array();
-	 	foreach (json_decode($json_import, true) as $value) {
-	 		$infos="";
-	 		if(count($value)==3 && !empty($value['SITE_TYPE']) && !empty($value['SITE_TITLE']) && !empty($value['SITE_URL']) && !empty($value['FEED_URL'])) {
-				$sitetype = $value['SITE_TYPE'];
-				$sitename = $value['SITE_TITLE'];
-				$siteurl = escape($value['SITE_URL']);
-	 			$rssurl = escape($value['FEED_URL']);
+		$json_import = json_decode($json_import, true);
 
-					$foldername = $sitename;$foldername2 = $sitename;
+		if(!isset($json_import['meta']) || !isset($json_import['meta']['xsaf-version']) || $json_import['meta']['xsaf-version'] != XSAF_VERSION){
+			if(DEBUG){
+				echo "\nxsaf-version différentes !";
+			}
+			return false;
+		}
+		if(!empty($json_import['autoblogs'])) {
+		 	foreach ($json_import['autoblogs'] as $value) {
+		 		$infos="";
+		 		if(count($value)==4 && !empty($value['SITE_TYPE']) && !empty($value['SITE_TITLE']) && !empty($value['SITE_URL']) && !empty($value['FEED_URL'])) {
+					$sitetype = $value['SITE_TYPE'];
+					$sitename = $value['SITE_TITLE'];
+					$siteurl = escape($value['SITE_URL']);
+		 			$rssurl = escape($value['FEED_URL']);
 
-				if(!file_exists($foldername) && !file_exists($foldername2)) { 
-					if ( mkdir('./'. $foldername, 0755, false) ) {
-		                $fp = fopen('./'. $foldername .'/index.php', 'w+');
+						$foldername = $sitename;$foldername2 = $sitename;
 
-						$response = get_headers($rssurl, 1); // check for redirections
-						if(!empty($response['Location'])) {
-							$result="false";
-						}else{
-							$xml = simplexml_load_file($rssurl); // quick feed check
+					if(!file_exists($foldername) && !file_exists($foldername2)) { 
+						if ( mkdir('./'. $foldername, 0755, false) ) {
+			                $fp = fopen('./'. $foldername .'/index.php', 'w+');
 
-							if($xml === FALSE){
+							$response = get_headers($rssurl, 1); // check for redirections
+							if(!empty($response['Location'])) {
 								$result="false";
-							}elseif (isset($xml->entry)) { // ATOM feed.
-								$result="true";
-							}elseif (isset($xml->item)) { // RSS 1.0 /RDF
-								$result="true";
-							}elseif (isset($xml->channel->item)) { // RSS 2.0
-								$result="true";
 							}else{
-								$result="false";
-							} 
-						}
+								$xml = simplexml_load_file($rssurl); // quick feed check
 
-						/* autoblog */
-						if($result!=="false") {
-			                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") ) {
-			                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
-			                    fclose($fp);
-			                }else{
-			              		fclose($fp);
-				                $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
-				                if( !fwrite($fp, '[VroumVroumBlogConfig]
+								if($xml === FALSE){
+									$result="false";
+								}elseif (isset($xml->entry)) { // ATOM feed.
+									$result="true";
+								}elseif (isset($xml->item)) { // RSS 1.0 /RDF
+									$result="true";
+								}elseif (isset($xml->channel->item)) { // RSS 2.0
+									$result="true";
+								}else{
+									$result="false";
+								} 
+							}
+
+							/* autoblog */
+							if($result!=="false") {
+				                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/".AUTOBLOG_FILE_NAME."'; ?>") ) {
+				                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
+				                    fclose($fp);
+				                }else{
+				              		fclose($fp);
+					                $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
+					                if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
 SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"') ){
-			                    	fclose($fp);
-			                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
-				               	}else{
-				                	fclose($fp);
-/* ============================================================================================================================================================================== */
-/* récupération de la DB distante */ $remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db');
-/* ============================================================================================================================================================================== */
-									$infos = "\nautoblog crée avec succès : $foldername";
-									$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+				                    	fclose($fp);
+				                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
+					               	}else{
+					                	fclose($fp);
+	/* ============================================================================================================================================================================== */
+	/* récupération de la DB distante */ $remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db');
+	/* ============================================================================================================================================================================== */
+
+										//TODO : tester si articles.db est une DB valide
+
+										$infos = "\nautoblog crée avec succès : $foldername";
+										$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+									}
 								}
+							} else {
+								$infos = "\n$rssurl -> flux invalide";
 							}
-						} else {
-							$infos = "\n$rssurl -> flux invalide";
+						/* end of file writing */
+			            }else {
+			                $infos = "\nImpossible de créer le répertoire ".$foldername;
 						}
-					/* end of file writing */
-		            }else {
-		                $infos = "\nImpossible de créer le répertoire ".$foldername;
+					}  else {
+						/*$infos = "\nFin d'itération ou Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)";*/
+					} 
+					if(DEBUG){
+						echo $infos;
 					}
-				}  else {
-					/*$infos = "\nFin d'itération ou Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)";*/
-				} 
-				if(DEBUG){
-					echo $infos;
-				}
-	 		}
-	 		echo "\n time : ".(time() - $max_exec_time);
-	 		if(time() >= $max_exec_time){
-	 			break;
-	 		}
-	 	}
+		 		}
+		 		echo "\n time : ".(time() - $max_exec_time);
+		 		if(time() >= $max_exec_time){
+		 			break;
+		 		}
+		 	}
+		 }
 	 	/*if(!empty($to_update)){
 	 		if(DEBUG){
 	 			echo "\nupdate of autoblogs ...";
@@ -140,7 +155,7 @@ FEED_URL="'. $rssurl .'"') ){
 }
 
 /* And now, the XSAF links to be imported, with maximal execusion time for import in second ! */
-xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/2.json', 5);
+xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json', 5);
 //xsafimport('https://www.ecirtam.net/autoblogs/?export', 5);
 //xsafimport('https://autoblog.suumitsu.eu/?export', 5);
 
