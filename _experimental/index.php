@@ -145,7 +145,7 @@ foreach($subdirs as $unit)
 			$reponse[$unit] = array("SITE_TYPE"=>"$type", "SITE_TITLE"=>"$title", "SITE_URL"=>"$url", "FEED_URL"=>"$feed");
  			}
 		}
-		echo json_encode( array( "meta"=> array("xsaf-version"=>XSAF_VERSION),
+		echo json_encode( array( "meta"=> array("xsaf-version"=>XSAF_VERSION,"xsaf-db_transfer"=>"true","xsaf-media_transfer"=>"true"),
 								"autoblogs"=>$reponse));
 die;
 }
