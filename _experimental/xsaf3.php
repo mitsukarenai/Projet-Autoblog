@@ -44,7 +44,7 @@ libxml_use_internal_errors(true);
 function xsafimport($xsafremote, $max_exec_time) {
 	echo "\n*Traitement $xsafremote en maximum $max_exec_time secondes";
 	$max_exec_time+=time()-1; // -1 car l'import prend environ 1 seconde
-/* détection de ferme autoblog  */	if(strpos($xsafremote, '?export') === false) {$get_remote_db="0";} else {$get_remote_db="1";}
+/* détection de ferme autoblog  */
 	$json_import = file_get_contents($xsafremote);
 	if(!empty($json_import)) {
 		$to_update=array();
@@ -56,6 +56,8 @@ function xsafimport($xsafremote, $max_exec_time) {
 			}
 			return false;
 		}
+		if($json_import['meta']['xsaf-db_transfer'] != "true") {$get_remote_db="0";} else {$get_remote_db="1";}
+		if($json_import['meta']['xsaf-media_transfer'] != "true") {$get_remote_media="0";} else {$get_remote_media="1";}
 		if(!empty($json_import['autoblogs'])) {
 		 	foreach ($json_import['autoblogs'] as $value) {
 		 		$infos="";
