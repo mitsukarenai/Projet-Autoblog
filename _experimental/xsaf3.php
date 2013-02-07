@@ -116,7 +116,7 @@ FEED_URL="'. $rssurl .'"') ){
 
 										//TODO : tester si articles.db est une DB valide
 
-										$infos = "\nautoblog crée avec succès : $foldername";
+										$infos = "\nautoblog crée avec succès (DB:$get_remote_db media:$get_remote_media) : $foldername";
 										$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
 									}
 								}
