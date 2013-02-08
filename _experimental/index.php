@@ -1,6 +1,6 @@
 <?php
 
-/* modtime 2013-01-23 */
+/* modtime 2013-02-08 */
 
 define('XSAF_VERSION', 3);
 
@@ -456,11 +456,10 @@ if(!empty($autoblogs)){
 }
 ?>
 <div class="clear"></div>
-<?php echo "<br/>".count($autoblogs)." autoblogs d'hébergés"; ?>
+<?php echo "<br/>".count($autoblogs)." autoblogs hébergés"; ?>
 </div>
-Autoblogs propulsés par <a href="http://autoblog.kd2.org/source.txt">VroumVroumBlog 0.2.10</a> [SQLite] (Domaine Public)<br>index2 inspiré par <a href="http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog">Arthur</a> et développé par <a href="https://www.suumitsu.eu/">Mitsu</a> et <a href="https://www.ecirtam.net/">Oros</a> (Domaine Public)
-<br/><a href='https://github.com/mitsukarenai/ferme-autoblog'>Code source du projet</a>
+Propulsé par <a href="https://github.com/mitsukarenai/ferme-autoblog">Ferme d'Autoblogs 0.3.0</a> de Mitsu et Oros (Domaine Public)
 <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
-<iframe width="1" height="1" style="display:none" src="xsaf2.php"></iframe>
+<iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
 </body>
 </html>

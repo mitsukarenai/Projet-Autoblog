@@ -802,7 +802,7 @@ else
 
 echo '
 <div class="footer">
-    <p>Powered by VroumVroumBlog '.$vvbversion.' - <a href="?feed">'.__('RSS Feed').'</a></p>
+    <p>Powered by <a href="https://github.com/mitsukarenai/ferme-autoblog">VroumVroumBlog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
     <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a>
         - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
     <p><a href="'.LOCAL_URL.'?media">'.__('Media export').' <sup> JSON</sup></a></p>

@@ -66,6 +66,9 @@ function xsafimport($xsafremote, $max_exec_time) {
 					$sitename = $value['SITE_TITLE'];
 					$siteurl = escape($value['SITE_URL']);
 		 			$rssurl = escape($value['FEED_URL']);
+						if($sitetype == 'shaarli') { $articles_per_page = "20"; $update_interval = "1800"; $update_timeout = "30"; }
+						else if($sitetype == 'microblog') { $articles_per_page = "20"; $update_interval = "300"; $update_timeout = "30"; }
+						else { $articles_per_page = "5"; $update_interval = "3600"; $update_timeout = "30"; }
 
 						$foldername = $sitename;$foldername2 = $sitename;
 
@@ -105,13 +108,18 @@ SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
 SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
-FEED_URL="'. $rssurl .'"') ){
+FEED_URL="'. $rssurl .'"
+ARTICLES_PER_PAGE="'. $articles_per_page .'"
+UPDATE_INTERVAL="'. $update_interval .'"
+UPDATE_TIMEOUT="'. $update_timeout .'"') ){
 				                    	fclose($fp);
 				                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 					               	}else{
 					                	fclose($fp);
 	/* ============================================================================================================================================================================== */
-	/* récupération de la DB distante */ $remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db');
+	/* récupération de la DB distante */
+	if($get_remote_db == "1") {	$remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db'); }
+	if($get_remote_media == "1") { }
 	/* ============================================================================================================================================================================== */
 
 										//TODO : tester si articles.db est une DB valide
@@ -121,7 +129,7 @@ FEED_URL="'. $rssurl .'"') ){
 									}
 								}
 							} else {
-								$infos = "\n$rssurl -> flux invalide";
+								$infos = "\n$rssurl -> flux invalide"; unlink("./$foldername/index.php"); rmdir($foldername);
 							}
 						/* end of file writing */
 			            }else {
