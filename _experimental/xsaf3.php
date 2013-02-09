@@ -127,13 +127,14 @@ UPDATE_TIMEOUT="'. $update_timeout .'"') ){
 		$json_media_import = file_get_contents($remote_media);
 		if(!empty($json_media_import))
 			{
+			mkdir('./'.$foldername.'/media/');
 			$json_media_import = json_decode($json_media_import, true);
 			$media_path=$json_media_import['url'];
 			if(!empty($json_media_import['files']))
 				{
 				foreach ($json_media_import['files'] as $value)
 					{
-					copy($media_path.$value, './'.$foldername.'/'.$value);
+					copy($media_path.$value, './'.$foldername.'/media/'.$value);
 					}
 				}
 			}
@@ -185,7 +186,7 @@ UPDATE_TIMEOUT="'. $update_timeout .'"') ){
 /* And now, the XSAF links to be imported, with maximal execusion time for import in second ! */
 xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json', 5);
 //xsafimport('https://www.ecirtam.net/autoblogs/?export', 5);
-//xsafimport('https://autoblog.suumitsu.eu/?export', 5);
+xsafimport('https://autoblog.suumitsu.eu/?export', 5);
 
 if(DEBUG) {
 	echo "\n\nXSAF import finished\n\n";
