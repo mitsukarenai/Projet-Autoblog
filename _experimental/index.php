@@ -211,27 +211,26 @@ if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] ===
 		{
 		$rssurl = DetectRedirect(escape($_GET['rssurl']));
 		$siteurl = escape($_GET['siteurl']);
+		$sitetype = 'generic';
 		$foldername = sha1(NoProtocolSiteURL($siteurl));
 		if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}
 		$sitename = escape($_GET['sitename']);
-		$sitedomain1 = preg_split('/\//', $siteurl, 0);
-		$sitedomain2=$sitedomain1[2];
-		$sitedomain3=explode(".", $sitedomain2);
-		$sitedomain3=array_reverse($sitedomain3);
-		$sitedomain = $sitedomain3[1].'.'.$sitedomain3[0];
 			if(file_exists($foldername) || file_exists($foldername2)) { die('Erreur: l\'autoblog <a target="_blank" href="./'.$foldername.'/">existe déjà</a>.'); }
 	if ( mkdir('./'. $foldername, 0755, false) ) {
 	$fp = fopen('./'. $foldername .'/index.php', 'w+');
-	if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
+	if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog-0.3.php'; ?>") )
 		{die("Impossible d'écrire le fichier index.php");}
 	fclose($fp);
 	$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
 	if( !fwrite($fp, '[VroumVroumBlogConfig]
+SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
 SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
-DOWNLOAD_MEDIA_FROM='.$sitedomain) )
+ARTICLES_PER_PAGE="'. $articles_per_page .'"
+UPDATE_INTERVAL="'. $update_interval .'"
+UPDATE_TIMEOUT="'. $update_timeout .'"') )
 	{die("Impossible d'écrire le fichier vvb.ini");}
 	fclose($fp);
 	{die('<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'.$foldername.'">afficher l\'autoblog</a>');}
@@ -243,6 +242,7 @@ else
 	else
 		{
 		// checking procedure
+		$sitetype = $_GET['sitetype'];
 		$rssurl = DetectRedirect($_GET['rssurl']);
 		$siteurl = get_link_from_feed($rssurl);
 		$foldername = sha1(NoProtocolSiteURL($siteurl));
@@ -256,6 +256,7 @@ else
 		<input style="width:30em;" type="text" name="sitename" id="sitename" value="'.$sitename.'"><label for="sitename">&larr; titre du site (auto)</label><br>		
 		<input style="width:30em;" placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
         <input style="width:30em;" placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
+        <input style="width:30em;" placeholder="Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
         <input type="submit" value="Créer"></form></body></html>';
 		echo $form; die;
 		}
@@ -267,25 +268,31 @@ $socialaccount = strtolower(escape($_POST['socialaccount']));
         if(escape($_POST['socialinstance']) === 'twitter') { $socialinstance = 'twitter'; }
         if(escape($_POST['socialinstance']) === 'identica') { $socialinstance = 'identica'; }
         if(escape($_POST['socialinstance']) === 'statusnet') { $socialinstance = 'statusnet'; }
+        if(escape($_POST['socialinstance']) === 'shaarli') { $socialinstance = 'shaarli'; }
 	$folder = "$socialinstance-$socialaccount";if(file_exists($folder)) { die('Erreur: l\'autoblog <a href="./'.$folder.'/">existe déjà</a>.'); }
-		if($socialinstance === 'twitter') { $siteurl = "http://twitter.com/$socialaccount"; $rssurl = "http://api.twitter.com.nyud.net/1/statuses/user_timeline.rss?screen_name=$socialaccount"; } 
-		if($socialinstance === 'identica') { $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca.nyud.net/api/statuses/user_timeline/$socialaccount.rss"; } 
-		if($socialinstance === 'statusnet' && !empty($_POST['socialurl'])) { $siteurl = "http://".escape($_POST['socialurl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['socialurl'])."/api/statuses/user_timeline/$socialaccount.rss"; } 
+		if($socialinstance === 'twitter') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://twitter.com/$socialaccount"; $rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; } 
+		if($socialinstance === 'identica') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; } 
+		if($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://".escape($_POST['statusneturl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['statusneturl'])."/api/statuses/user_timeline/$socialaccount.rss"; } 
+		if($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { $sitetype = 'shaarli'; $update_interval='1800'; $siteurl = "http://".escape($_POST['shaarliurl']); $rssurl = "http://".escape($_POST['shaarliurl'])."/index.php?do=rss"; } 
 		$headers = get_headers($rssurl, 1);
 		if (strpos($headers[0], '200') == FALSE) {$error[] = "Flux inaccessible (compte inexistant ?)";} else {  }
 if( empty($error) ) {
 	if( !preg_match('#\.\.|/#', $folder) ) {
 		if ( mkdir('./'. $folder, 0755, false) ) {
 			$fp = fopen('./'. $folder .'/index.php', 'w+');
-			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/automicroblog.php'; ?>") )
+			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/autoblog-0.3.php'; ?>") )
 				$error[] = "Impossible d'écrire le fichier index.php";
 			fclose($fp);
 			$fp = fopen('./'. $folder .'/vvb.ini', 'w+');
 			if( !fwrite($fp, '[VroumVroumBlogConfig]
+SITE_TYPE="'.$sitetype.'"
 SITE_TITLE="'.$socialinstance.'-'.$socialaccount.'"
-SITE_DESCRIPTION="AutoMicroblog automatis&eacute; de "
-SITE_URL='. $siteurl .'
-FEED_URL="'. $rssurl .'"') )
+SITE_DESCRIPTION="Automicroblog de @'.$socialaccount.'"
+SITE_URL="'. $siteurl .'"
+FEED_URL="'. $rssurl .'"
+ARTICLES_PER_PAGE="20"
+UPDATE_INTERVAL="'.$update_interval.'"
+UPDATE_TIMEOUT="30"') )
 			$error[] = "Impossible d'écrire le fichier vvb.ini";
 			fclose($fp);
 				$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$folder.'"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$folder.'">ajouté avec succès</a>.</b>';
@@ -327,11 +334,14 @@ if( !empty($_POST) && empty($_POST['socialinstance']) ) {
                 fclose($fp);
                 $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
                 if( !fwrite($fp, '[VroumVroumBlogConfig]
+SITE_TYPE="generic"
 SITE_TITLE="'. $sitename .'"
 SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
-DOWNLOAD_MEDIA_FROM='.$sitedomain) )
+ARTICLES_PER_PAGE="5"
+UPDATE_INTERVAL="3600"
+UPDATE_TIMEOUT="30"') )
                     $error[] = "Impossible d'écrire le fichier vvb.ini";
                 fclose($fp);
 			$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'.$foldername.'">afficher l\'autoblog</a>';
@@ -345,6 +355,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			{
 			// checking procedure
 			$rssurl = DetectRedirect($rssurl);
+			$sitetype = 'generic';
 			$siteurl = get_link_from_feed($rssurl);
 			$foldername = sha1(NoProtocolSiteURL($siteurl));
 			$sitename = get_title_from_feed($rssurl);
@@ -355,6 +366,7 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			<form method="POST"><input style="color:black" type="text" id="sitename" value="'.$sitename.'" disabled><label for="sitename">&larr; titre du site (auto)</label><br>		
 			<input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
             <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
+            <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
             <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number" value="17"><label for="number">&larr; antibot</label><br><input type="submit" value="Créer"></form>';
 			}
 
@@ -375,7 +387,9 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			.pbloc {background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;text-align:justify;box-shadow:0px 5px 7px #aaa;}
 			input {width:30em;}
 			input[type="radio"] { width:1em; } 
-			input#socialaccount, input#socialurl, input#socialsub {width:12em;}
+			input#socialaccount, input#statusneturl, input#shaarliurl, input#socialsub {width:12em;}
+			div.form {padding:0.2em;margin:1px;}
+			div.form:hover {background-color:#FAF4DA;border:1px dotted;margin:0; }
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
 			.vignette:hover { background-color:#fff;}
 			.vignette .title { font-size: 14pt;text-shadow: #ccc 0px 5px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -396,15 +410,21 @@ DOWNLOAD_MEDIA_FROM='.$sitedomain) )
 			Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i> (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).<br><br>
 			<b>Autres fermes</b><br>
 			&rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a><br><br>
-			<b>Ajouter un compte social</b><br><br>
+			<div class="form"><b>Ajouter un compte social</b><br><br>
         <form method="POST">
             <input class="text" placeholder="identifiant compte" type="text" name="socialaccount" id="socialaccount"><br>
 			<input type="radio" name="socialinstance" value="twitter">Twitter<br>
 			<input type="radio" name="socialinstance" value="identica">Identica<br>
-			<input type="radio" name="socialinstance" value="statusnet"><input placeholder="statusnet.personnel.com" type="text" name="socialurl" id="socialurl"><br>
+			<input type="radio" name="socialinstance" value="statusnet"><input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><label for="statusneturl">&larr; <abbr title="page d'accueil du StatusNet, sans / de fin et sans http://">adresse statusnet</abbr></label><br>
             <input id="socialsub" type="submit" value="Créer">
-        </form><br>
-			<b>Ajouter un site web</b><br>
+        </form></div><br>
+			<div class="form"><b>Ajouter un Shaarli</b><br><br>
+        <form method="POST">
+            <input class="text" placeholder="identifiant compte" type="hidden" name="socialaccount" id="socialaccount" value="shaarli">
+			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="mon.site.com/shaarli" type="text" name="shaarliurl" id="shaarliurl"><label for="shaarliurl">&larr; <abbr title="page d'accueil du Shaarli, sans / de fin et sans http://">adresse Shaarli</abbr></label><br>
+            <input id="socialsub" type="submit" value="Créer">
+        </form></div><br>
+			<div class="form"><b>Ajouter un site web</b><br>
 <?php
 if( !empty( $error )) {
     echo '<p>Erreur(s) :</p><ul>';
@@ -416,7 +436,7 @@ if( !empty( $error )) {
 ?>
 Si vous souhaitez que <i><?php echo $_SERVER['SERVER_NAME']; ?></i> héberge un autoblog d'un site,<br/>remplissez le formulaire suivant:<br><br>
 		<?php echo $form; ?>
-<br>Pour ajouter facillement un autoblog, glissez ce bouton dans votre barre de marque-pages =&gt; <a class="bouton" onclick="alert('Glissez ce lien dans votre barre de marque-pages ou clic-droit puis choisiez d\'ajouter ce lien aux marque-pages.');return false;" href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">Projet Autoblog</a>
+</div><br>Pour ajouter facillement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages =&gt; <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;" href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">Projet Autoblog</a>
 </div>
 <div class="pbloc">
 <h2>Autoblogs hébergés</h2>
@@ -442,7 +462,7 @@ foreach($subdirs as $unit)
 		    $autoblogs[$unit] = '
 				<div class="vignette">
 					<div class="title"><a title="'.escape($config->site_title).'" href="'.$unit.'/"><img width="15" height="15" alt="" src="./?check='.$unit.'"> '.escape($config->site_title).'</a></div>
-					<div class="source"><a href="'.$unit.'/vvb.ini">config</a> | source: <a href="'.escape($config->site_url).'">'.escape($config->site_url).'</a></div>
+					<div class="source"><a href="'.$unit.'/vvb.ini">config</a> | '.escape($config->site_type).' source: <a href="'.escape($config->site_url).'">'.escape($config->site_url).'</a></div>
 				</div>';
 		        unset($ini);
 		}
