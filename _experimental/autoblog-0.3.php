@@ -674,7 +674,7 @@ if($site_type == 'generic') // custom CSS for generic
 	}
 	else if($site_type == 'shaarli') // custom CSS for shaarli
 	{
-    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
+    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
     .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
     .article .title h2 a { color:#000; text-decoration:none; }
     .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }

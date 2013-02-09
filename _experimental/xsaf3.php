@@ -70,7 +70,9 @@ function xsafimport($xsafremote, $max_exec_time) {
 						else if($sitetype == 'microblog') { $articles_per_page = "20"; $update_interval = "300"; $update_timeout = "30"; }
 						else { $articles_per_page = "5"; $update_interval = "3600"; $update_timeout = "30"; }
 
-						$foldername = $sitename;$foldername2 = $sitename;
+//						$foldername = $sitename;$foldername2 = $sitename;
+		$foldername = sha1(NoProtocolSiteURL($siteurl));
+		if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}
 
 					if(!file_exists($foldername) && !file_exists($foldername2)) { 
 						if ( mkdir('./'. $foldername, 0755, false) ) {
@@ -106,7 +108,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 					                if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
+SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="'. $articles_per_page .'"

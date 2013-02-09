@@ -94,10 +94,6 @@ $svg_twitter='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:d
 $svg_identica='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#a00000;stroke-width:4;stroke-miterlimit:4" /></svg>';
 $svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#ff6a00;stroke-width:4;stroke-miterlimit:4" /></svg>';
 		
-		if(strpos($_GET['check'], 'twitter') !== FALSE) { header('Content-type: image/svg+xml');die($svg_twitter); }
-		if(strpos($_GET['check'], 'identica') !== FALSE) { header('Content-type: image/svg+xml');die($svg_identica); }
-		if(strpos($_GET['check'], 'statusnet') !== FALSE) { header('Content-type: image/svg+xml');die($svg_statusnet); }
-
 	$errorlog="./".$_GET['check']."/error.log";
 	if(file_exists($errorlog) && filemtime($errorlog) < $expire) { unlink($errorlog); } /* errorlog périmé ? Suppression. */
 	if(file_exists($errorlog)) /* errorlog existe encore ? se contenter de lire sa taille pour avoir le statut */
@@ -111,6 +107,9 @@ $svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns
 		{
 		$ini = parse_ini_file("./".$_GET['check']."/vvb.ini") or die;
 		header('Content-type: image/svg+xml');
+		if(strpos("$ini[SITE_TITLE]", 'twitter') !== FALSE) { die($svg_twitter); } /* Twitter */
+		if(strpos("$ini[SITE_TITLE]", 'identica') !== FALSE) { die($svg_identica); } /* Identica */
+		if(strpos("$ini[SITE_TYPE]", 'microblog') !== FALSE) { die($svg_statusnet); } /* Statusnet */
 		$headers = get_headers("$ini[FEED_URL]");
 		if(empty($headers)) { file_put_contents($errorlog, '..'); die($svg_rouge); } /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
 		$code=explode(" ", $headers[0]);
@@ -225,12 +224,12 @@ if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] ===
 	if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
+SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
-ARTICLES_PER_PAGE="'. $articles_per_page .'"
-UPDATE_INTERVAL="'. $update_interval .'"
-UPDATE_TIMEOUT="'. $update_timeout .'"') )
+ARTICLES_PER_PAGE="5"
+UPDATE_INTERVAL="3600"
+UPDATE_TIMEOUT="30"') )
 	{die("Impossible d'écrire le fichier vvb.ini");}
 	fclose($fp);
 	{die('<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'.$foldername.'">afficher l\'autoblog</a>');}
@@ -256,7 +255,7 @@ else
 		<input style="width:30em;" type="text" name="sitename" id="sitename" value="'.$sitename.'"><label for="sitename">&larr; titre du site (auto)</label><br>		
 		<input style="width:30em;" placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
         <input style="width:30em;" placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
-        <input style="width:30em;" placeholder="Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
+        <input style="width:30em;" placeholder="generic" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
         <input type="submit" value="Créer"></form></body></html>';
 		echo $form; die;
 		}
@@ -269,25 +268,25 @@ $socialaccount = strtolower(escape($_POST['socialaccount']));
         if(escape($_POST['socialinstance']) === 'identica') { $socialinstance = 'identica'; }
         if(escape($_POST['socialinstance']) === 'statusnet') { $socialinstance = 'statusnet'; }
         if(escape($_POST['socialinstance']) === 'shaarli') { $socialinstance = 'shaarli'; }
-	$folder = "$socialinstance-$socialaccount";if(file_exists($folder)) { die('Erreur: l\'autoblog <a href="./'.$folder.'/">existe déjà</a>.'); }
 		if($socialinstance === 'twitter') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://twitter.com/$socialaccount"; $rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; } 
 		if($socialinstance === 'identica') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; } 
 		if($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://".escape($_POST['statusneturl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['statusneturl'])."/api/statuses/user_timeline/$socialaccount.rss"; } 
-		if($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { $sitetype = 'shaarli'; $update_interval='1800'; $siteurl = "http://".escape($_POST['shaarliurl']); $rssurl = "http://".escape($_POST['shaarliurl'])."/index.php?do=rss"; } 
-		$headers = get_headers($rssurl, 1);
+		if($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { $sitetype = 'shaarli'; $update_interval='1800'; $siteurl = "http://".escape($_POST['shaarliurl']); $rssurl = "http://".escape($_POST['shaarliurl'])."/index.php?do=rss";$socialaccount = get_title_from_feed($rssurl); } 
+		$foldername = sha1(NoProtocolSiteURL($siteurl));if(file_exists($foldername)) { die('Erreur: l\'autoblog <a href="./'.$foldername.'/">existe déjà</a>.'); }
+		$rssurl=DetectRedirect($rssurl); $headers = get_headers($rssurl, 1);
 		if (strpos($headers[0], '200') == FALSE) {$error[] = "Flux inaccessible (compte inexistant ?)";} else {  }
 if( empty($error) ) {
-	if( !preg_match('#\.\.|/#', $folder) ) {
-		if ( mkdir('./'. $folder, 0755, false) ) {
-			$fp = fopen('./'. $folder .'/index.php', 'w+');
+	if( !preg_match('#\.\.|/#', $foldername) ) {
+		if ( mkdir('./'. $foldername, 0755, false) ) {
+			$fp = fopen('./'. $foldername .'/index.php', 'w+');
 			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/autoblog-0.3.php'; ?>") )
 				$error[] = "Impossible d'écrire le fichier index.php";
 			fclose($fp);
-			$fp = fopen('./'. $folder .'/vvb.ini', 'w+');
+			$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
 			if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'.$sitetype.'"
 SITE_TITLE="'.$socialinstance.'-'.$socialaccount.'"
-SITE_DESCRIPTION="Automicroblog de @'.$socialaccount.'"
+SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $socialaccount .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="20"
@@ -295,7 +294,7 @@ UPDATE_INTERVAL="'.$update_interval.'"
 UPDATE_TIMEOUT="30"') )
 			$error[] = "Impossible d'écrire le fichier vvb.ini";
 			fclose($fp);
-				$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$folder.'"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$folder.'">ajouté avec succès</a>.</b>';
+				$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$foldername.'">ajouté avec succès</a>.</b>';
             }
             else 
                 $error[] = "Impossible de créer le répertoire.";
@@ -329,14 +328,14 @@ if( !empty($_POST) && empty($_POST['socialinstance']) ) {
 				if(file_exists($foldername) || file_exists($foldername2)) { die('Erreur: l\'autoblog <a href="./'.$foldername.'/">existe déjà</a>.'); }
 			if ( mkdir('./'. $foldername, 0755, false) ) {
                 $fp = fopen('./'. $foldername .'/index.php', 'w+');
-                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
+                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog-0.3.php'; ?>") )
                     $error[] = "Impossible d'écrire le fichier index.php";
                 fclose($fp);
                 $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
                 if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="generic"
 SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="Ce site n\'est pas le site officiel de '. $sitename .'<br>C\'est un blog automatis&eacute; qui r&eacute;plique les articles de <a href="'. $siteurl .'">'. $sitename .'</a>"
+SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="5"
