@@ -121,7 +121,23 @@ UPDATE_TIMEOUT="'. $update_timeout .'"') ){
 	/* ============================================================================================================================================================================== */
 	/* récupération de la DB distante */
 	if($get_remote_db == "1") {	$remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db'); }
-	if($get_remote_media == "1") { }
+	if($get_remote_media == "1")
+		{
+		$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
+		$json_media_import = file_get_contents($remote_media);
+		if(!empty($json_media_import))
+			{
+			$json_media_import = json_decode($json_media_import, true);
+			$media_path=$json_media_import['url'];
+			if(!empty($json_media_import['files']))
+				{
+				foreach ($json_media_import['files'] as $value)
+					{
+					copy($media_path.$value, './'.$foldername.'/'.$value);
+					}
+				}
+			}
+		}
 	/* ============================================================================================================================================================================== */
 
 										//TODO : tester si articles.db est une DB valide
