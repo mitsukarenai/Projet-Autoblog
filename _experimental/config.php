@@ -47,6 +47,9 @@ function __($str)
     }
 }
 
+// Autoriser la création d'autoblogs ?
+$allow_new_autoblogs=TRUE;
+
 // Logo à utiliser
 $logo="./icon-logo.svg";
 

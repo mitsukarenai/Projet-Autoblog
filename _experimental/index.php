@@ -204,7 +204,7 @@ function escape($str)
 $form = '<form method="POST"><input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl"><br>
             <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number"><br><input type="submit" value="Vérifier"></form>';
 
-if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] === '17')
+if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] === '17' && $allow_new_autoblogs == TRUE)
 {
 	if(isset($_GET['add']) && $_GET['add'] === '1' && !empty($_GET['siteurl']) && !empty($_GET['sitename']))
 		{
@@ -261,7 +261,7 @@ else
 		}
 }
 
-if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']))
+if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && $allow_new_autoblogs == TRUE)
 {
 $socialaccount = strtolower(escape($_POST['socialaccount']));
         if(escape($_POST['socialinstance']) === 'twitter') { $socialinstance = 'twitter'; }
@@ -306,7 +306,7 @@ UPDATE_TIMEOUT="30"') )
 }
 
 
-if( !empty($_POST) && empty($_POST['socialinstance']) ) {
+if( !empty($_POST) && empty($_POST['socialinstance'])  && $allow_new_autoblogs == TRUE) {
     $error = array();
 	if(empty($_POST['rssurl']))
 		{$error[] = "Veuillez entrer l'adresse du flux.";}
@@ -409,6 +409,7 @@ UPDATE_TIMEOUT="30"') )
 			Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i> (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).<br><br>
 			<b>Autres fermes</b><br>
 			&rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a><br><br>
+			<?php if($allow_new_autoblogs == TRUE) { ?>
 			<div class="form"><b>Ajouter un compte social</b><br><br>
         <form method="POST">
             <input class="text" placeholder="identifiant compte" type="text" name="socialaccount" id="socialaccount"><br>
@@ -436,7 +437,8 @@ if( !empty( $error )) {
 Si vous souhaitez que <i><?php echo $_SERVER['SERVER_NAME']; ?></i> héberge un autoblog d'un site,<br/>remplissez le formulaire suivant:<br><br>
 		<?php echo $form; ?>
 </div><br>Pour ajouter facillement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages =&gt; <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;" href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">Projet Autoblog</a>
-</div>
+<?php } ?>
+<br></div>
 <div class="pbloc">
 <h2>Autoblogs hébergés</h2>
 <div class="clear"><a href="?export">export<sup> JSON</sup></a></div>
