@@ -270,8 +270,8 @@ $socialaccount = strtolower(escape($_POST['socialaccount']));
         if(escape($_POST['socialinstance']) === 'shaarli') { $socialinstance = 'shaarli'; }
 		if($socialinstance === 'twitter') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://twitter.com/$socialaccount"; $rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; } 
 		if($socialinstance === 'identica') { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://identi.ca/$socialaccount"; $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; } 
-		if($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { $sitetype = 'microblog'; $update_interval='300'; $siteurl = "http://".escape($_POST['statusneturl'])."/$socialaccount"; $rssurl = "http://".escape($_POST['statusneturl'])."/api/statuses/user_timeline/$socialaccount.rss"; } 
-		if($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { $sitetype = 'shaarli'; $update_interval='1800'; $siteurl = "http://".escape($_POST['shaarliurl']); $rssurl = "http://".escape($_POST['shaarliurl'])."/index.php?do=rss";$socialaccount = get_title_from_feed($rssurl); } 
+		if($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { $sitetype = 'microblog'; $update_interval='300'; $siteurl=NoProtocolSiteURL(escape($_POST['statusneturl'])); if(substr($siteurl, -1) == '/'){ $siteurl = substr($siteurl, 0, -1); } $rssurl = DetectRedirect("http://".$siteurl."/api/statuses/user_timeline/$socialaccount.rss"); $siteurl = DetectRedirect("http://".$siteurl."/$socialaccount"); } 
+		if($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { $sitetype = 'shaarli'; $update_interval='1800'; $siteurl = NoProtocolSiteURL(escape($_POST['shaarliurl'])); if(substr($siteurl, -1) == '/'){ $siteurl = substr($siteurl, 0, -1); } $siteurl = DetectRedirect("http://".$siteurl."/"); $rssurl = $siteurl."?do=rss";$socialaccount = get_title_from_feed($rssurl); } 
 		$foldername = sha1(NoProtocolSiteURL($siteurl));if(file_exists($foldername)) { die('Erreur: l\'autoblog <a href="./'.$foldername.'/">existe déjà</a>.'); }
 		$rssurl=DetectRedirect($rssurl); $headers = get_headers($rssurl, 1);
 		if (strpos($headers[0], '200') == FALSE) {$error[] = "Flux inaccessible (compte inexistant ?)";} else {  }
@@ -414,13 +414,13 @@ UPDATE_TIMEOUT="30"') )
             <input class="text" placeholder="identifiant compte" type="text" name="socialaccount" id="socialaccount"><br>
 			<input type="radio" name="socialinstance" value="twitter">Twitter<br>
 			<input type="radio" name="socialinstance" value="identica">Identica<br>
-			<input type="radio" name="socialinstance" value="statusnet"><input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><label for="statusneturl">&larr; <abbr title="page d'accueil du StatusNet, sans / de fin et sans http://">adresse statusnet</abbr></label><br>
+			<input type="radio" name="socialinstance" value="statusnet"><input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
             <input id="socialsub" type="submit" value="Créer">
         </form></div><br>
 			<div class="form"><b>Ajouter un Shaarli</b><br><br>
         <form method="POST">
             <input class="text" placeholder="identifiant compte" type="hidden" name="socialaccount" id="socialaccount" value="shaarli">
-			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="mon.site.com/shaarli" type="text" name="shaarliurl" id="shaarliurl"><label for="shaarliurl">&larr; <abbr title="page d'accueil du Shaarli, sans / de fin et sans http://">adresse Shaarli</abbr></label><br>
+			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
             <input id="socialsub" type="submit" value="Créer">
         </form></div><br>
 			<div class="form"><b>Ajouter un site web</b><br>
