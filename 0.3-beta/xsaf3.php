@@ -1,9 +1,8 @@
 <?php
-/* modtime 2013-02-04 */
 
 define('DEBUG', true);
 define('XSAF_VERSION', 3);
-define('AUTOBLOG_FILE_NAME', 'autoblog-0.3.php');
+define('AUTOBLOG_FILE_NAME', 'autoblog.php');
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */

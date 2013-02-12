@@ -3,11 +3,6 @@
     VroumVroumBlog 0.3.0
     This blog automatically publishes articles from an external RSS 2.0 or ATOM feed.
 
-    Installation:
-    - copy this script (index.php) to a directory on your webserver.
-    - optionnaly copy the database ('articles.db'). Otherwise, it will be created automatically.
-    - tweak setting in vvb.ini
-
     Requirement for the source RSS feed:
     - Source feed MUST be a valid RSS 2.0, RDF 1.0 or ATOM 1.0 feed.
     - Source feed MUST be valid UTF-8
@@ -802,7 +797,7 @@ else
 
 echo '
 <div class="footer">
-    <p>Powered by <a href="https://github.com/mitsukarenai/ferme-autoblog">VroumVroumBlog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
+    <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
     <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a>
         - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
     <p><a href="'.LOCAL_URL.'?media">'.__('Media export').' <sup> JSON</sup></a></p>

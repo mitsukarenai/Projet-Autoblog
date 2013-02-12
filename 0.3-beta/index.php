@@ -1,7 +1,19 @@
 <?php
+/*
+	Projet Autoblog 0.3-beta
+	Code: https://github.com/mitsukarenai/Projet-Autoblog
+	Authors: Mitsu https://www.suumitsu.eu/  & Oros https://www.ecirtam.net/
+	License: Public Domain
 
-/* modtime 2013-02-08 */
+	Instructions:
+	 (by default, autoblog creation is allowed: you can set this to "FALSE" in config.php)
+	 (by default, Cross-Site Autoblog Farming [XSAF] imports a few autoblogs from https://github.com/mitsukarenai/xsaf-bootstrap/blob/master/3.json you can uncomment and add xsafimports in xsaf3.php (jump at end of file) )
+	 (by default, database and media transfer via XSAF is allowed)
 
+	- upload all files on your server (PHP 5.3+ required)
+	- PROFIT !
+
+*/
 define('XSAF_VERSION', 3);
 
 define('ROOT_DIR', __DIR__);
@@ -217,7 +229,7 @@ if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] ===
 			if(file_exists($foldername) || file_exists($foldername2)) { die('Erreur: l\'autoblog <a target="_blank" href="./'.$foldername.'/">existe déjà</a>.'); }
 	if ( mkdir('./'. $foldername, 0755, false) ) {
 	$fp = fopen('./'. $foldername .'/index.php', 'w+');
-	if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog-0.3.php'; ?>") )
+	if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
 		{die("Impossible d'écrire le fichier index.php");}
 	fclose($fp);
 	$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
@@ -279,7 +291,7 @@ if( empty($error) ) {
 	if( !preg_match('#\.\.|/#', $foldername) ) {
 		if ( mkdir('./'. $foldername, 0755, false) ) {
 			$fp = fopen('./'. $foldername .'/index.php', 'w+');
-			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/autoblog-0.3.php'; ?>") )
+			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/autoblog.php'; ?>") )
 				$error[] = "Impossible d'écrire le fichier index.php";
 			fclose($fp);
 			$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
@@ -328,7 +340,7 @@ if( !empty($_POST) && empty($_POST['socialinstance'])  && $allow_new_autoblogs =
 				if(file_exists($foldername) || file_exists($foldername2)) { die('Erreur: l\'autoblog <a href="./'.$foldername.'/">existe déjà</a>.'); }
 			if ( mkdir('./'. $foldername, 0755, false) ) {
                 $fp = fopen('./'. $foldername .'/index.php', 'w+');
-                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog-0.3.php'; ?>") )
+                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
                     $error[] = "Impossible d'écrire le fichier index.php";
                 fclose($fp);
                 $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
@@ -479,7 +491,7 @@ if(!empty($autoblogs)){
 <div class="clear"></div>
 <?php echo "<br/>".count($autoblogs)." autoblogs hébergés"; ?>
 </div>
-Propulsé par <a href="https://github.com/mitsukarenai/ferme-autoblog">Ferme d'Autoblogs 0.3.0</a> de Mitsu et Oros (Domaine Public)
+Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog 0.3</a> de Mitsu et Oros (Domaine Public)
 <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
 <iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
 </body>
