@@ -1,7 +1,7 @@
 Projet-Autoblog
 ===============
 
-Création, gestion et échange d'autoblogs contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ )
+Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ )
 
 - serie 0.1 par Sebsauvage
 
