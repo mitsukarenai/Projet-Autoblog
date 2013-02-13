@@ -1,7 +1,7 @@
 Projet Autoblog serie 0.3
 ==============
 
-PHASE BETA ! "git pullez" souvent, et merci pour vos rapports de bugs.
+- version VroumVroumBlog 0.3.0 BETA
 
 Auteurs: Mitsu (https://www.suumitsu.eu/) & Oros (https://www.ecirtam.net/)
 
