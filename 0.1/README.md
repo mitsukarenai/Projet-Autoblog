@@ -1,6 +1,8 @@
 Projet Autoblog serie 0.1
 ==============
 
+- version VroumVroumBlog 0.1.32
+
 Auteur: Sebastien Sauvage
 
 Licence: Domaine Public
