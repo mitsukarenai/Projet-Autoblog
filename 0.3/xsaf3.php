@@ -110,15 +110,18 @@ function xsafimport($xsafremote, $max_exec_time) {
 				                }else{
 				              		fclose($fp);
 					                $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
-					                if( !fwrite($fp, '[VroumVroumBlogConfig]
-SITE_TYPE="'. $sitetype .'"
-SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
-SITE_URL="'. $siteurl .'"
-FEED_URL="'. $rssurl .'"
-ARTICLES_PER_PAGE="'. $articles_per_page .'"
-UPDATE_INTERVAL="'. $update_interval .'"
-UPDATE_TIMEOUT="'. $update_timeout .'"') ){
+					                 if( !fwrite($fp, <<<EOF
+[VroumVroumBlogConfig]
+SITE_TYPE="$sitetype"
+SITE_TITLE="$sitename"
+SITE_DESCRIPTION="source: <a href='$siteurl'>$sitename</a>"
+SITE_URL="$siteurl"
+FEED_URL="$rssurl"
+ARTICLES_PER_PAGE="$articles_per_page"
+UPDATE_INTERVAL="$update_interval"
+UPDATE_TIMEOUT="$update_timeout"
+EOF
+									) ){
 				                    	fclose($fp);
 				                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
 					               	}else{
