@@ -1,6 +1,8 @@
 Projet Autoblog serie 0.2
 ==============
 
+- version VroumVroumBlog 0.2.11
+
 Auteurs: BohwaZ (VVB) & Arthur Hoaro, Mitsukarenai, Oros (index ferme d'autoblogs)
 
 Licence: Domaine Public
