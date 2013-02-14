@@ -490,7 +490,11 @@ class VroumVroum_Blog
         $extensions = implode('|', $extensions);
 
         $from = parse_url($url);
-        $from['path'] = preg_replace('![^/]*$!', '', $from['path']);
+        if( isset($from['path']) ) { // not exist if http://exemple.com
+            $from['path'] = preg_replace('![^/]*$!', '', $from['path']);
+        }else{
+            $from['path'] = '';
+        }
 
         preg_match_all('!(src|href)\s*=\s*[\'"]?([^"\'<>\s]+\.(?:'.$extensions.'))[\'"]?!i', $content, $match, PREG_SET_ORDER);
 
