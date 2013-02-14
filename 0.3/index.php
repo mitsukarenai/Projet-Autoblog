@@ -272,7 +272,8 @@ else
 		echo $form; die;
 		}
 }
-
+$error = array();
+$infos = array();
 if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && $allow_new_autoblogs == TRUE)
 {
 $socialaccount = strtolower(escape($_POST['socialaccount']));
@@ -293,9 +294,9 @@ if( empty($error) ) {
 			$fp = fopen('./'. $foldername .'/index.php', 'w+');
 			if( !fwrite($fp, "<?php require_once dirname(__DIR__).'/autoblog.php'; ?>") )
 				$error[] = "Impossible d'écrire le fichier index.php";
-			fclose($fp);
-			$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
-			if( !fwrite($fp, '[VroumVroumBlogConfig]
+				fclose($fp);
+				$fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
+				if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'.$sitetype.'"
 SITE_TITLE="'.$socialinstance.'-'.$socialaccount.'"
 SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $socialaccount .'</a>"
@@ -304,9 +305,9 @@ FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="20"
 UPDATE_INTERVAL="'.$update_interval.'"
 UPDATE_TIMEOUT="30"') )
-			$error[] = "Impossible d'écrire le fichier vvb.ini";
-			fclose($fp);
-				$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$foldername.'">ajouté avec succès</a>.</b>';
+				$error[] = "Impossible d'écrire le fichier vvb.ini";
+				fclose($fp);
+				$infos[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$foldername.'">ajouté avec succès</a>.</b>';
             }
             else 
                 $error[] = "Impossible de créer le répertoire.";
@@ -317,9 +318,7 @@ UPDATE_TIMEOUT="30"') )
 
 }
 
-
 if( !empty($_POST) && empty($_POST['socialinstance'])  && $allow_new_autoblogs == TRUE) {
-    $error = array();
 	if(empty($_POST['rssurl']))
 		{$error[] = "Veuillez entrer l'adresse du flux.";}
 	if(empty($_POST['number']))
@@ -355,7 +354,7 @@ UPDATE_INTERVAL="3600"
 UPDATE_TIMEOUT="30"') )
                     $error[] = "Impossible d'écrire le fichier vvb.ini";
                 fclose($fp);
-			$error[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'.$foldername.'">afficher l\'autoblog</a>';
+				$infos[] = '<iframe width="1" height="1" frameborder="0" src="'.$foldername.'"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'.$foldername.'">afficher l\'autoblog</a>';
             }
             else 
                 $error[] = "Impossible de créer le répertoire.";
@@ -441,6 +440,13 @@ UPDATE_TIMEOUT="30"') )
 if( !empty( $error )) {
     echo '<p>Erreur(s) :</p><ul>';
     foreach ( $error AS $value ) {
+        echo '<li>'. $value .'</li>';
+    }
+    echo '</ul>';
+}
+if( !empty( $infos )) {
+    echo '<p>Info(s) :</p><ul>';
+    foreach ( $infos AS $value ) {
         echo '<li>'. $value .'</li>';
     }
     echo '</ul>';
