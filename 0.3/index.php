@@ -37,15 +37,10 @@ function get_link_from_feed($url)
 	// get site link from feed
 	$data = file_get_contents("$url");
 	$xml = simplexml_load_string($data); // quick feed check
-	if (isset($xml->entry)) // ATOM feed.
-		{$result="true";}  
-	elseif (isset($xml->item)) // RSS 1.0 /RDF
-		{$result="true";} 
-	elseif (isset($xml->channel->item)) // RSS 2.0
-		{$result="true";} 
-	else
-		{$result="false";}
- 		if($result == "false") { die('le flux n\'a pas une syntaxe valide'); }
+    // ATOM feed && RSS 1.0 /RDF && RSS 2.0
+	if (!isset($xml->entry) && !isset($xml->item) && !isset($xml->channel->item)) 
+	 { die('le flux n\'a pas une syntaxe valide'); }
+
 		$check = substr($data, 0, 5);
 		if($check !== '<?xml') { die('n\'est pas un flux valide'); }
 	$xml = new SimpleXmlElement($data);
@@ -119,9 +114,9 @@ $svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns
 		{
 		$ini = parse_ini_file("./".$_GET['check']."/vvb.ini") or die;
 		header('Content-type: image/svg+xml');
-		if(strpos("$ini[SITE_TITLE]", 'twitter') !== FALSE) { die($svg_twitter); } /* Twitter */
-		if(strpos("$ini[SITE_TITLE]", 'identica') !== FALSE) { die($svg_identica); } /* Identica */
-		if(strpos("$ini[SITE_TYPE]", 'microblog') !== FALSE) { die($svg_statusnet); } /* Statusnet */
+		if(strpos(strtolower($ini[SITE_TITLE]), 'twitter') !== FALSE) { die($svg_twitter); } /* Twitter */
+		if(strpos(strtolower($ini[SITE_TITLE]), 'identica') !== FALSE) { die($svg_identica); } /* Identica */
+		if(strpos(strtolower($ini[SITE_TYPE]), 'microblog') !== FALSE) { die($svg_statusnet); } /* Statusnet */
 		$headers = get_headers("$ini[FEED_URL]");
 		if(empty($headers)) { file_put_contents($errorlog, '..'); die($svg_rouge); } /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
 		$code=explode(" ", $headers[0]);
@@ -236,7 +231,7 @@ if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] ===
 	if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'. $sitetype .'"
 SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
+SITE_DESCRIPTION="source: <a href=\''. $siteurl .'\'>'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="5"
@@ -299,7 +294,7 @@ if( empty($error) ) {
 				if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'.$sitetype.'"
 SITE_TITLE="'.$socialinstance.'-'.$socialaccount.'"
-SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $socialaccount .'</a>"
+SITE_DESCRIPTION="source: <a href=\''. $siteurl .'\'>'. $socialaccount .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="20"
@@ -346,7 +341,7 @@ if( !empty($_POST) && empty($_POST['socialinstance'])  && $allow_new_autoblogs =
                 if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="generic"
 SITE_TITLE="'. $sitename .'"
-SITE_DESCRIPTION="source: <a href="'. $siteurl .'">'. $sitename .'</a>"
+SITE_DESCRIPTION="source: <a href=\''. $siteurl .'\'>'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="5"
