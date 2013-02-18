@@ -697,7 +697,7 @@ echo '
 </head>
 <body>
 <div class="header">
-    <h1><a href="'. LOCAL_URL .'.." style="font-size:0.8em;">PROJET AUTOBLOG ~ '. $head_title .'</a></h1>
+    <h1><a href="'.escape(LOCAL_URL) .'.." style="font-size:0.8em;">PROJET AUTOBLOG ~ '. escape($head_title) .'</a></h1>
     <hr>
     <h1><a href="'.escape(LOCAL_URL).'">'.escape($config->site_title).'</a></h1>';
 

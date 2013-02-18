@@ -32,6 +32,9 @@ else {
 define('ROOT_DIR', __DIR__);
 if(file_exists("functions.php")){
 	include "functions.php";
+}else{
+	echo "functions.php not found !";
+	die;
 }
 
 function serverUrl() {
@@ -166,9 +169,9 @@ function xsafimport($xsafremote, $max_exec_time) {
 /* And now, the XSAF links to be imported, with maximal execusion time for import in second ! 
 	You should add only trusted sources. */
 $autoblog_farm = array( 
-	'https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json',
+	'https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json' /*,
 	'https://www.ecirtam.net/autoblogs/?export',
-	'https://autoblog.suumitsu.eu/?export',
+	'https://autoblog.suumitsu.eu/?export', */
 );
 if( DEBUG ) echo '<html><body>';
 if( ALLOW_XSAF ) {

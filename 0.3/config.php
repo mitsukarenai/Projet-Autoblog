@@ -62,13 +62,12 @@ define( 'ALLOW_FULL_UPDATE', TRUE );
 
 
 // Logo à utiliser
-//$logo="./icon-logo.svg";
-$logo = '';
+$logo="./icon-logo.svg";
 
 // Marquez ici votre propre message qui apparaîtra en bas de page.
 // exemple : 
 //$HTML_footer="<br/><a href='http://datalove.me/'>Love data</a><br/>Data is essential<br/>Data must flow<br/>Data must be used<br/>Data is neither good nor bad<br/>There is no illegal data<br/>Data is free<br/>Data can not be owned<br/>No man, machine or system shall interrupt the flow of data<br/>Locking data is a crime against datanity";
-$HTML_footer='D\'après les premières versions de <a href="sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.';
+$HTML_footer='D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.';
 
-$head_title = "Arthur HOARO";
+$head_title = "";
 ?>

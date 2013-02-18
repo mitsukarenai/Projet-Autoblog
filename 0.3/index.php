@@ -381,7 +381,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8">
-    <title>Projet Autoblog | <?php echo $head_title; ?></title>
+    <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " .$head_title; } ?></title>
 		<style type="text/css">
 			body {background-color:#efefef;text-align:center;color:#333;font-family:sans-serif}
 			a {color:black;text-decoration:none;font-weight:bold;}
@@ -408,7 +408,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		</style>
 	</head>
 	<body>
-		<h1>PROJET AUTOBLOG | <?php echo $head_title; ?></h1>
+		<h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " .$head_title; } ?></h1>
         
 		<div class="pbloc">
             <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
@@ -416,8 +416,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			<h2>Présentation</h2>
 
             <p>
-            	La Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web.
-	            Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. 
+            	La Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web.<br/>
+	            Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. <br/>
 	            L'objectif premier de ce projet est de lutter contre la censure et toute sorte de pression...
 	        </p>
 			<p>
