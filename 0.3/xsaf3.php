@@ -3,33 +3,35 @@
 define('DEBUG', true);
 define('XSAF_VERSION', 3);
 define('AUTOBLOG_FILE_NAME', 'autoblog.php');
+define('ALLOW_REMOTE_DB_DL', false);
+define('ALLOW_REMOTE_MEDIA_DL', false);
+define('EXEC_TIME', 5);
+define( 'ALLOW_XSAF', TRUE );
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
-header('Content-type: text/plain');
-$expire = time() -7200 ; $lockfile = ".xsaflock";  /* defaut delay: 7200 (2 hours) */
+//header('Content-type: text/plain');
 
-if (file_exists($lockfile)) {
-	if (filemtime($lockfile) > $expire) {
+$expire = time() -7200 ; 
+$lockfile = ".xsaflock";  /* defaut delay: 7200 (2 hours) */
+
+if (file_exists($lockfile) && filemtime($lockfile) > $expire) {
   		echo "too early";
   		die;
-  	}else{
-  		unlink($lockfile);
-  		if( file_put_contents($lockfile, '') ===FALSE) {
-			echo "Merci d'ajouter des droits d'écriture sur le dossier.";
-			die;
-		}
-  	}
-}else{
-	if( file_put_contents($lockfile, '') ===FALSE) {
-		echo "Merci d'ajouter des droits d'écriture sur le dossier.";
+} 
+else {
+    if( file_exists($lockfile) )
+        unlink($lockfile);
+        
+    if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
+    	echo "Merci d'ajouter des droits d'écriture sur le dossier.";
 		die;
 	}	
-} 
+}
 
 define('ROOT_DIR', __DIR__);
-function escape($str) {
-    return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
+if(file_exists("functions.php")){
+	include "functions.php";
 }
 
 function serverUrl() {
@@ -38,18 +40,16 @@ function serverUrl() {
     return 'http'.($https?'s':'').'://'.$_SERVER["SERVER_NAME"].$serverport;
 }
 
-function NoProtocolSiteURL($url) {
-	$siteurlnoprototypes = array("http://", "https://");
-	$siteurlnoproto = str_replace($siteurlnoprototypes, "", $url);
-	return $siteurlnoproto;
-}
-
 libxml_use_internal_errors(true);
+
 // $max_exec_time = temps max d'exécution en seconde
 function xsafimport($xsafremote, $max_exec_time) {
-	echo "\n*Traitement $xsafremote en maximum $max_exec_time secondes";
+	if( DEBUG )
+		echo "\n*Traitement $xsafremote en maximum $max_exec_time secondes";
+
 	$max_exec_time+=time()-1; // -1 car l'import prend environ 1 seconde
-/* détection de ferme autoblog  */
+	
+	/* détection de ferme autoblog  */
 	$json_import = file_get_contents($xsafremote);
 	if(!empty($json_import)) {
 		$to_update=array();
@@ -61,143 +61,127 @@ function xsafimport($xsafremote, $max_exec_time) {
 			}
 			return false;
 		}
-		if($json_import['meta']['xsaf-db_transfer'] != "true") {$get_remote_db="0";} else {$get_remote_db="1";}
-		if($json_import['meta']['xsaf-media_transfer'] != "true") {$get_remote_media="0";} else {$get_remote_media="1";}
+
+		$get_remote_db = ($json_import['meta']['xsaf-db_transfer'] == "true") ? true : false;
+		$get_remote_media = ($json_import['meta']['xsaf-media_transfer'] == "true") ? true : false;
+		
 		if(!empty($json_import['autoblogs'])) {
 		 	foreach ($json_import['autoblogs'] as $value) {
-		 		$infos="";
+		 		
 		 		if(count($value)==4 && !empty($value['SITE_TYPE']) && !empty($value['SITE_TITLE']) && !empty($value['SITE_URL']) && !empty($value['FEED_URL'])) {
-					$sitetype = $value['SITE_TYPE'];
-					$sitename = $value['SITE_TITLE'];
+					$sitetype = escape($value['SITE_TYPE']);
+					$sitename = escape($value['SITE_TITLE']);
 					$siteurl = escape($value['SITE_URL']);
+					// Do not use DetectRedirect because it's slow and it has been used when the feed was added
+		 			//$rssurl = DetectRedirect(escape($value['FEED_URL']));
 		 			$rssurl = escape($value['FEED_URL']);
-						if($sitetype == 'shaarli') { $articles_per_page = "20"; $update_interval = "1800"; $update_timeout = "30"; }
-						else if($sitetype == 'microblog') { $articles_per_page = "20"; $update_interval = "300"; $update_timeout = "30"; }
-						else { $articles_per_page = "5"; $update_interval = "3600"; $update_timeout = "30"; }
 
-//						$foldername = $sitename;$foldername2 = $sitename;
-		$foldername = sha1(NoProtocolSiteURL($siteurl));
-		if(substr($siteurl, -1) == '/'){ $foldername2 = sha1(NoProtocolSiteURL(substr($siteurl, 0, -1))); }else{ $foldername2 = sha1(NoProtocolSiteURL($siteurl).'/');}
-
-					if(!file_exists($foldername) && !file_exists($foldername2)) { 
-						if ( mkdir('./'. $foldername, 0755, false) ) {
-			                $fp = fopen('./'. $foldername .'/index.php', 'w+');
-
-							$response = get_headers($rssurl, 1); // check for redirections
-							if(!empty($response['Location'])) {
-								$result="false";
-							}else{
-								$xml = simplexml_load_file($rssurl); // quick feed check
-
-								if($xml === FALSE){
-									$result="false";
-								}elseif (isset($xml->entry)) { // ATOM feed.
-									$result="true";
-								}elseif (isset($xml->item)) { // RSS 1.0 /RDF
-									$result="true";
-								}elseif (isset($xml->channel->item)) { // RSS 2.0
-									$result="true";
-								}else{
-									$result="false";
-								} 
-							}
-
-							/* autoblog */
-							if($result!=="false") {
-				                if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/".AUTOBLOG_FILE_NAME."'; ?>") ) {
-				                    $infos = "\nImpossible d'écrire le fichier index.php dans ".$foldername;
-				                    fclose($fp);
-				                }else{
-				              		fclose($fp);
-					                $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
-					                 if( !fwrite($fp, <<<EOF
-[VroumVroumBlogConfig]
-SITE_TYPE="$sitetype"
-SITE_TITLE="$sitename"
-SITE_DESCRIPTION="source: <a href='$siteurl'>$sitename</a>"
-SITE_URL="$siteurl"
-FEED_URL="$rssurl"
-ARTICLES_PER_PAGE="$articles_per_page"
-UPDATE_INTERVAL="$update_interval"
-UPDATE_TIMEOUT="$update_timeout"
-EOF
-									) ){
-				                    	fclose($fp);
-				                		$infos = "\nImpossible d'écrire le fichier vvb.ini dans ".$foldername;
-					               	}else{
-					                	fclose($fp);
-	/* ============================================================================================================================================================================== */
-	/* récupération de la DB distante */
-	if($get_remote_db == "1") {	$remote_db=str_replace("?export", $foldername."/articles.db", $xsafremote); copy($remote_db, './'. $foldername .'/articles.db'); }
-	if($get_remote_media == "1")
-		{
-		$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
-		$json_media_import = file_get_contents($remote_media);
-		if(!empty($json_media_import))
-			{
-			mkdir('./'.$foldername.'/media/');
-			$json_media_import = json_decode($json_media_import, true);
-			$media_path=$json_media_import['url'];
-			if(!empty($json_media_import['files']))
-				{
-				foreach ($json_media_import['files'] as $value)
-					{
-					copy($media_path.$value, './'.$foldername.'/media/'.$value);
+					if($sitetype == 'shaarli') { 
+						$articles_per_page = "20"; 
+						$update_interval = "1800"; 
+						$update_timeout = "30"; 
 					}
+					else if( $sitetype == 'microblog' ) { 
+						$articles_per_page = "20"; 
+						$update_interval = "300"; 
+						$update_timeout = "30"; 
+					}
+					else { 
+						$articles_per_page = "5"; 
+						$update_interval = "3600"; 
+						$update_timeout = "30"; 
+					}
+
+		            $foldername = urlToFolder($siteurl);
+				}
+
+
+				/* TOO SLOW
+				$xml = simplexml_load_file($rssurl); // quick feed check
+				// ATOM feed && RSS 1.0 /RDF && RSS 2.0
+				$result = (!isset($xml->entry) && !isset($xml->item) && !isset($xml->channel->item)) ? false : true;	*/			
+				$result = true;
+
+				/* autoblog */
+				if( $result === true ) {
+					$foldername = urlToFolder($siteurl);
+
+					$errors = createAutoblog($sitetype, $sitename, $siteurl, $rssurl);
+					foreach( $errors AS $value) {
+						if( DEBUG )
+							echo '<p>'. $value .'</p>';
+					}
+					if( empty($errors) && DEBUG ) {
+						echo '<p>autoblog '. $sitename .' crée avec succès (DL DB : '. var_dump($get_remote_db) .' - DL media : '. var_dump($get_remote_media) .') : '. $foldername .'</p>';
+						if( !ALLOW_REMOTE_DB_DL && !ALLOW_REMOTE_MEDIA_DL )
+							echo '<iframe width="1" height="1" frameborder="0" src="'. $foldername .'/index.php"></iframe>';
+					}
+
+					/* ============================================================================================================================================================================== */
+					/* récupération de la DB distante */
+					if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {	
+				        $remote_db = str_replace("?export", $foldername."/articles.db", $xsafremote); 
+				        copy($remote_db, './'. $foldername .'/articles.db');         
+				    }
+
+					if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
+						$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
+						$json_media_import = file_get_contents($remote_media);
+						if(!empty($json_media_import))
+							{
+							mkdir('./'.$foldername.'/media/');
+							$json_media_import = json_decode($json_media_import, true);
+							$media_path=$json_media_import['url'];
+							if(!empty($json_media_import['files'])) {
+								foreach ($json_media_import['files'] as $value)	{
+									copy($media_path.$value, './'.$foldername.'/media/'.$value);
+								}
+							}
+						}
+					}
+
+					/* ============================================================================================================================================================================== */
+					//TODO : tester si articles.db est une DB valide
+					//$to_update[] = serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+				}
+
+				if( DEBUG )
+					echo '<p>time : '.($max_exec_time - time()) .'</p>';
+				if(time() >= $max_exec_time) {
+					if( DEBUG )
+						echo "<p>Time out !</p>";
+					break;				
 				}
 			}
+		} 
+		else {
+			if( DEBUG )
+				echo "Format JSON incorrect.";
+			return false;
 		}
-	/* ============================================================================================================================================================================== */
-
-										//TODO : tester si articles.db est une DB valide
-
-										$infos = "\nautoblog crée avec succès (DB:$get_remote_db media:$get_remote_media) : $foldername";
-										$to_update[]=serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
-									}
-								}
-							} else {
-								$infos = "\n$rssurl -> flux invalide"; unlink("./$foldername/index.php"); rmdir($foldername);
-							}
-						/* end of file writing */
-			            }else {
-			                $infos = "\nImpossible de créer le répertoire ".$foldername;
-						}
-					}  else {
-						/*$infos = "\nFin d'itération ou Le répertoire ".$foldername." existe déjà ($sitename;$siteurl;$rssurl)";*/
-					} 
-					if(DEBUG){
-						echo $infos;
-					}
-		 		}
-		 		echo "\n time : ".(time() - $max_exec_time);
-		 		if(time() >= $max_exec_time){
-		 			break;
-		 		}
-		 	}
-		 }
-	 	/*if(!empty($to_update)){
-	 		if(DEBUG){
-	 			echo "\nupdate of autoblogs ...";
-	 		}
-	 		// because it's could be very long, we finish by updating new autoblogs
-	 		foreach ($to_update as $url) {
-	 			get_headers($url);
-	 		}
-	 		if(DEBUG){
-	 			echo "done\n\n";
-	 		}
-	 	}*/
 	}
-	return;
+	return;	
 }
-
-/* And now, the XSAF links to be imported, with maximal execusion time for import in second ! */
-xsafimport('https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json', 5);
-//xsafimport('https://www.ecirtam.net/autoblogs/?export', 5);
-//xsafimport('https://autoblog.suumitsu.eu/?export', 5);
+	
+/* And now, the XSAF links to be imported, with maximal execusion time for import in second ! 
+	You should add only trusted sources. */
+$autoblog_farm = array( 
+	'https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json',
+	'https://www.ecirtam.net/autoblogs/?export',
+	'https://autoblog.suumitsu.eu/?export',
+);
+if( DEBUG ) echo '<html><body>';
+if( ALLOW_XSAF ) {
+	foreach( $autoblog_farm AS $value ) {
+		if( !empty($value) )
+			xsafimport($value, EXEC_TIME);
+	}
+}
+elseif( DEBUG )
+	echo "<p>XSAF désactivé. Positionnez la variable ALLOW_XSAF à TRUE dans le fichier xsaf3.php pour l'activer.</p>";
 
 if(DEBUG) {
-	echo "\n\nXSAF import finished\n\n";
+	echo "<p>XSAF import finished</p>";
 }
-die;
+if( DEBUG ) echo '</body></html>';
 ?>
