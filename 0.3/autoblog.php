@@ -333,7 +333,7 @@ class VroumVroum_Blog
                 'http'  =>  array(
                     'method'    =>  'GET',
                     'timeout'   =>  $this->config->update_timeout,
-                    'header'    =>  "User-Agent: Opera/9.80 (X11; Linux i686; U; fr; Autoblogs; +https://github.com/mitsukarenai/Projet-Autoblog/) Presto/2.2.15 Version/10.10\r\n",
+                    'header'    =>  "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:20.0; Autoblogs; +https://github.com/mitsukarenai/Projet-Autoblog/) Gecko/20100101 Firefox/20.0\r\n",
                 )
             )
         );
