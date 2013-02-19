@@ -35,7 +35,7 @@ function escape($str) {
 }
 
 function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
-    if( $type == 'generic' ) {
+    if( $type == 'generic' || empty( $type )) {
         $var = updateType( $siteurl );
         $type = $var['type'];
         if( !empty( $var['name']) )

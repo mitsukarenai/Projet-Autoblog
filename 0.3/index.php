@@ -22,9 +22,15 @@ define('XSAF_VERSION', 3);
 define('ROOT_DIR', __DIR__);
 if(file_exists("config.php")){
 	include "config.php";
+}else{
+    echo "config.php not found !";
+	die;
 }
 if(file_exists("functions.php")){
 	include "functions.php";
+}else{
+    echo "functions.php not found !";
+	die;
 }
 
 $error = array();
@@ -35,7 +41,7 @@ function get_title_from_feed($url) {
 }
 
 function get_title_from_datafeed($data) {
-	if($data === false) { die('url inaccessible');  }
+	if($data === false) { return 'url inaccessible';  }
 	$dom = new DOMDocument;
 	$dom->loadXML($data) or die('xml malformé');
 	$title = $dom->getElementsByTagName('title');
@@ -47,6 +53,7 @@ function get_link_from_feed($url) {
 }
 
 function get_link_from_datafeed($data) {
+    if($data === false) { return 'url inaccessible';  }
 	$xml = simplexml_load_string($data); // quick feed check
     
     // ATOM feed && RSS 1.0 /RDF && RSS 2.0
@@ -227,34 +234,58 @@ $form = '<form method="POST"><input type="hidden" name="generic" value="1" />
 /**
  * ADD BY BOOKMARK BUTTON
  **/
-if(!empty($_GET['via_button']) && !empty($_GET['rssurl']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_BUTTON )
+if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_BUTTON )
 {
-	if(isset($_GET['add']) && $_GET['add'] === '1' && !empty($_GET['siteurl']) && !empty($_GET['sitename'])) {
-		$rssurl = DetectRedirect(escape($_GET['rssurl']));
-		$siteurl = escape($_GET['siteurl']);
-        $sitename = escape($_GET['sitename']);
-        
-      	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
-		if( empty($error))
-			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. $foldername .'/index.php"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$foldername.'">ajouté avec succès</a>.</b>';
+    $form = '<html><head></head><body>';
     
-	}
-	else {
-		$rssurl = DetectRedirect(escape($_GET['rssurl']));
-        $datafeed = file_get_contents($rssurl);
-		$siteurl = get_link_from_datafeed($datafeed);
-        $sitename = get_title_from_datafeed($datafeed);
-			
-		$form = '<html><head></head><body><span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
-		<form method="GET">
-		<input type="hidden" name="via_button" value="1"><input type="hidden" name="add" value="1"><input type="hidden" name="number" value="17">
-		<input style="width:30em;" type="text" name="sitename" id="sitename" value="'.$sitename.'"><label for="sitename">&larr; titre du site (auto)</label><br>		
-		<input style="width:30em;" placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
-        <input style="width:30em;" placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
-        <input style="width:30em;" placeholder="generic" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
-        <input type="submit" value="Créer"></form></body></html>';
-		echo $form; die;
-		}
+    if( empty($_GET['rssurl']) ) {
+        $form .= '<p>URL du flux RSS incorrect.<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
+    }
+    else { 
+    	if(isset($_GET['add']) && $_GET['add'] === '1' && !empty($_GET['siteurl']) && !empty($_GET['sitename'])) {
+    		$rssurl = DetectRedirect(escape($_GET['rssurl']));
+    		$siteurl = escape($_GET['siteurl']);
+            $sitename = escape($_GET['sitename']);
+            $sitetype = updateType()['type'];
+            
+          	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
+    		if( empty($error)) {
+                $form .= '<p>'.$sitetype.'</p>';
+    			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder($siteurl) .'/index.php"></iframe>';
+                $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolder($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
+    		}
+            else {
+                $form .= '<ul>';
+                foreach ( $error AS $value )
+                    $form .= '<li>'. $value .'</li>';
+                $form .= '</ul>';
+            }
+            $form .= '<a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
+    	}
+    	else {
+    		$rssurl = DetectRedirect(escape($_GET['rssurl']));
+            $datafeed = file_get_contents($rssurl);
+            if( $datafeed !== false ) {
+        		$siteurl = get_link_from_datafeed($datafeed);
+                $sitename = get_title_from_datafeed($datafeed);        
+        		$sitetype = updateType()['type'];
+                
+        		$form .= '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
+        		<form method="GET">
+        		<input type="hidden" name="via_button" value="1"><input type="hidden" name="add" value="1"><input type="hidden" name="number" value="17">
+        		<input style="width:30em;" type="text" name="sitename" id="sitename" value="'.$sitename.'"><label for="sitename">&larr; titre du site (auto)</label><br>		
+        		<input style="width:30em;" placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
+                <input style="width:30em;" placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
+                <input style="width:30em;" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
+                <input type="submit" value="Créer"></form>';
+            } 
+            else {
+                $form .= '<p>URL du flux RSS incorrect.<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
+            }
+    	}
+    }
+    $form .= '</body></html>';
+    echo $form; die;        
 }
 
 /**
@@ -381,7 +412,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8">
-    <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " .$head_title; } ?></title>
+    <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></title>
 		<style type="text/css">
 			body {background-color:#efefef;text-align:center;color:#333;font-family:sans-serif}
 			a {color:black;text-decoration:none;font-weight:bold;}
@@ -408,7 +439,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		</style>
 	</head>
 	<body>
-		<h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " .$head_title; } ?></h1>
+		<h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></h1>
         
 		<div class="pbloc">
             <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
@@ -416,7 +447,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			<h2>Présentation</h2>
 
             <p>
-            	La Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web.<br/>
+            	Le Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web.<br/>
 	            Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. <br/>
 	            L'objectif premier de ce projet est de lutter contre la censure et toute sorte de pression...
 	        </p>
