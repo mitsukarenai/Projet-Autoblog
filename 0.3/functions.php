@@ -30,6 +30,10 @@ function urlToFolder($url) {
     return sha1(NoProtocolSiteURL($url));
 }
 
+function urlToFolderWithTrailingSlash($url) {
+    return sha1(NoProtocolSiteURL($url).'/');
+}
+
 function escape($str) {
     return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
 }
@@ -43,6 +47,12 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
     }
     
 	$foldername = urlToFolder($siteurl);
+	if(file_exists($foldername)) { 
+		$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">'. $sitename .'</a> existe déjà.'; 
+		return $error;
+	}
+
+	$foldername = urlToFolderWithTrailingSlash($siteurl);
 	if(file_exists($foldername)) { 
 		$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">'. $sitename .'</a> existe déjà.'; 
 		return $error;
