@@ -178,19 +178,21 @@ if (isset($_GET['export']) || isset($_GET['feedexport'])) {
  * Site map
  **/
 if (isset($_GET['sitemap']))
-// url-list sitemap
 {
-    header('Content-Type: text/plain');
+	header('Content-Type: application/xml');
+	echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     $directory = "./";
     $subdirs = glob($directory . "*");
-    
     foreach($subdirs as $unit) {
  		if(is_dir($unit)) {
 			$unit=substr($unit, 2);
 			$proto=$_SERVER['HTTPS']?"https://":"http://";
-			echo $proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."\n";
+			echo '<url><loc>'.$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
+			echo '<lastmod>'.date('c', filemtime($unit))."</lastmod>\n";
+			echo '<changefreq>hourly</changefreq></url>';
  		}
 	}
+	echo '</urlset>';
     die;
 }
 
