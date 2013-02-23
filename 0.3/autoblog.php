@@ -589,6 +589,26 @@ if (isset($_GET['feed'])) // FEED
     exit;
 }
 
+/*if (isset($_GET['opml'])) // OPML
+{
+    header('Content-Type: application/octet-stream');
+	header('Content-Disposition: attachment; filename="'.escape($config->site_title).'.xml"');
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+	<head>
+		<title>'.escape($config->site_title).'.xml</title>
+		<dateCreated>'.date('r', time()).'</dateCreated>
+	</head>
+	<body>
+		<outline sitetype="'.escape($config->site_type).'"/>
+		<outline htmlUrl="'.escape($config->site_url).'"/>
+		<outline xmlUrl="'.escape($config->feed_url).'"/>
+		<outline title="'.escape($config->site_title).'"/>
+	</body>
+</opml>';
+    exit;
+}*/
+
 if (isset($_GET['media'])) // MEDIA
 {
     header('Content-Type: application/json');
