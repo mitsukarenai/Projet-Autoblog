@@ -136,7 +136,7 @@ if (isset($_GET['check']))
 /**
  * Simple and Full Export
  **/
-if (isset($_GET['export']) || isset($_GET['feedexport'])) {
+if (isset($_GET['export'])) {
     header('Content-Type: application/json');
     $directory = "./";
     $subdirs = glob($directory . "*");
@@ -154,23 +154,15 @@ if (isset($_GET['export']) || isset($_GET['feedexport'])) {
 			unset($ini);
             
             $feed=$config->feed_url;
-            
-            if( isset($_GET['export']) ) {
-    			$type=$config->site_type;
-    			$title=$config->site_title;
-    			$url=$config->site_url;			
-    			$reponse[$unit] = array("SITE_TYPE"=>"$type", "SITE_TITLE"=>"$title", "SITE_URL"=>"$url", "FEED_URL"=>"$feed");
-            }
-            // export feed only
-            else
-                $reponse=$reponse.";$feed";
+            $type=$config->site_type;
+    		$title=$config->site_title;
+    		$url=$config->site_url;			
+    		$reponse[$unit] = array("SITE_TYPE"=>"$type", "SITE_TITLE"=>"$title", "SITE_URL"=>"$url", "FEED_URL"=>"$feed");
+
  		}
 	}
-    if( isset($_GET['export']) )
-	    echo json_encode( array( "meta"=> array("xsaf-version"=>XSAF_VERSION,"xsaf-db_transfer"=>"true","xsaf-media_transfer"=>"true"),
+    echo json_encode( array( "meta"=> array("xsaf-version"=>XSAF_VERSION,"xsaf-db_transfer"=>"true","xsaf-media_transfer"=>"true"),
 								"autoblogs"=>$reponse));
-    else
-        echo json_encode(explode(';', substr($reponse, 1)));
     die;
 }
 
@@ -549,7 +541,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             	&rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
             </p>
 
-            <div class="clear"><a href="?export">export<sup> JSON</sup></a></div>
+            <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a></div>
             
             <?php
             $directory = "./";
