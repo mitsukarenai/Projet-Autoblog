@@ -600,7 +600,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 		<dateCreated>'.date('r', time()).'</dateCreated>
 	</head>
 	<body>
-		<outline sitetype="'.escape($config->site_type).'"/>
 		<outline htmlUrl="'.escape($config->site_url).'"/>
 		<outline xmlUrl="'.escape($config->feed_url).'"/>
 		<outline title="'.escape($config->site_title).'"/>
