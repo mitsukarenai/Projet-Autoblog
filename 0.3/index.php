@@ -571,7 +571,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             	foreach ($autoblogs as $key => $autoblog) {
             		$autoblogs_display .= '<div class="vignette">
 	    					<div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
-	    					<div class="source"><a href="'.$key.'/vvb.ini">config</a> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
+	    					<div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> <a href="'.$key.'/?opml">opml</a></sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
 	    				</div>';
             	}
             }

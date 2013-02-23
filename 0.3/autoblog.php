@@ -804,7 +804,7 @@ else
 echo '
 <div class="footer">
     <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
-    <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a>
+    <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a> (<a href="?opml">OPML</a>)
         - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
     <p><a href="'.LOCAL_URL.'?media">'.__('Media export').' <sup> JSON</sup></a></p>
 </div>';
