@@ -78,7 +78,6 @@ function xsafimport($xsafremote, $max_exec_time) {
 					// Do not use DetectRedirect because it's slow and it has been used when the feed was added
 		 			//$rssurl = DetectRedirect(escape($value['FEED_URL']));
 		 			$rssurl = escape($value['FEED_URL']);
-		            $foldername = urlToFolder($siteurl);
 				}
 
 
@@ -90,7 +89,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 
 				/* autoblog */
 				if( $result === true ) {
-					$foldername = urlToFolder($siteurl);
+					$foldername = urlToFolderSlash($siteurl);
 
 					$errors = createAutoblog($sitetype, $sitename, $siteurl, $rssurl);
 					foreach( $errors AS $value) {

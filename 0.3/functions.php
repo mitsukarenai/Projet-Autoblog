@@ -1,12 +1,18 @@
 <?php
 
 function NoProtocolSiteURL($url) {
-	$siteurlnoprototypes = array("http://", "https://");
-	$siteurlnoproto = str_replace($siteurlnoprototypes, "", $url);
-    
+	$protocols = array("http://", "https://");
+	$siteurlnoproto = str_replace($protocols, "", $url);
+
     // Remove the / at the end of string
     if ( $siteurlnoproto[strlen($siteurlnoproto) - 1] == '/' )
         $siteurlnoproto = substr($siteurlnoproto, 0, -1);
+
+    // Remove index.php/html at the end of string
+    if( strpos($url, 'index.php') || strpos($url, 'index.html') ) {
+    	$siteurlnoproto = preg_replace('#(.*)/index\.(html|php)$#', '$1', $siteurlnoproto);
+    }
+
 	return $siteurlnoproto;
 }
 
@@ -30,8 +36,12 @@ function urlToFolder($url) {
     return sha1(NoProtocolSiteURL($url));
 }
 
-function urlToFolderWithTrailingSlash($url) {
+function urlToFolderSlash($url) {
     return sha1(NoProtocolSiteURL($url).'/');
+}
+
+function folderExists($url) {
+	return file_exists(urlToFolder($url)) || file_exists(urlToFolderSlash($url));
 }
 
 function escape($str) {
@@ -46,17 +56,12 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         	$sitename = ucfirst($var['name']) . ' - ' . $sitename;
     }
     
-	$foldername = urlToFolder($siteurl);
-	if(file_exists($foldername)) { 
+	if(folderExists($siteurl)) { 
 		$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">'. $sitename .'</a> existe déjà.'; 
 		return $error;
 	}
 
-	$foldername = urlToFolderWithTrailingSlash($siteurl);
-	if(file_exists($foldername)) { 
-		$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">'. $sitename .'</a> existe déjà.'; 
-		return $error;
-	}
+	$foldername = urlToFolderSlash($siteurl);	
 	
 	if ( mkdir('./'. $foldername, 0755, false) ) {
         $fp = fopen('./'. $foldername .'/index.php', 'w+');
@@ -128,5 +133,28 @@ function updateType($siteurl) {
     }
     else
         return array('type' => 'generic', 'name' => '');
+}
+
+function debug($data)
+{
+	if(is_array($data))
+	{
+		echo '<p>Array <br/>{<br/>';
+		foreach ( $data AS $Key => $Element )
+		{
+			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['. $Key .'] =>';
+			debug($Element);
+		}
+		echo '}</p>';
+	}
+	else if(is_bool($data))
+	{
+		if($data === 1)
+			echo 'true<br/>';
+		else
+			echo 'false<br/>';
+	}	
+	else
+		echo $data.'<br />';
 }
 ?>

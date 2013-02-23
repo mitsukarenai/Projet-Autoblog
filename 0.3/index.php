@@ -247,8 +247,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
           	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
     		if( empty($error)) {
                 $form .= '<p>'.$sitetype.'</p>';
-    			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash($siteurl) .'/index.php"></iframe>';
-                $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolderWithTrailingSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
+    			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash($siteurl) .'/index.php"></iframe>';
+                $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
     		}
             else {
                 $form .= '<ul>';
@@ -323,7 +323,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
 	if( empty($error) ) {
 		$error = createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error);
 		if( empty($error))
-			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderWithTrailingSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
     }
 }
 
@@ -348,7 +348,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 			$error = createAutoblog('generic', $sitename, $siteurl, $rssurl, $error);
 
 			if( empty($error))
-				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderWithTrailingSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
         }	
     	else {
     		// checking procedure
@@ -385,7 +385,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                     
                     $error = createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error );
                     if( empty ( $error ))
-                    	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderWithTrailingSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                    	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
                 }
             }
         }
