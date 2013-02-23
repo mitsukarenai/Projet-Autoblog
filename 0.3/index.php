@@ -276,7 +276,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                 <input type="submit" value="Créer"></form>';
             } 
             else {
-                $form .= '<p>URL du flux RSS incorrect.<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
+                $form .= '<p>URL du flux RSS incorrecte.<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
             }
     	}
     }
@@ -330,7 +330,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
 /**
  * ADD BY GENERIC LINK
  **/
-if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_LINK) {
+if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_LINKS) {
 	if(empty($_POST['rssurl']))
 		{$error[] = "Veuillez entrer l'adresse du flux.";}
 	if(empty($_POST['number']))
@@ -348,23 +348,26 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 			$error = createAutoblog('generic', $sitename, $siteurl, $rssurl, $error);
 
 			if( empty($error))
-				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
         }	
     	else {
     		// checking procedure
     		$rssurl = DetectRedirect($rssurl);
     		$datafeed = file_get_contents($rssurl);
+    		if( $datafeed === false ) {
+    			$error[] = 'URL "'. $rssurl .'" inaccessible.';
+    		}
     		$sitetype = 'generic';
     		$siteurl = get_link_from_datafeed($datafeed);
     		$sitename = get_title_from_datafeed($datafeed);			
 
-        		$form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
-        		<form method="POST"><input type="hidden" name="generic" value="1" />
-                <input style="color:black" type="text" id="sitename" value="'.$sitename.'" disabled><label for="sitename">&larr; titre du site (auto)</label><br>		
-        		<input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
-                <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
-                <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
-                <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number" value="17"><label for="number">&larr; antibot</label><br><input type="submit" value="Créer"></form>';
+    		$form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
+    		<form method="POST"><input type="hidden" name="generic" value="1" />
+            <input style="color:black" type="text" id="sitename" value="'.$sitename.'" disabled><label for="sitename">&larr; titre du site (auto)</label><br>		
+    		<input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
+            <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
+            <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
+            <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number" value="17"><label for="number">&larr; antibot</label><br><input type="submit" value="Créer"></form>';
             
     	}
 	}
