@@ -247,8 +247,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
           	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
     		if( empty($error)) {
                 $form .= '<p>'.$sitetype.'</p>';
-    			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder($siteurl) .'/index.php"></iframe>';
-                $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolder($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
+    			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash($siteurl) .'/index.php"></iframe>';
+                $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolderWithTrailingSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
     		}
             else {
                 $form .= '<ul>';
@@ -323,7 +323,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
 	if( empty($error) ) {
 		$error = createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error);
 		if( empty($error))
-			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">AutoMicroblog <a href="'.$foldername.'">ajouté avec succès</a>.</b>';
+			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderWithTrailingSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
     }
 }
 
@@ -348,7 +348,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 			$error = createAutoblog('generic', $sitename, $siteurl, $rssurl, $error);
 
 			if( empty($error))
-				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolder( $siteurl ) .'">afficher l\'autoblog</a>';
+				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">autoblog crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderWithTrailingSlash( $siteurl ) .'">afficher l\'autoblog</a>';
         }	
     	else {
     		// checking procedure
@@ -356,13 +356,8 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
     		$datafeed = file_get_contents($rssurl);
     		$sitetype = 'generic';
     		$siteurl = get_link_from_datafeed($datafeed);
-    		$foldername = urlToFolder($siteurl);
     		$sitename = get_title_from_datafeed($datafeed);			
-    			
-    		if(file_exists($foldername)) { 
-    			$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">existe déjà</a>.'; 
-    		}
-            else {
+
         		$form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
         		<form method="POST"><input type="hidden" name="generic" value="1" />
                 <input style="color:black" type="text" id="sitename" value="'.$sitename.'" disabled><label for="sitename">&larr; titre du site (auto)</label><br>		
@@ -370,7 +365,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
                 <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
                 <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number" value="17"><label for="number">&larr; antibot</label><br><input type="submit" value="Créer"></form>';
-            }
+            
     	}
 	}
 }
@@ -390,7 +385,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                     
                     $error = createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error );
                     if( empty ( $error ))
-                    	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolder( $siteurl ) .'">afficher l\'autoblog</a>.';
+                    	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderWithTrailingSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderWithTrailingSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
                 }
             }
         }
@@ -419,7 +414,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			input {width:30em;}
 			input[type="radio"] { width:1em; } 
 			input[type="submit"] { width:8em; } 
-			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl, input[type="text"]#socialsub {width:12em;}
+			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl {width:12em;}
 			div.form {padding:0.2em;border:1px solid #fff;}
 			div.form:hover {background-color:#FAF4DA;border:1px dotted; }
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
@@ -489,13 +484,13 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		                <h3>Ajouter un compte social</h3>
 
 		                <form method="POST">
-		                    <input class="text" placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
+		                    <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
 		        			<input type="radio" name="socialinstance" value="twitter">Twitter<br>
 		        			<input type="radio" name="socialinstance" value="identica">Identica<br>
 		        			<input type="radio" name="socialinstance" value="statusnet">		          
             				<input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
 		                
-                    		<input id="socialsub" type="submit" value="Créer">
+                    		<input type="submit" value="Créer">
 		                </form>
 		            </div>
 
@@ -503,9 +498,9 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		                <h3>Ajouter un Shaarli</h3>
 		                
 		                <form method="POST">
-		                    <input class="text" placeholder="identifiant compte" type="hidden" name="socialaccount" id="socialaccount" value="shaarli">
+		                    <input type="hidden" name="socialaccount" value="shaarli">
 		        			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
-		                    <input id="socialsub" type="submit" value="Créer">
+		                    <input type="submit" value="Créer">
 		                </form>
 		            </div>
                 <?php } 
