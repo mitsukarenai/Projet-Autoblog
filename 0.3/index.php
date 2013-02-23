@@ -246,7 +246,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
     		$rssurl = DetectRedirect(escape($_GET['rssurl']));
     		$siteurl = escape($_GET['siteurl']);
             $sitename = escape($_GET['sitename']);
-            $sitetype = updateType()['type'];
+            $sitetype = updateType($_GET['type']);
             
           	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
     		if( empty($error)) {
@@ -268,7 +268,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
             if( $datafeed !== false ) {
         		$siteurl = get_link_from_datafeed($datafeed);
                 $sitename = get_title_from_datafeed($datafeed);        
-        		$sitetype = updateType()['type'];
+        		$sitetype = updateType($_GET['type']);
                 
         		$form .= '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
         		<form method="GET">
