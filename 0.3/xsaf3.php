@@ -78,23 +78,6 @@ function xsafimport($xsafremote, $max_exec_time) {
 					// Do not use DetectRedirect because it's slow and it has been used when the feed was added
 		 			//$rssurl = DetectRedirect(escape($value['FEED_URL']));
 		 			$rssurl = escape($value['FEED_URL']);
-
-					if($sitetype == 'shaarli') { 
-						$articles_per_page = "20"; 
-						$update_interval = "1800"; 
-						$update_timeout = "30"; 
-					}
-					else if( $sitetype == 'microblog' ) { 
-						$articles_per_page = "20"; 
-						$update_interval = "300"; 
-						$update_timeout = "30"; 
-					}
-					else { 
-						$articles_per_page = "5"; 
-						$update_interval = "3600"; 
-						$update_timeout = "30"; 
-					}
-
 		            $foldername = urlToFolder($siteurl);
 				}
 

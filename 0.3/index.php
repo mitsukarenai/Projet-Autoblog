@@ -1,4 +1,6 @@
 <?php
+//ini_set('display_errors','1');
+//error_reporting(E_ALL);
 /*
 	Projet Autoblog 0.3-beta-fah
 	Code: https://github.com/mitsukarenai/Projet-Autoblog
@@ -422,9 +424,10 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			.pbloc {background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;text-align:justify;box-shadow:0px 5px 7px #aaa;}
 			input {width:30em;}
 			input[type="radio"] { width:1em; } 
-			input#socialaccount, input#statusneturl, input#shaarliurl, input#socialsub {width:12em;}
-			div.form {padding:0.2em;margin:1px;}
-			div.form:hover {background-color:#FAF4DA;border:1px dotted;margin:0; }
+			input[type="submit"] { width:8em; } 
+			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl, input[type="text"]#socialsub {width:12em;}
+			div.form {padding:0.2em;border:1px solid #fff;}
+			div.form:hover {background-color:#FAF4DA;border:1px dotted; }
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
 			.vignette:hover { background-color:#fff;}
 			.vignette .title { font-size: 14pt;text-shadow: #ccc 0px 5px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -515,7 +518,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 
                 if(ALLOW_NEW_AUTOBLOGS_BY_OPML == TRUE) { ?>    
                     <div class="form">
-                        <h3>Ajout par fichier OPML</h3>
+                        <h3>Ajouter par fichier OPML</h3>
                         
                         <form enctype='multipart/form-data' method='POST'>
                             <input type='hidden' name='opml' value='1' />

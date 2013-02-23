@@ -71,9 +71,9 @@ SITE_TITLE="'. $sitename .'"
 SITE_DESCRIPTION="Site original : <a href=\''. $siteurl .'\'>'. $sitename .'</a>"
 SITE_URL="'. $siteurl .'"
 FEED_URL="'. $rssurl .'"
-ARTICLES_PER_PAGE="5"
+ARTICLES_PER_PAGE="'. getArticlesPerPage( $type ) .'"
 UPDATE_INTERVAL="'. getInterval( $type ) .'"
-UPDATE_TIMEOUT="30"') )
+UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
             $error[] = "Impossible d'écrire le fichier vvb.ini";
         fclose($fp);
     }
@@ -81,6 +81,17 @@ UPDATE_TIMEOUT="30"') )
         $error[] = "Impossible de créer le répertoire.";
 
     return $error;
+}
+
+function getArticlesPerPage( $type ) {
+	switch( $type ) {
+		case 'microblog':
+			return 20;
+		case 'shaarli':
+			return 20;
+		default:
+			return 5;
+	}
 }
 
 function getInterval( $type ) {
@@ -91,6 +102,17 @@ function getInterval( $type ) {
 			return 1800;
 		default:
 			return 3600;
+	}
+}
+
+function getTimeout( $type ) {
+	switch( $type ) {
+		case 'microblog':
+			return 30;
+		case 'shaarli':
+			return 30;
+		default:
+			return 30;
 	}
 }
 
