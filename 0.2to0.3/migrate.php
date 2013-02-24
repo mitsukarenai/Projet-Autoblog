@@ -30,21 +30,26 @@ foreach($liste_blog as $blog) {
         copy($dir . $blog . '/articles.db', $dir . $foldername .'/articles.db');
         deleteDir($dir . $blog );
 
+        
+        if( strpos($ini['SITE_TITLE'], 'Autoblog de') !== false ) {            
+            $ini['SITE_TITLE'] = preg_replace('#^Autoblog de (.*)$#', '$1', $ini['SITE_TITLE']);
+        }
+
         switch(substr($ini['SITE_TITLE'], 0, 7)) {
-        	case 'twitter':
-        	case 'statusn':
-        	case 'identic':
+            case 'twitter':
+            case 'statusn':
+            case 'identic':
                 $ini['SITE_TYPE']="microblog";
                 $ini['ARTICLES_PER_PAGE'] = "20";
                 $ini['UPDATE_INTERVAL'] = "300";
                 $ini['UPDATE_TIMEOUT'] = "30";
-        		break;        	
-        	default:
-        		$ini['SITE_TYPE']="generic";
-        		$ini['ARTICLES_PER_PAGE'] = "5";
-        		$ini['UPDATE_INTERVAL'] = "3600";
-        		$ini['UPDATE_TIMEOUT'] = "30";
-        		break;
+                break;          
+            default:
+                $ini['SITE_TYPE']="generic";
+                $ini['ARTICLES_PER_PAGE'] = "5";
+                $ini['UPDATE_INTERVAL'] = "3600";
+                $ini['UPDATE_TIMEOUT'] = "30";
+                break;
         }     
 
         $fp = fopen($dir.$foldername."/vvb.ini", 'w+');
