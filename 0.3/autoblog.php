@@ -589,24 +589,25 @@ if (isset($_GET['feed'])) // FEED
     exit;
 }
 
-/*if (isset($_GET['opml'])) // OPML
+if (isset($_GET['opml'])) // OPML
 {
-    header('Content-Type: application/octet-stream');
+    //header('Content-Type: application/octet-stream');
+    header('Content-type: text/xml');
 	header('Content-Disposition: attachment; filename="'.escape($config->site_title).'.xml"');
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<opml version="1.0">
-	<head>
-		<title>'.escape($config->site_title).'.xml</title>
-		<dateCreated>'.date('r', time()).'</dateCreated>
-	</head>
-	<body>
-		<outline htmlUrl="'.escape($config->site_url).'"/>
-		<outline xmlUrl="'.escape($config->feed_url).'"/>
-		<outline title="'.escape($config->site_title).'"/>
-	</body>
-</opml>';
+    $opmlfile = new SimpleXMLElement('<opml></opml>');
+    $opmlfile->addAttribute('version', '1.0');
+    $opmlhead = $opmlfile->addChild('head');
+    $opmlhead->addChild('title', escape($config->site_title));
+    $opmlhead->addChild('dateCreated', date('r', time()));
+    $opmlbody = $opmlfile->addChild('body');
+    $outline = $opmlbody->addChild('outline');
+    $outline->addAttribute('title', escape($config->site_title));
+    $outline->addAttribute('htmlUrl', escape($config->site_url));
+    $outline->addAttribute('xmlUrl', escape($config->feed_url));
+
+    echo $opmlfile->asXML();
     exit;
-}*/
+}
 
 if (isset($_GET['media'])) // MEDIA
 {

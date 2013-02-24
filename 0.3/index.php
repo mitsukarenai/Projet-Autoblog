@@ -165,6 +165,47 @@ if (isset($_GET['export'])) {
 }
 
 /**
+ *	OPML Full Export
+ **/
+if (isset($_GET['exportopml'])) // OPML
+{
+    //header('Content-Type: application/octet-stream');
+    header('Content-type: text/xml');
+	header('Content-Disposition: attachment; filename="autoblogs-'. $_SERVER['SERVER_NAME'] .'.xml"');
+
+	$opmlfile = new SimpleXMLElement('<opml></opml>');
+    $opmlfile->addAttribute('version', '1.0');
+    $opmlhead = $opmlfile->addChild('head');
+    $opmlhead->addChild('title', 'Autoblog OPML export from '. $_SERVER['SERVER_NAME'] );
+    $opmlhead->addChild('dateCreated', date('r', time()));
+    $opmlbody = $opmlfile->addChild('body');
+
+    $directory = "./";
+    $subdirs = glob($directory . "*");
+    
+    foreach($subdirs as $unit) {
+ 		if(is_dir($unit)) { 
+ 			$unit=substr($unit, 2);
+			$ini = parse_ini_file($unit.'/vvb.ini');
+			$config = new stdClass;
+            
+			foreach ($ini as $key=>$value) {
+				$key = strtolower($key);
+				$config->$key = $value;
+			}
+			unset($ini);
+
+		    $outline = $opmlbody->addChild('outline');
+		    $outline->addAttribute('title', escape($config->site_title));
+		    $outline->addAttribute('htmlUrl', escape($config->site_url));
+		    $outline->addAttribute('xmlUrl', escape($config->feed_url));
+    	}
+    }
+    echo $opmlfile->asXML();
+    exit;
+}
+
+/**
  * Site map
  **/
 if (isset($_GET['sitemap']))
@@ -537,7 +578,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             	&rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
             </p>
 
-            <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a></div>
+            <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
             
             <?php
             $directory = "./";
