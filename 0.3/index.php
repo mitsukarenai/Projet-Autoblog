@@ -1,8 +1,6 @@
 <?php
-//ini_set('display_errors','1');
-//error_reporting(E_ALL);
 /*
-	Projet Autoblog 0.3-beta-fah
+	Projet Autoblog 0.3-beta
 	Code: https://github.com/mitsukarenai/Projet-Autoblog
 	Authors: 
         Mitsu https://www.suumitsu.eu/
