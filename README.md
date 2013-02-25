@@ -7,4 +7,4 @@ Création, gestion et échange de blogs automatiques contre la censure (à propo
 
 - serie 0.2 par BohwaZ, Arthur Hoaro, Mitsu, Oros
 
-- serie 0.3 par Mitsu & Oros
+- serie 0.3 par Mitsu, Oros, Arthur Hoaro
