@@ -444,7 +444,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 	<head>
-		<meta charset="utf-8">
+	<meta charset="utf-8">
     <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></title>
 		<style type="text/css">
 			body {background-color:#efefef;text-align:center;color:#333;font-family:sans-serif}
@@ -470,9 +470,13 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			.bouton{background: -moz-linear-gradient(center top , #EDEDED 5%, #DFDFDF 100%) repeat scroll 0 0 #EDEDED;border: 1px none;padding: 10px;border: 1px solid #7777777;border-radius: 8px 8px 8px 8px;box-shadow: 0 1px 0 0 #FFFFFF inset;display: inline-block;}
             .success {color: green;}
             .error {color: red;}
+            .button_list{display:none;}
+            .button{-moz-box-shadow:inset 0 1px 0 0 #d9fbbe;-webkit-box-shadow:inset 0 1px 0 0 #d9fbbe;box-shadow:inset 0 1px 0 0 #d9fbbe;background:0;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356',endColorstr='#a5cc52');background-color:#b8e356;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #83c41a;display:inline-block;color:#fff;font-family:arial;font-size:14px;font-weight:700;text-decoration:none;text-shadow:1px 1px 0 #86ae47;padding:6px 24px;}
+            .button:hover{background:0;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52',endColorstr='#b8e356');background-color:#a5cc52;}
+            .button:active{position:relative;top:1px;}
 		</style>
 	</head>
-	<body>
+	<body onload="hideAddForms()">
 		<h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></h1>
         
 		<div class="pbloc">
@@ -504,13 +508,26 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                     }
                     foreach ( $success AS $value ) {
                         echo '<li class="success">'. $value .'</li>';
-                    }
+                    }                                
                     echo '</ul>';
                 }
-                ?>
                 
-                <?php if(ALLOW_NEW_AUTOBLOGS_BY_LINKS == TRUE) { ?>
-		        	<div class="form">	
+                $button_list = '<p id="button_list">Ajouter un autoblog via : ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_LINKS)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'social\');return false;">Compte réseau social</a> 
+                    <a href="#" class="button" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_OPML)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a>  
+                    <a href="#" class="button" onclick="alert(\'not implemented\');return false;">Lien vers OPML</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
+                $button_list .= '</p>';
+                echo $button_list;
+                
+                if(ALLOW_NEW_AUTOBLOGS_BY_LINKS == TRUE) { ?>
+		        	<div class="form" id="add_generic">	
                         <h3>Ajouter un site web</h3>		            
 		                <p>
 		                    Si vous souhaitez que <i><?php echo $_SERVER['SERVER_NAME']; ?></i> héberge un autoblog d'un site,<br>
@@ -522,7 +539,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 <?php } 
 
                 if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL == TRUE) { ?>
-					<div class="form">            
+					<div class="form" id="add_social">            
 		                <h3>Ajouter un compte social</h3>
 
 		                <form method="POST">
@@ -536,7 +553,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		                </form>
 		            </div>
 
-                    <div class="form">
+                    <div class="form" id="add_shaarli">
 		                <h3>Ajouter un Shaarli</h3>
 		                
 		                <form method="POST">
@@ -548,7 +565,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 <?php } 
                 
                 if(ALLOW_NEW_AUTOBLOGS_BY_OPML == TRUE) { ?>    
-                    <div class="form">
+                    <div class="form" id="add_opmlfile">
                         <h3>Ajouter par fichier OPML</h3>
                         
                         <form enctype='multipart/form-data' method='POST'>
@@ -560,13 +577,15 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 	    			
                 <?php } 
                 
-                if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>                    
-                	<h3>Marque page</h3>
-	    			<p>Pour ajouter facilement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages &rarr; 
-	                <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;" 
-	                    href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">
-	                        Projet Autoblog
-	                </a>
+                if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>    
+                    <div class="form" id="add_bookmark">
+                    	<h3>Marque page</h3>
+    	    			<p>Pour ajouter facilement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages &rarr; 
+    	                <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;" 
+    	                    href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">
+    	                        Projet Autoblog
+    	                </a>
+                    </div>
                 <?php } ?>
             </div>
 <?php   } ?>
@@ -629,5 +648,17 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
         Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog 0.3</a> de <a href="https://www.suumitsu.eu/">Mitsu</a>, <a href="https://www.ecirtam.net/">Oros</a> et <a href="http://aryo.fr">Arthur Hoaro</a> (Domaine Public)
         <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
 		<iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
+        
+        <script type="text/javascript">
+            document.getElementById('add_generic').style.display = 'none';
+            document.getElementById('add_social').style.display = 'none';
+            document.getElementById('add_shaarli').style.display = 'none';
+            document.getElementById('add_opmlfile').style.display = 'none';
+            document.getElementById('add_bookmark').style.display = 'none';
+            document.getElementById('button_list').style.display = 'block';
+            function show_form(str){
+                document.getElementById('add_'+str).style.display = 'block';
+            }
+        </script>
 	</body>
 </html>
