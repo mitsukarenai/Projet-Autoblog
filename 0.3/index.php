@@ -1,8 +1,8 @@
 <?php
 /*
-	Projet Autoblog 0.3-beta
-	Code: https://github.com/mitsukarenai/Projet-Autoblog
-	Authors: 
+    Projet Autoblog 0.3-beta
+    Code: https://github.com/mitsukarenai/Projet-Autoblog
+    Authors: 
         Mitsu https://www.suumitsu.eu/
         Oros https://www.ecirtam.net/
         Arthur Hoaro http://aryo.fr
@@ -87,6 +87,16 @@ function serverUrl()
 
 function objectCmp($a, $b) {
     return strcasecmp ($a->site_title, $b->site_title);
+}
+
+function generate_antibot() {
+    $letters = array('zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf', 'vingt');
+    return $letters[mt_rand(0, 20)];
+}
+
+function check_antibot($number, $text_number) {
+    $letters = array('zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf', 'vingt');
+    return ( array_search( $text_number, $letters ) === intval($number) ) ? true : false;     
 }
 
 /**
@@ -260,9 +270,11 @@ if( isset($_GET['updateAll']) && ALLOW_FULL_UPDATE) {
     }    
 }
 
+$antibot = generate_antibot();
 $form = '<form method="POST"><input type="hidden" name="generic" value="1" />
             <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl"><br>
-            <input placeholder="Antibot: \'dix-sept\' en chiffre" type="text" name="number" id="number"><br>
+            <input placeholder="Antibot : Ecrivez '. $antibot .' en chiffre" type="text" name="number" id="number"><br>
+            <input type="hidden" name="antibot" value="'. $antibot .'" />
             <input type="submit" value="Vérifier">
         </form>';
 
@@ -281,11 +293,10 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
     		$rssurl = DetectRedirect(escape($_GET['rssurl']));
     		$siteurl = escape($_GET['siteurl']);
             $sitename = escape($_GET['sitename']);
-            $sitetype = updateType($_GET['type']);
+            $sitetype = escape($_GET['type']);
             
           	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
     		if( empty($error)) {
-                $form .= '<p>'.$sitetype.'</p>';
     			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash($siteurl) .'/index.php"></iframe>';
                 $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
     		}
@@ -303,7 +314,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
             if( $datafeed !== false ) {
         		$siteurl = get_link_from_datafeed($datafeed);
                 $sitename = get_title_from_datafeed($datafeed);        
-        		$sitetype = updateType($_GET['type']);
+        		$sitetype = updateType($_GET['type'])['type'];
                 
         		$form .= '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
         		<form method="GET">
@@ -372,10 +383,10 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
 if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_LINKS) {
 	if(empty($_POST['rssurl']))
 		{$error[] = "Veuillez entrer l'adresse du flux.";}
-	if(empty($_POST['number']))
+	if(empty($_POST['number']) || empty($_POST['antibot']) )
 		{$error[] = "Vous êtes un bot ?";}
-    if($_POST['number'] !== '17')
-		{$error[] = "C'est pas le bon nombre.";} 
+    elseif(! check_antibot($_POST['number'], $_POST['antibot']))
+		{$error[] = "Antibot : Ce n'est pas le bon nombre.";} 
 
 	if(empty($error)) {
 		$rssurl = DetectRedirect(escape($_POST['rssurl']));
@@ -406,7 +417,8 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
     		<input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
             <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
             <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
-            <input placeholder="Antibot: \'dix sept\' en chiffre" type="text" name="number" id="number" value="17"><label for="number">&larr; antibot</label><br><input type="submit" value="Créer"></form>';
+            <input placeholder="Antibot: '. escape($_POST['antibot']) .' en chiffre" type="text" name="number" id="number" value="'. escape($_POST['number']) .'"><label for="number">&larr; antibot</label><br>
+            <input type="hidden" name="antibot" value="'. escape($_POST['antibot']) .'" /><input type="submit" value="Créer"></form>';
             
     	}
 	}
@@ -476,7 +488,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             .button:active{position:relative;top:1px;}
 		</style>
 	</head>
-	<body onload="hideAddForms()">
+	<body>
 		<h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></h1>
         
 		<div class="pbloc">
@@ -650,7 +662,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		<iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
         
         <script type="text/javascript">
-            document.getElementById('add_generic').style.display = 'none';
+            <?php if( !empty($_POST['generic']) && !empty($_POST['siteurl']) || empty($_POST['generic']) ) 
+            echo "document.getElementById('add_generic').style.display = 'none';"; ?>
             document.getElementById('add_social').style.display = 'none';
             document.getElementById('add_shaarli').style.display = 'none';
             document.getElementById('add_opmlfile').style.display = 'none';
@@ -660,5 +673,6 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 document.getElementById('add_'+str).style.display = 'block';
             }
         </script>
+        
 	</body>
 </html>

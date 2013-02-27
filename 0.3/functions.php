@@ -57,7 +57,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
     }
     
 	if(folderExists($siteurl)) { 
-		$error[] = 'Erreur: l\'autoblog <a href="./'.$foldername.'/">'. $sitename .'</a> existe déjà.'; 
+		$error[] = 'Erreur : l\'autoblog '. $sitename .' existe déjà.'; 
 		return $error;
 	}
 
