@@ -121,7 +121,7 @@ function create_from_opml($opml) {
  **/
 function versionCheck() {
     $versionfile = 'version';
-    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/tree/master/0.3/version'
+    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/tree/master/0.3/version';
     
     if( file_get_contents($versionfile) != file_get_contents($lastestUrl) ) {
         return true;
