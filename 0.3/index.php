@@ -99,6 +99,23 @@ function check_antibot($number, $text_number) {
     return ( array_search( $text_number, $letters ) === intval($number) ) ? true : false;     
 }
 
+function create_from_opml($opml) {
+    global $error, $success;
+    
+    foreach( $opml->body->outline as $outline ) {
+        if ( !empty( $outline['title'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
+            $siteurl = escape($outline['htmlUrl']);
+            $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
+            $sitename = escape( $outline['title'] );
+            
+            $error = array_merge( $error, createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error ) );
+            
+            if( empty ( $error ))
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+        }
+    }
+}
+
 /**
  * SVG
  **/
@@ -295,7 +312,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
             $sitename = escape($_GET['sitename']);
             $sitetype = escape($_GET['type']);
             
-          	$error = createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error);
+          	$error = array_merge( $error, createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error));
     		if( empty($error)) {
     			$form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash($siteurl) .'/index.php"></iframe>';
                 $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
@@ -373,7 +390,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
     		$error[] = "Flux inaccessible (compte inexistant ?)";
     	}
     	if( empty($error) ) {
-    		$error = createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error);
+    		$error = array_merge( $error, createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error));
     		if( empty($error))
     			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
         }
@@ -400,7 +417,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 			$siteurl = escape($_POST['siteurl']);			
 			$sitename = get_title_from_feed($rssurl);
 
-			$error = createAutoblog('generic', $sitename, $siteurl, $rssurl, $error);
+			$error = array_merge( $error, createAutoblog('generic', $sitename, $siteurl, $rssurl, $error));
 
 			if( empty($error))
 				$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
@@ -430,9 +447,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 }
 
 /**
- * ADD BY OPML
+ * ADD BY OPML File
  **/
-if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML) {   
+if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE) {   
     if(empty($_POST['number']) || empty($_POST['antibot']) )
     	{$error[] = "Vous êtes un bot ?";}
     elseif(! check_antibot($_POST['number'], $_POST['antibot']))
@@ -442,17 +459,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
         if (is_uploaded_file($_FILES['file']['tmp_name'])) {
             $opml = null;
             if( ($opml = simplexml_load_file( $_FILES['file']['tmp_name'])) !== false ) {
-                foreach( $opml->body->outline as $outline ) {
-                    if ( !empty( $outline['title'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
-                        $siteurl = escape($outline['htmlUrl']);
-                        $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
-                        $sitename = escape( $outline['title'] );
-                        
-                        $error = createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error );
-                        if( empty ( $error ))
-                        	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
-                    }
-                }
+                create_from_opml($opml);
             }
             else 
                 $error[] = "Impossible de lire le contenu du fichier OPML.";
@@ -460,6 +467,26 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
         } else {
             $error[] = "Le fichier n'a pas été envoyé.";
         }  
+    }    
+}
+
+/**
+ * ADD BY OPML Link
+ **/
+ if( !empty($_POST['opml_link']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK) {   
+    if(empty($_POST['number']) || empty($_POST['antibot']) )
+        {$error[] = "Vous êtes un bot ?";}
+    elseif(! check_antibot($_POST['number'], $_POST['antibot']))
+		{$error[] = "Antibot : Ce n'est pas le bon nombre.";} 
+    if( empty( $_POST['opml_url'] ))
+        {$error[] = 'Le lien est incorrect.';}
+    
+    if( empty( $error)) {
+        if ( ($opml = simplexml_load_file( escape($_POST['opml_url']) )) !== false ) {
+            create_from_opml($opml);
+        }
+        else 
+            $error[] = "Impossible de lire le contenu du fichier OPML ou d'accéder à l'URL donnée.";
     }    
 }
 
@@ -541,9 +568,10 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
                     $button_list .= '<a href="#" class="button" onclick="show_form(\'social\');return false;">Compte réseau social</a> 
                     <a href="#" class="button" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML)
-                    $button_list .= '<a href="#" class="button" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a>  
-                    <a href="#" class="button" onclick="alert(\'not implemented\');return false;">Lien vers OPML</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK)
+                    $button_list .= '<a href="#" class="button" onclick="show_form(\'opmllink\');return false;">Lien vers OPML</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
                     $button_list .= '<a href="#" class="button" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
                 $button_list .= '</p>';
@@ -582,7 +610,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		                
 		                <form method="POST">
 		                    <input type="hidden" name="socialaccount" value="shaarli">
-		        			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
+                            <input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
                             <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
 		                    <input type="submit" value="Créer">
@@ -590,12 +618,12 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		            </div>
                 <?php } 
                 
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML == TRUE) { ?>    
+                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE == TRUE) { ?>    
                     <div class="form" id="add_opmlfile">
                         <h3>Ajouter par fichier OPML</h3>
                         
                         <form enctype='multipart/form-data' method='POST'>
-                            <input type='hidden' name='opml' value='1' />
+                            <input type='hidden' name='opml_file' value='1' />
                             <input type='file' name='file' /><br>
                             <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
@@ -603,6 +631,21 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                         </form>
                     </div>
 	    			
+                <?php } 
+                
+                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK == TRUE) { ?>    
+                    <div class="form" id="add_opmllink">
+                        <h3>Ajouter par lien OPML</h3>
+                        
+                        <form method="POST">
+                            <input type="hidden" name="opml_link" value="1">
+    	        			<input placeholder="Lien vers OPML" type="text" name="opml_url" id="opml_url" class="smallinput"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
+    	                    <input type="submit" value="Envoyer">
+                        </form>
+                    </div>
+        			
                 <?php } 
                 
                 if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>    
@@ -658,10 +701,11 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             
             if(!empty($autoblogs)){
             	foreach ($autoblogs as $key => $autoblog) {
-					if(escape($autoblog->site_type)=='generic') {$opml_link=' <a href="'.$key.'/?opml">opml</a>';} else $opml_link='';
+					//if(escape($autoblog->site_type)=='generic') {                    
+                    $opml_link='<a href="'.$key.'/?opml">opml</a>'; //} else $opml_link='';
             		$autoblogs_display .= '<div class="vignette">
 	    					<div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
-	    					<div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a>'.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
+	    					<div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
 	    				</div>';
             	}
             }
@@ -684,6 +728,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             document.getElementById('add_shaarli').style.display = 'none';
             document.getElementById('add_opmlfile').style.display = 'none';
             document.getElementById('add_bookmark').style.display = 'none';
+            document.getElementById('add_opmllink').style.display = 'none';
             document.getElementById('button_list').style.display = 'block';
             function show_form(str){
                 document.getElementById('add_'+str).style.display = 'block';

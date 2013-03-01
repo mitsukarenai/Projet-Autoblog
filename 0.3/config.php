@@ -47,6 +47,7 @@ function __($str)
     }
 }
 
+define( 'ALLOW_FULL_UPDATE', TRUE );
 define( 'ALLOW_NEW_AUTOBLOGS', TRUE );
 // If you set ALLOW_NEW_AUTOBLOGS to FALSE, the following options do not matter.
 // Generic RSS
@@ -56,9 +57,9 @@ define( 'ALLOW_NEW_AUTOBLOGS_BY_SOCIAL', TRUE );
 // Bookmark button
 define( 'ALLOW_NEW_AUTOBLOGS_BY_BUTTON', TRUE );
 // OPML file
-define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML', TRUE );
-
-define( 'ALLOW_FULL_UPDATE', TRUE );
+define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE', TRUE );
+// OPML Link
+define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK', TRUE );
 
 
 // Logo à utiliser

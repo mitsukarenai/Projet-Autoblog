@@ -52,8 +52,10 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
     if( $type == 'generic' || empty( $type )) {
         $var = updateType( $siteurl );
         $type = $var['type'];
-        if( !empty( $var['name']) )
-        	$sitename = ucfirst($var['name']) . ' - ' . $sitename;
+        if( !empty( $var['name']) ) {
+            if( !stripos($siteurl, $var['name'] === false) )
+        	    $sitename = ucfirst($var['name']) . ' - ' . $sitename;
+        }
     }
     
 	if(folderExists($siteurl)) { 
