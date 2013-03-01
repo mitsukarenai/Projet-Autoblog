@@ -91,7 +91,7 @@ function objectCmp($a, $b) {
 
 function generate_antibot() {
     $letters = array('zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf', 'vingt');
-    return $letters[mt_rand(0, 20)];
+    return $letters[mt_rand(1, 20)];
 }
 
 function check_antibot($number, $text_number) {
@@ -142,7 +142,7 @@ if (isset($_GET['check']))
 }
 
 /**
- * Simple and Full Export
+ * JSON Export
  **/
 if (isset($_GET['export'])) {
     header('Content-Type: application/json');
@@ -339,42 +339,47 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
  **/
 if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
 {
-	$socialaccount = strtolower(escape($_POST['socialaccount']));
-	$socialinstance = strtolower(escape($_POST['socialinstance']));
-        
-	if($socialinstance === 'twitter') { 
-		$sitetype = 'microblog'; 
-		$siteurl = "http://twitter.com/$socialaccount"; 
-		$rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; 
-	} 
-	elseif($socialinstance === 'identica') { 
-		$sitetype = 'microblog'; 
-		$siteurl = "http://identi.ca/$socialaccount"; 
-		$rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; 
-	} 
-	elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { 
-		$sitetype = 'microblog'; 
-		$siteurl= NoProtocolSiteURL(escape($_POST['statusneturl'])); 
-		$rssurl = DetectRedirect("http://".$siteurl."/api/statuses/user_timeline/$socialaccount.rss"); 
-		$siteurl = DetectRedirect("http://".$siteurl."/$socialaccount"); 
-	} 
-	elseif($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { 
-		$sitetype = 'shaarli'; 
-		$siteurl = NoProtocolSiteURL(escape($_POST['shaarliurl'])); 
-		$siteurl = DetectRedirect("http://".$siteurl."/"); 
-		$rssurl = $siteurl."?do=rss";
-		$socialaccount = get_title_from_feed($rssurl); 
-	} 
-		
-	$headers = get_headers($rssurl, 1);
-	if (strpos($headers[0], '200') == FALSE) {
-		$error[] = "Flux inaccessible (compte inexistant ?)";
-	}
-	if( empty($error) ) {
-		$error = createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error);
-		if( empty($error))
-			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+    if( !empty($_POST['number']) && !empty($_POST['antibot']) && check_antibot($_POST['number'], $_POST['antibot']) ) {
+            
+    	$socialaccount = strtolower(escape($_POST['socialaccount']));
+    	$socialinstance = strtolower(escape($_POST['socialinstance']));
+            
+    	if($socialinstance === 'twitter') { 
+    		$sitetype = 'microblog'; 
+    		$siteurl = "http://twitter.com/$socialaccount"; 
+    		$rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; 
+    	} 
+    	elseif($socialinstance === 'identica') { 
+    		$sitetype = 'microblog'; 
+    		$siteurl = "http://identi.ca/$socialaccount"; 
+    		$rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; 
+    	} 
+    	elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { 
+    		$sitetype = 'microblog'; 
+    		$siteurl= NoProtocolSiteURL(escape($_POST['statusneturl'])); 
+    		$rssurl = DetectRedirect("http://".$siteurl."/api/statuses/user_timeline/$socialaccount.rss"); 
+    		$siteurl = DetectRedirect("http://".$siteurl."/$socialaccount"); 
+    	} 
+    	elseif($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { 
+    		$sitetype = 'shaarli'; 
+    		$siteurl = NoProtocolSiteURL(escape($_POST['shaarliurl'])); 
+    		$siteurl = DetectRedirect("http://".$siteurl."/"); 
+    		$rssurl = $siteurl."?do=rss";
+    		$socialaccount = get_title_from_feed($rssurl); 
+    	} 
+    		
+    	$headers = get_headers($rssurl, 1);
+    	if (strpos($headers[0], '200') == FALSE) {
+    		$error[] = "Flux inaccessible (compte inexistant ?)";
+    	}
+    	if( empty($error) ) {
+    		$error = createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error);
+    		if( empty($error))
+    			$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+        }
     }
+    else 
+        $error[] = 'Antibot : Chiffres incorrects.';
 }
 
 /**
@@ -427,29 +432,35 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 /**
  * ADD BY OPML
  **/
-if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML) {    
-    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-        $opml = null;
-        if( ($opml = simplexml_load_file( $_FILES['file']['tmp_name'])) !== false ) {
-            foreach( $opml->body->outline as $outline ) {
-                if ( !empty( $outline['title'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
-                    $siteurl = escape($outline['htmlUrl']);
-                    $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
-                    $sitename = escape( $outline['title'] );
-                    
-                    $error = createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error );
-                    if( empty ( $error ))
-                    	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML) {   
+    if(empty($_POST['number']) || empty($_POST['antibot']) )
+    	{$error[] = "Vous êtes un bot ?";}
+    elseif(! check_antibot($_POST['number'], $_POST['antibot']))
+		{$error[] = "Antibot : Ce n'est pas le bon nombre.";} 
+    
+    if( empty( $error)) {
+        if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+            $opml = null;
+            if( ($opml = simplexml_load_file( $_FILES['file']['tmp_name'])) !== false ) {
+                foreach( $opml->body->outline as $outline ) {
+                    if ( !empty( $outline['title'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
+                        $siteurl = escape($outline['htmlUrl']);
+                        $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
+                        $sitename = escape( $outline['title'] );
+                        
+                        $error = createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error );
+                        if( empty ( $error ))
+                        	$success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                    }
                 }
             }
-        }
-        else 
-            $error[] = "Impossible de lire le contenu du fichier OPML.";
-        unlink($_FILES['file']['tmp_name']);
-    } else {
-        $error[] = "Le fichier n'a pas été envoyé.";
-    }   
-    
+            else 
+                $error[] = "Impossible de lire le contenu du fichier OPML.";
+            unlink($_FILES['file']['tmp_name']);
+        } else {
+            $error[] = "Le fichier n'a pas été envoyé.";
+        }  
+    }    
 }
 
 ?>
@@ -468,7 +479,7 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			input {width:30em;}
 			input[type="radio"] { width:1em; } 
 			input[type="submit"] { width:8em; } 
-			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl {width:12em;}
+			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl,input[type="text"].smallinput {width:15em;}
 			div.form {padding:0.2em;border:1px solid #fff;}
 			div.form:hover {background-color:#FAF4DA;border:1px dotted; }
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
@@ -560,7 +571,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		        			<input type="radio" name="socialinstance" value="identica">Identica<br>
 		        			<input type="radio" name="socialinstance" value="statusnet">		          
             				<input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
-		                
+		                    <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                     		<input type="submit" value="Créer">
 		                </form>
 		            </div>
@@ -571,6 +583,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 		                <form method="POST">
 		                    <input type="hidden" name="socialaccount" value="shaarli">
 		        			<input type="hidden" name="socialinstance" value="shaarli"><input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
 		                    <input type="submit" value="Créer">
 		                </form>
 		            </div>
@@ -583,6 +597,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                         <form enctype='multipart/form-data' method='POST'>
                             <input type='hidden' name='opml' value='1' />
                             <input type='file' name='file' /><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type='submit' value='Importer' />
                         </form>
                     </div>
