@@ -566,16 +566,17 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                 
                 $button_list = '<p id="button_list">Ajouter un autoblog via : ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_LINKS)
-                    $button_list .= '<a href="#" class="button" id="button_generic" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
-                    $button_list .= '<a href="#" class="button" id="button_social" onclick="show_form(\'social\');return false;">Compte réseau social</a> 
-                    <a href="#" class="button" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
+                    $button_list .= '<a href="#add_generic" class="button" id="button_generic" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
+                if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL) {
+                    $button_list .= '<a href="#add_social" class="button" id="button_social" onclick="show_form(\'social\');return false;">Compte réseau social</a> ';
+                    $button_list .= '<a href="#add_shaarli" class="button" id="button_shaarli" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
+                }
                 if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE)
-                    $button_list .= '<a href="#" class="button" id="button_opmlfile" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a> ';
+                    $button_list .= '<a href="#add_opmlfile" class="button" id="button_opmlfile" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK)
-                    $button_list .= '<a href="#" class="button" id="button_opmllink" onclick="show_form(\'opmllink\');return false;">Lien vers OPML</a> ';
+                    $button_list .= '<a href="#add_opmllink" class="button" id="button_opmllink" onclick="show_form(\'opmllink\');return false;">Lien vers OPML</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
-                    $button_list .= '<a href="#" class="button" id="button_bookmark" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
+                    $button_list .= '<a href="#add_bookmark" class="button" id="button_bookmark" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
                 $button_list .= '</p>';
                 echo $button_list;
                 
