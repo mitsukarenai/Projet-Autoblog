@@ -117,6 +117,21 @@ function create_from_opml($opml) {
 }
 
 /**
+ * Simple version check
+ **/
+function versionCheck() {
+    $versionfile = 'version';
+    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/tree/master/0.3/version'
+    
+    if( file_get_contents($versionfile) != file_get_contents($lastestUrl) ) {
+        return true;
+    }
+    return false;
+ }
+ $update_available = versionCheck();
+ 
+
+/**
  * SVG
  **/
 if (isset($_GET['check']))
@@ -541,11 +556,20 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 	            Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. <br/>
 	            L'objectif premier de ce projet est de lutter contre la censure et toute sorte de pression...
 	        </p>
+           
 			<p>
 				Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i> 
 				(<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).
 			</p>			
        	</div>
+           
+        <?php if( $update_available ) { ?>
+            <div class="pbloc">
+                <p>
+                    Une mise à jour du Projet Autoblog est disponible ! &rarr; <a href="#">Télécharger</a>
+	            </p>
+            </div>
+        <?php } ?>
 
 		<?php if(ALLOW_NEW_AUTOBLOGS == TRUE) { ?>
 	        <div class="pbloc">
