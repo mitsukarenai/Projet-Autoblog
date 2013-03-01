@@ -480,12 +480,14 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
 			.clear {clear:both;text-align:right;font-size:small;}
 			#logo {float: right;}
 			.bouton{background: -moz-linear-gradient(center top , #EDEDED 5%, #DFDFDF 100%) repeat scroll 0 0 #EDEDED;border: 1px none;padding: 10px;border: 1px solid #7777777;border-radius: 8px 8px 8px 8px;box-shadow: 0 1px 0 0 #FFFFFF inset;display: inline-block;}
+
             .success {color: green;}
             .error {color: red;}
             .button_list{display:none;}
             .button{-moz-box-shadow:inset 0 1px 0 0 #d9fbbe;-webkit-box-shadow:inset 0 1px 0 0 #d9fbbe;box-shadow:inset 0 1px 0 0 #d9fbbe;background:0;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356',endColorstr='#a5cc52');background-color:#b8e356;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #83c41a;display:inline-block;color:#fff;font-family:arial;font-size:14px;font-weight:700;text-decoration:none;text-shadow:1px 1px 0 #86ae47;padding:6px 24px;}
             .button:hover{background:0;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52',endColorstr='#b8e356');background-color:#a5cc52;}
             .button:active{position:relative;top:1px;}
+	    .buttonactive{background-color:#aaa;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #83c41a;display:inline-block;color:#fff;font-family:arial;font-size:14px;font-weight:700;text-decoration:none;text-shadow:1px 1px 0 #86ae47;padding:6px 24px;}
 		</style>
 	</head>
 	<body>
@@ -526,15 +528,15 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
                 
                 $button_list = '<p id="button_list">Ajouter un autoblog via : ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_LINKS)
-                    $button_list .= '<a href="#" class="button" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
+                    $button_list .= '<a href="#" class="button" id="button_generic" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
-                    $button_list .= '<a href="#" class="button" onclick="show_form(\'social\');return false;">Compte réseau social</a> 
-                    <a href="#" class="button" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
+                    $button_list .= '<a href="#" class="button" id="button_social" onclick="show_form(\'social\');return false;">Compte réseau social</a> 
+                    <a href="#" class="button" id="button_shaarli" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_OPML)
-                    $button_list .= '<a href="#" class="button" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a>  
+                    $button_list .= '<a href="#" class="button" id="button_opmlfile" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a>  
                     <a href="#" class="button" onclick="alert(\'not implemented\');return false;">Lien vers OPML</a> ';
                 if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
-                    $button_list .= '<a href="#" class="button" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
+                    $button_list .= '<a href="#" class="button" id="button_bookmark" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
                 $button_list .= '</p>';
                 echo $button_list;
                 
@@ -670,7 +672,8 @@ if( !empty($_POST['opml']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML
             document.getElementById('add_bookmark').style.display = 'none';
             document.getElementById('button_list').style.display = 'block';
             function show_form(str){
-                document.getElementById('add_'+str).style.display = 'block';
+                document.getElementById('add_'+str).style.display = (document.getElementById('add_'+str).style.display != 'block' ? 'block' : 'none' ); 
+		document.getElementById('button_'+str).className = (document.getElementById('button_'+str).className != 'buttonactive' ? 'buttonactive' : 'button' ); 
             }
         </script>
         
