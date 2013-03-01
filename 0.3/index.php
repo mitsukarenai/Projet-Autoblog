@@ -121,11 +121,28 @@ function create_from_opml($opml) {
  **/
 function versionCheck() {
     $versionfile = 'version';
-    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/tree/master/0.3/version';
+    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/master/0.3/version';    
+    
+    $expire = time() - 84600 ; // 23h30 en secondes
+    $lockfile = '.versionlock';
+    
+    if (file_exists($lockfile) && filemtime($lockfile) > $expire) {
+        if( file_get_contents($lockfile) == 'NEW' ) {
+            // No new version installed
+            if( filemtime( $lockfile ) > filemtime( $versionfile ) )
+                return true;
+            else unlink($lockfile);
+        }            
+        else return false;
+    } 
+    
+    if (file_exists($lockfile) && filemtime($lockfile) < $expire) { unlink($lockfile); }
     
     if( file_get_contents($versionfile) != file_get_contents($lastestUrl) ) {
+        file_put_contents($lockfile, 'NEW');
         return true;
     }
+    file_put_contents($lockfile, '.');
     return false;
  }
  $update_available = versionCheck();
@@ -565,6 +582,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
            
         <?php if( $update_available ) { ?>
             <div class="pbloc">
+                <h2>Mise à jour</h2>
                 <p>
                     Une mise à jour du Projet Autoblog est disponible ! &rarr; <a href="#">Télécharger</a>
 	            </p>
