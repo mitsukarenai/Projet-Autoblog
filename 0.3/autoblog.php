@@ -602,6 +602,7 @@ if (isset($_GET['opml'])) // OPML
     $opmlbody = $opmlfile->addChild('body');
     $outline = $opmlbody->addChild('outline');
     $outline->addAttribute('title', escape($config->site_title));
+    $outline->addAttribute('text', escape($config->site_type));
     $outline->addAttribute('htmlUrl', escape($config->site_url));
     $outline->addAttribute('xmlUrl', escape($config->feed_url));
 

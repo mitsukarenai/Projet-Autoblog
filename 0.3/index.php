@@ -103,12 +103,13 @@ function create_from_opml($opml) {
     global $error, $success;
     
     foreach( $opml->body->outline as $outline ) {
-        if ( !empty( $outline['title'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
+        if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
             $siteurl = escape($outline['htmlUrl']);
+            $sitetype = escape($outline['text']); if ( $sitetype !== 'generic' or $sitetype !== 'microblog' or $sitetype !== 'shaarli') { die('SITE TYPE inconnu'); }
             $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
             $sitename = escape( $outline['title'] );
             
-            $error = array_merge( $error, createAutoblog( 'generic', $sitename, $siteurl, $rssurl, $error ) );
+            $error = array_merge( $error, createAutoblog( $sitetype, $sitename, $siteurl, $rssurl, $error ) );
             
             if( empty ( $error ))
                 $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
@@ -256,6 +257,7 @@ if (isset($_GET['exportopml'])) // OPML
 
 		    $outline = $opmlbody->addChild('outline');
 		    $outline->addAttribute('title', escape($config->site_title));
+		    $outline->addAttribute('text', escape($config->site_type));
 		    $outline->addAttribute('htmlUrl', escape($config->site_url));
 		    $outline->addAttribute('xmlUrl', escape($config->feed_url));
     	}
@@ -746,8 +748,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             
             if(!empty($autoblogs)){
             	foreach ($autoblogs as $key => $autoblog) {
-					//if(escape($autoblog->site_type)=='generic') {                    
-                    $opml_link='<a href="'.$key.'/?opml">opml</a>'; //} else $opml_link='';
+                    $opml_link='<a href="'.$key.'/?opml">opml</a>';
             		$autoblogs_display .= '<div class="vignette">
 	    					<div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
 	    					<div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
