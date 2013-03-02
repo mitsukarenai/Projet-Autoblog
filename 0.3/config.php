@@ -60,6 +60,8 @@ define( 'ALLOW_NEW_AUTOBLOGS_BY_BUTTON', TRUE );
 define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE', TRUE );
 // OPML Link
 define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK', TRUE );
+// XSAF
+define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 
 // Logo à utiliser

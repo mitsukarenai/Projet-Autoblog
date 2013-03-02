@@ -6,7 +6,7 @@ define('AUTOBLOG_FILE_NAME', 'autoblog.php');
 define('ALLOW_REMOTE_DB_DL', false);
 define('ALLOW_REMOTE_MEDIA_DL', false);
 define('EXEC_TIME', 5);
-define( 'ALLOW_XSAF', TRUE );
+define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
@@ -34,6 +34,13 @@ if(file_exists("functions.php")){
 	include "functions.php";
 }else{
 	echo "functions.php not found !";
+	die;
+}
+
+if(file_exists("config.php")){
+	include "config.php";
+}else{
+	echo "config.php not found !";
 	die;
 }
 
@@ -156,14 +163,14 @@ $autoblog_farm = array(
 	'https://autoblog.suumitsu.eu/?export', */
 );
 if( DEBUG ) echo '<html><body>';
-if( ALLOW_XSAF ) {
+if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF ) {
 	foreach( $autoblog_farm AS $value ) {
 		if( !empty($value) )
 			xsafimport($value, EXEC_TIME);
 	}
 }
 elseif( DEBUG )
-	echo "<p>XSAF désactivé. Positionnez la variable ALLOW_XSAF à TRUE dans le fichier xsaf3.php pour l'activer.</p>";
+	echo "<p>XSAF désactivé. Positionnez les variables ALLOW_NEW_AUTOBLOGS et ALLOW_NEW_AUTOBLOGS_BY_XSAF à TRUE dans le fichier config.php pour l'activer.</p>";
 
 if(DEBUG) {
 	echo "<p>XSAF import finished</p>";
