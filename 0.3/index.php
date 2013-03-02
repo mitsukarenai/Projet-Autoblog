@@ -105,7 +105,7 @@ function create_from_opml($opml) {
     foreach( $opml->body->outline as $outline ) {
         if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
             $siteurl = escape($outline['htmlUrl']);
-            $sitetype = escape($outline['text']); if ( $sitetype !== 'generic' or $sitetype !== 'microblog' or $sitetype !== 'shaarli') { die('SITE TYPE inconnu'); }
+            $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { die("SITE TYPE inconnu: $sitetype"); }
             $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
             $sitename = escape( $outline['title'] );
             
@@ -540,7 +540,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 			input {width:30em;}
 			input[type="radio"] { width:1em; } 
 			input[type="submit"] { width:8em; } 
-			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl,input[type="text"].smallinput {width:15em;}
+			input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl,input[type="text"].smallinput {width:20em;}
 			div.form {padding:0.2em;border:1px solid #fff;}
 			div.form:hover {background-color:#FAF4DA;border:1px dotted; }
 			.vignette { width:20em;height:2em;float:left;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
