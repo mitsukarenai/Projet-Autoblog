@@ -105,7 +105,7 @@ function create_from_opml($opml) {
     foreach( $opml->body->outline as $outline ) {
         if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
             $siteurl = escape($outline['htmlUrl']);
-            $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { die("SITE TYPE inconnu: $sitetype"); }
+            $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { $sitetype = 'generic'; }
             $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
             $sitename = escape( $outline['title'] );
             
