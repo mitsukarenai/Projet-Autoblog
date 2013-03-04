@@ -365,7 +365,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
             if( $datafeed !== false ) {
         		$siteurl = get_link_from_datafeed($datafeed);
                 $sitename = get_title_from_datafeed($datafeed);        
-        		$sitetype = updateType($_GET['type'])['type'];
+        		$sitetype = updateType($_GET['type']);
+                $sitetype = $sitetype['type'];
                 
         		$form .= '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
         		<form method="GET">
