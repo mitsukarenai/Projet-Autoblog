@@ -48,6 +48,8 @@ function __($str)
 }
 
 define( 'ALLOW_FULL_UPDATE', TRUE );
+// Check new version on Github
+define( 'ALLOW_CHECK_UPDATE', TRUE );
 define( 'ALLOW_NEW_AUTOBLOGS', TRUE );
 // If you set ALLOW_NEW_AUTOBLOGS to FALSE, the following options do not matter.
 // Generic RSS
