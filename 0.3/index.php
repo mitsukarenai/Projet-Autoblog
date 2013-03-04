@@ -146,7 +146,7 @@ function versionCheck() {
     file_put_contents($lockfile, '.');
     return false;
  }
- $update_available = versionCheck();
+ $update_available = (ALLOW_CHECK_UPDATE) ? versionCheck() : false;
  
 
 /**
