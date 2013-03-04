@@ -278,7 +278,7 @@ if (isset($_GET['sitemap']))
     foreach($subdirs as $unit) {
  		if(is_dir($unit)) {
 			$unit=substr($unit, 2);
-			$proto=$_SERVER['HTTPS']?"https://":"http://";
+			$proto=(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'])=='on')?"https://":"http://";
 			echo '<url><loc>'.$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
 			echo '<lastmod>'.date('c', filemtime($unit))."</lastmod>\n";
 			echo '<changefreq>hourly</changefreq></url>';
@@ -469,10 +469,10 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 
     		$form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
     		<form method="POST"><input type="hidden" name="generic" value="1" />
-            <input style="color:black" type="text" id="sitename" value="'.$sitename.'" disabled><label for="sitename">&larr; titre du site (auto)</label><br>		
+            <input style="color:black" type="text" id="sitename" value="'.$sitename.'" '.( $datafeed === false?'':'disabled').'><label for="sitename">&larr; titre du site (auto)</label><br>		
     		<input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
             <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
-            <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" disabled><label for="sitetype">&larr; type de site</label><br>
+            <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" '.( $datafeed === false?'':'disabled').'><label for="sitetype">&larr; type de site</label><br>
             <input placeholder="Antibot: '. escape($_POST['antibot']) .' en chiffre" type="text" name="number" id="number" value="'. escape($_POST['number']) .'"><label for="number">&larr; antibot</label><br>
             <input type="hidden" name="antibot" value="'. escape($_POST['antibot']) .'" /><input type="submit" value="Créer"></form>';
             
@@ -516,11 +516,17 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         {$error[] = 'Le lien est incorrect.';}
     
     if( empty( $error)) {
-        if ( ($opml = simplexml_load_file( escape($_POST['opml_url']) )) !== false ) {
-            create_from_opml($opml);
+        $opml_url = escape($_POST['opml_url']);
+        if(parse_url($opml_url, PHP_URL_HOST)==FALSE) {
+            $error[] = "URL du fichier OPML non valide.";
+        } else {
+            if ( ($opml = simplexml_load_file( $opml_url )) !== false ) {
+                create_from_opml($opml);
+            } else {
+                $error[] = "Impossible de lire le contenu du fichier OPML ou d'accéder à l'URL donnée.";
+            }            
         }
-        else 
-            $error[] = "Impossible de lire le contenu du fichier OPML ou d'accéder à l'URL donnée.";
+
     }    
 }
 
