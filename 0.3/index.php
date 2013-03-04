@@ -398,7 +398,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
     	if($socialinstance === 'twitter') { 
     		$sitetype = 'microblog'; 
     		$siteurl = "http://twitter.com/$socialaccount"; 
-    		$rssurl = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$socialaccount"; 
+    		$rssurl = $apitwitter.$socialaccount; 
     	} 
     	elseif($socialinstance === 'identica') { 
     		$sitetype = 'microblog'; 
