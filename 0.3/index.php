@@ -292,7 +292,7 @@ if (isset($_GET['sitemap']))
  * Update ALL autblogs (except .disabled)
  * This action can be very slow and consume CPU if you have a lot of autoblogs
  **/
-if( isset($_GET['updateAll']) && ALLOW_FULL_UPDATE) {
+if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
 
     $expire = time() - 84600 ; // 23h30 en secondes
     $lockfile = ".updatealllock";  
