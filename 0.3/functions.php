@@ -20,13 +20,15 @@ function NoProtocolSiteURL($url) {
 function DetectRedirect($url)
 {
 	if(parse_url($url, PHP_URL_HOST)==FALSE) {
-		die('Not a URL');
+		//die('Not a URL');
+		return array( 'error' => 'Not a URL: '. escape ($url) );
 	}
 	$response = get_headers($url, 1);
 	if(!empty($response['Location'])) {
 		$response2 = get_headers($response['Location'], 1);
 		if(!empty($response2['Location'])) {
-			die('too much redirection');
+			//die('too much redirection');
+			return array( 'error' => 'too much redirection: '. escape ($url) );
 		}
 		else { return $response['Location']; }
 	}

@@ -3,7 +3,7 @@ Projet Autoblog serie 0.3
 
 - version VroumVroumBlog 0.3.0 BETA
 
-Auteurs: Mitsu (https://www.suumitsu.eu/) & Oros (https://www.ecirtam.net/)
+Auteurs: Mitsu (https://www.suumitsu.eu/), Oros (https://www.ecirtam.net/) et Arthur Hoaro (http://hoa.ro)
 
 Licence: Domaine Public
 

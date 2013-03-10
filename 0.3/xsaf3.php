@@ -6,7 +6,6 @@ define('AUTOBLOG_FILE_NAME', 'autoblog.php');
 define('ALLOW_REMOTE_DB_DL', false);
 define('ALLOW_REMOTE_MEDIA_DL', false);
 define('EXEC_TIME', 5);
-define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
