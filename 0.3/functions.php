@@ -144,24 +144,8 @@ function updateType($siteurl) {
 
 function debug($data)
 {
-	if(is_array($data))
-	{
-		echo '<p>Array <br/>{<br/>';
-		foreach ( $data AS $Key => $Element )
-		{
-			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['. $Key .'] =>';
-			debug($Element);
-		}
-		echo '}</p>';
-	}
-	else if(is_bool($data))
-	{
-		if($data === 1)
-			echo 'true<br/>';
-		else
-			echo 'false<br/>';
-	}	
-	else
-		echo $data.'<br />';
+	echo '<pre>';
+	var_dump($data);
+	echo '</pre>';
 }
 ?>
