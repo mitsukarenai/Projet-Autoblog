@@ -130,10 +130,10 @@ function getTimeout( $type ) {
 
 function updateType($siteurl) {
     if( strpos($siteurl, 'twitter.com') !== FALSE ) {
-        return array('type' => 'microblog', 'name' => 'twitter');
+        return array('type' => 'twitter', 'name' => 'twitter');
     }
     elseif ( strpos( $siteurl, 'identi.ca') !== FALSE ) {
-        return array('type' => 'microblog', 'name' => 'identica');
+        return array('type' => 'identica', 'name' => 'identica');
     }
     elseif( strpos( $siteurl, 'shaarli' ) !== FALSE ) { 
         return array('type' => 'shaarli', 'name' => 'shaarli');

@@ -279,6 +279,30 @@ if (isset($_GET['export'])) {
 }
 
 /**
+ * JSON Allowed Twitter accounts export
+ **/
+if (isset($_GET['export_twitter'])) {
+    header('Content-Type: application/json');
+    $directory = "./";
+    $subdirs = glob($directory . "*");
+    $response = array();
+
+    foreach($subdirs as $unit) {
+        if(is_dir($unit)) {
+            $unit=substr($unit, 2);
+            $ini = parse_ini_file($unit.'/vvb.ini');
+            if( $ini['SITE_TYPE'] == 'twitter' ) {
+                preg_match('#twitter\.com/(.+)#', $ini['SITE_URL'], $username);
+                $response[] = $username[1];
+            }
+            unset($ini);
+        }
+    }
+    echo json_encode( $response );
+    die;
+}
+
+/**
  *  OPML Full Export
  **/
 if (isset($_GET['exportopml'])) // OPML
@@ -460,12 +484,12 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         $socialinstance = strtolower(escape($_POST['socialinstance']));
             
         if($socialinstance === 'twitter') { 
-            $sitetype = 'microblog'; 
+            $sitetype = 'twitter'; 
             $siteurl = "http://twitter.com/$socialaccount"; 
             $rssurl = $apitwitter.$socialaccount; 
         } 
         elseif($socialinstance === 'identica') { 
-            $sitetype = 'microblog'; 
+            $sitetype = 'identica'; 
             $siteurl = "http://identi.ca/$socialaccount"; 
             $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss"; 
         } 
