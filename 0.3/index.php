@@ -486,7 +486,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         if($socialinstance === 'twitter') { 
             $sitetype = 'twitter'; 
             $siteurl = "http://twitter.com/$socialaccount"; 
-            $rssurl = $apitwitter.$socialaccount; 
+            $rssurl = $apitwitter.$socialaccount; */  $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
         } 
         elseif($socialinstance === 'identica') { 
             $sitetype = 'identica'; 
@@ -743,7 +743,8 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 
                         <form method="POST">
                             <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
-                            <input type="radio" name="socialinstance" value="twitter">Twitter<br>
+                            <?php /*<input type="radio" name="socialinstance" value="twitter">Twitter<br>*/ ?>
+                            <s>Twitter</s><br>
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">                  
                             <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
