@@ -484,9 +484,10 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         $socialinstance = strtolower(escape($_POST['socialinstance']));
             
         if($socialinstance === 'twitter') { 
-            $sitetype = 'twitter'; 
+            /*$sitetype = 'twitter'; 
             $siteurl = "http://twitter.com/$socialaccount"; 
-            $rssurl = $apitwitter.$socialaccount; */  $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
+            $rssurl = $apitwitter.$socialaccount; */
+            $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
         } 
         elseif($socialinstance === 'identica') { 
             $sitetype = 'identica'; 
