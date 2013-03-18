@@ -530,9 +530,8 @@ class VroumVroum_Blog
                     // Ignore copy errors
                 }
             }
-                $content = str_replace($m[0], $m[1] . '="media/'.$filename.'" data-original-source="'.$url.'"', $content);
+                $content = str_replace($m[0], $m[1] . '="'. LOCAL_URL .'media/'.$filename.'" data-original-source="'.$url.'"', $content);
         }
-
         return $content;
     }
 
