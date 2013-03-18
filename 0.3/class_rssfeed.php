@@ -254,7 +254,7 @@ class AutoblogRSS extends FileRSSFeed {
         );
     }
     
-    public function addNewAutoblog($title, $folder, $siteurl, $rssurl, $code) {
+    public function addNewAutoblog($title, $folder, $siteurl, $rssurl) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
             $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;

@@ -880,11 +880,7 @@ if ($vvb->mustUpdate())
 echo '
 </body>
 </html>';
-// Escaping HTML strings
-function escape($str)
-{
-    return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
-}
+
 
 function escape_content($str)
 {
