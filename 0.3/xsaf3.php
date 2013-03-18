@@ -1,6 +1,6 @@
 <?php
 
-define('DEBUG', true);
+define('DEBUG', false);
 define('XSAF_VERSION', 3);
 define('AUTOBLOG_FILE_NAME', 'autoblog.php');
 define('ALLOW_REMOTE_DB_DL', false);
@@ -154,25 +154,16 @@ function xsafimport($xsafremote, $max_exec_time) {
 	return;	
 }
 	
-/* And now, the XSAF links to be imported, with maximal execusion time for import in second ! 
-	You should add only trusted sources. */
-$autoblog_farm = array( 
-	'https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json' /*,
-	'https://www.ecirtam.net/autoblogs/?export',
-	'https://autoblog.suumitsu.eu/?export', */
-);
 if( DEBUG ) echo '<html><body>';
-if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF ) {
-	foreach( $autoblog_farm AS $value ) {
+if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF && !empty($xsaf_farm) ) {
+	foreach( $xsaf_farm AS $value ) {
 		if( !empty($value) )
 			xsafimport($value, EXEC_TIME);
 	}
+    if(DEBUG) echo "<p>XSAF import finished</p>";
 }
 elseif( DEBUG )
 	echo "<p>XSAF désactivé. Positionnez les variables ALLOW_NEW_AUTOBLOGS et ALLOW_NEW_AUTOBLOGS_BY_XSAF à TRUE dans le fichier config.php pour l'activer.</p>";
 
-if(DEBUG) {
-	echo "<p>XSAF import finished</p>";
-}
 if( DEBUG ) echo '</body></html>';
 ?>
