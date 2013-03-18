@@ -226,7 +226,7 @@ class AutoblogRSS extends FileRSSFeed {
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
                 $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
-        parent::addItem( 'L\'autoblog "'. $title.' est de nouveau disponible', $autobHref, 
+        parent::addItem( 'L\'autoblog "'. $title.'" est de nouveau disponible', $autobHref, 
             'Autoblog : <a href="'. $autobHref .'">'.$title.'</a><br>
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
@@ -242,9 +242,25 @@ class AutoblogRSS extends FileRSSFeed {
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
             $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
-        parent::addItem( 'L\'autoblog "'. $title.' a renvoyé un code imprévu', $autobHref, 
+        parent::addItem( 'L\'autoblog "'. $title.'" a renvoyé un code imprévu', $autobHref, 
             'Code: '. $code .'<br>
                 Autoblog : <a href="'. $autobHref .'">'.$title.'</a><br>
+                Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
+                RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
+                Folder: '. $folder ,
+            'admin',
+            $autobHref,
+            time()
+        );
+    }
+    
+    public function addNewAutoblog($title, $folder, $siteurl, $rssurl, $code) {
+        $path = pathinfo( $_SERVER['PHP_SELF'] );
+        $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
+            $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
+
+        parent::addItem( 'L\'autoblog "'. $title.'" a été ajouté à la ferme', $autobHref, 
+            'Autoblog : <a href="'. $autobHref .'">'.$title.'</a><br>
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
                 Folder: '. $folder ,

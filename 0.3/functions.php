@@ -1,4 +1,5 @@
 <?php
+if (!defined('RSS_FILE')) define('RSS_FILE', 'rss.xml');
 
 function NoProtocolSiteURL($url) {
 	$protocols = array("http://", "https://");
@@ -71,6 +72,14 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
 	$foldername = urlToFolderSlash($siteurl);	
 	
 	if ( mkdir('./'. $foldername, 0755, false) ) {
+        
+        /** 
+         * RSS
+         **/
+        require_once('class_rssfeed.php');
+        $rss = new AutoblogRSS(RSS_FILE);
+        $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
+         
         $fp = fopen('./'. $foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
             $error[] = "Impossible d'écrire le fichier index.php";

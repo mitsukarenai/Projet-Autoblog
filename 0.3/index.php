@@ -20,7 +20,6 @@
 
 define('XSAF_VERSION', 3);
 define('ROOT_DIR', __DIR__);
-define('RSS_FILE', 'rss.xml');
 
 if(file_exists("config.php")){
     include "config.php";
@@ -170,7 +169,7 @@ if (isset($_GET['rss'])) {
 if( !file_exists(RSS_FILE)) {
     require_once('class_rssfeed.php');
     $rss = new AutoblogRSS(RSS_FILE);
-    $rss->create('Projet Autoblog'. ((!empty($head_title)) ? ' | '. $head_title : ''), serverUrl(true),"Projet Autoblog, flux RSS des changements de disponibilité.", serverUrl(true) . '/' . RSS_FILE);
+    $rss->create('Projet Autoblog'. ((!empty($head_title)) ? ' | '. $head_title : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . '/' . RSS_FILE);
 }
 
 /**
