@@ -215,7 +215,7 @@ class AutoblogRSS extends FileRSSFeed {
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
                 Folder: '. $folder ,
-            'admin',
+            'admin@'.$_SERVER['SERVER_NAME'],
             $autobHref,
             time()
         );
@@ -231,7 +231,7 @@ class AutoblogRSS extends FileRSSFeed {
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
                 Folder: '. $folder ,
-            'admin',
+            'admin@'.$_SERVER['SERVER_NAME'],
             $autobHref,
             time()
         );
@@ -248,7 +248,7 @@ class AutoblogRSS extends FileRSSFeed {
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
                 Folder: '. $folder ,
-            'admin',
+            'admin@'.$_SERVER['SERVER_NAME'],
             $autobHref,
             time()
         );
@@ -264,7 +264,7 @@ class AutoblogRSS extends FileRSSFeed {
                 Site: <a href="'. $siteurl .'">'. $siteurl .'</a><br>
                 RSS: <a href="'.$rssurl.'">'.$rssurl.'</a><br>
                 Folder: '. $folder ,
-            'admin',
+            'admin@'.$_SERVER['SERVER_NAME'],
             $autobHref,
             time()
         );
