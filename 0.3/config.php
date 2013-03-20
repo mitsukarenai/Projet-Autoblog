@@ -26,8 +26,8 @@ define( 'ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK', TRUE );
 define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 
-// URL to Twitter's feed API
-$apitwitter='http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=';
+// URL to Twitterbridge API - Set FALSE to disable Twitter (default).
+$apitwitter = FALSE;
 
 // Logo à utiliser
 $logo="./icon-logo.svg";
