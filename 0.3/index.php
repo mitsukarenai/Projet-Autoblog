@@ -483,10 +483,13 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         $socialinstance = strtolower(escape($_POST['socialinstance']));
             
         if($socialinstance === 'twitter') { 
-            /*$sitetype = 'twitter'; 
-            $siteurl = "http://twitter.com/$socialaccount"; 
-            $rssurl = $apitwitter.$socialaccount; */
-            $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
+            if( $apitwitter !== FALSE ) {
+                $sitetype = 'twitter'; 
+                $siteurl = "http://twitter.com/$socialaccount"; 
+                $rssurl = $apitwitter.$socialaccount;
+            }
+            else
+                $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
         } 
         elseif($socialinstance === 'identica') { 
             $sitetype = 'identica'; 
@@ -508,9 +511,12 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         } 
         
         if( !isset($rssurl['error']) && !isset($siteurl['error']) ) {
-            $headers = get_headers($rssurl, 1);
-            if (strpos($headers[0], '200') == FALSE) {
-                $error[] = "Flux inaccessible (compte inexistant ?)";
+            // Twitterbridge do NOT allow this user yet => No check
+            if( $sitetype != 'twitter' ) {
+                $headers = get_headers($rssurl, 1);
+                if (strpos($headers[0], '200') == FALSE) {
+                    $error[] = "Flux inaccessible (compte inexistant ?)";
+                }
             }
             if( empty($error) ) {
                 $error = array_merge( $error, createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error));
@@ -745,8 +751,10 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 
                         <form method="POST">
                             <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
-                            <?php /*<input type="radio" name="socialinstance" value="twitter">Twitter<br>*/ ?>
-                            <s>Twitter</s><br>
+                            <?php 
+                            if( $apitwitter !== FALSE ) 
+                                echo '<input type="radio" name="socialinstance" value="twitter">Twitter<br>';
+                            else echo '<s>Twitter</s><br>'; ?>                            
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">                  
                             <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>

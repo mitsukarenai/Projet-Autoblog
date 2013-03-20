@@ -686,7 +686,7 @@ if($site_type == 'generic') // custom CSS for generic
     .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
     .footer { text-align:center; font-size: small; color:#333; clear: both; }';
     }
-	else if($site_type == 'microblog') // custom CSS for microblog
+	else if($site_type == 'microblog' || $site_type == 'twitter' || $site_type == 'identica') // custom CSS for microblog
 	{
     $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
     .article .title h2 { width: 10em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 0.7em;margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
