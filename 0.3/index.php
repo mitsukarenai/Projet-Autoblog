@@ -687,7 +687,9 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             <div class="pbloc">
                 <h2>Mise à jour</h2>
                 <p>
-                    Une mise à jour du Projet Autoblog est disponible ! &rarr; <a href="#">Télécharger</a>
+                    Une mise à jour du Projet Autoblog est disponible !<br>
+                    &rarr; <a href="https://github.com/mitsukarenai/Projet-Autoblog/archive/master.zip">Télécharger la dernière version</a><br>
+                    &rarr; <strong>Important : </strong><a href="https://github.com/mitsukarenai/Projet-Autoblog/wiki/Mettre-%C3%A0-jour">Consulter la documentation - mise à jour</a>
                 </p>
             </div>
         <?php } ?>
