@@ -1,5 +1,5 @@
 <?php
-if (!defined('RSS_FILE')) define('RSS_FILE', 'rss.xml');
+
 
 function NoProtocolSiteURL($url) {
 	$protocols = array("http://", "https://");

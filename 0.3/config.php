@@ -4,6 +4,7 @@ if(!defined('ROOT_DIR'))
     define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
 }
 define('LOCAL_URI', '');
+if (!defined('RSS_FILE')) define('RSS_FILE', 'rss.xml');
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
