@@ -41,10 +41,7 @@ if (!defined('MEDIA_DIR'))          define('MEDIA_DIR', ROOT_DIR . '/media');
 if (!defined('LOCAL_URL'))
 {
     // Automagic URL discover
-    $path = substr(ROOT_DIR, strlen($_SERVER['DOCUMENT_ROOT']));
-    $path = (!empty($path[0]) && $path[0] != '/') ? '/' . $path : $path;
-    $path = (substr($path, -1) != '/') ? $path . '/' : $path;
-    define('LOCAL_URL', 'http' . (!empty($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $path);
+    define('LOCAL_URL', 'http' . (!empty($_SERVER['HTTPS']) ? 's' : '')."://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 }
 
 if (!defined('LOCAL_URI'))
@@ -535,7 +532,7 @@ class VroumVroum_Blog
                     // Ignore copy errors
                 }
             }
-                $content = str_replace($m[0], $m[1] . '="'. LOCAL_URL .'media/'.$filename.'" data-original-source="'.$url.'"', $content);
+                $content = str_replace($m[0], $m[1] . '="'.'media/'.$filename.'" data-original-source="'.$url.'"', $content);
         }
         return $content;
     }
@@ -619,10 +616,11 @@ if (isset($_GET['media'])) // MEDIA
     header('Content-Type: application/json');
     if(is_dir(MEDIA_DIR))
     {
+		$url = str_replace('?media', 'media/', LOCAL_URL);
         $files = scandir(MEDIA_DIR);
         unset($files[0]); // .
         unset($files[1]); // ..
-        echo json_encode(array("url"=> LOCAL_URL.substr(MEDIA_DIR, strlen(ROOT_DIR)+1).'/', "files" => $files));
+        echo json_encode(array("url"=> $url, "files" => $files));
     }
     exit;
 }
@@ -829,9 +827,9 @@ else
 echo '
 <div class="footer">
     <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
-    <p>'.__('Download:').' <a href="'.LOCAL_URL.basename(CONFIG_FILE).'">'.__('configuration').'</a> (<a href="?opml">OPML</a>)
-        - <a href="'.LOCAL_URL.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
-    <p><a href="'.LOCAL_URL.'?media">'.__('Media export').' <sup> JSON</sup></a></p>
+    <p>'.__('Download:').' <a href="./'.basename(CONFIG_FILE).'">'.__('configuration').'</a> (<a href="?opml">OPML</a>)
+        - <a href="./'.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
+    <p><a href="./?media">'.__('Media export').' <sup> JSON</sup></a></p>
 </div>';
 
 if ($vvb->mustUpdate())
@@ -885,7 +883,7 @@ echo '
 function escape_content($str)
 {
     $str = preg_replace('!<\s*(style|script|link)!', '&lt;\\1', $str);
-    $str = str_replace('="media/', '="'.LOCAL_URL.'media/', $str);
+    $str = str_replace('="media/', '="./media/', $str);
     return $str;
 }
 
