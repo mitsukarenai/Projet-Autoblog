@@ -40,9 +40,9 @@ END;
         $atomlink->addAttribute("rel","self");
         $atomlink->addAttribute("type","application/rss+xml");
         
-        $this->xml->channel->addChild("title",$title);
-        $this->xml->channel->addChild("link",$link);
-        $this->xml->channel->addChild("description",$description);
+        $this->xml->channel->title = $title;
+        $this->xml->channel->link = $link;
+        $this->xml->channel->description = $description;
     }
 
     /**
@@ -60,9 +60,9 @@ END;
      */
 	public function setImage($url, $title, $link) {
 		$image = $this->xml->channel->addChild("image");
-		$image->addChild("url",$url);
-		$image->addChild("title",$title);
-		$image->addChild("link",$link);
+		$image->url = $url;
+		$image->title = $title;
+		$image->link = $link;
 	}
 	/**
 	 * Add a item to the RSS feed
@@ -75,12 +75,15 @@ END;
 	 */
 	public function addItem($title, $link, $description, $author, $guid, $timestamp) {
 	    $item = $this->xml->channel->addChild("item");
-	    $item->addChild("title",$title);
-	    $item->addChild("description",$description);
-	    $item->addChild("link",$link);
-	    $item->addChild("guid",$guid);
-	    $item->addChild("author",$author);
-	    $item->addChild("pubDate",date(DATE_RSS,intval($timestamp)));
+	    $item->title = $title;
+	    $item->description = $description;
+	    $item->link = $link;
+	    $item->guid = $guid;
+	    if( isset($guid['isPermaLink']))
+	    	$item->guid['isPermaLink'] = $guid['isPermaLink'];
+	    if( !empty( $author) )
+	    	$item->author = $author;
+	    $item->pubDate = date(DATE_RSS,intval($timestamp));
 	}
 	/**
 	 * Displays the RSS feed 
