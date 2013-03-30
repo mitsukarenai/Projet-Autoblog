@@ -670,7 +670,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         </style>
     </head>
     <body>
-        <h1>PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></h1>
+        <h1><a href="<?php echo serverUrl(true); ?>">PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></a></h1>
         
         <div class="pbloc">
             <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
