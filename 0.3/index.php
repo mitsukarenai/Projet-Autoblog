@@ -109,10 +109,9 @@ function create_from_opml($opml) {
     
     foreach( $opml->body->outline as $outline ) {
         if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
-            $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
-            if( isset($rssurl['error']) )
-                $error[] = $rssurl['error'];
-            else {
+            try {
+                $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
+            
                 $sitename = escape( $outline['title'] );     
                 $siteurl = escape($outline['htmlUrl']);
                 $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { $sitetype = 'generic'; }   
@@ -121,6 +120,9 @@ function create_from_opml($opml) {
             
                 if( empty ( $error ))
                     $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+            }
+            catch (Exception $e) {
+                $error[] = $e->getMessage();
             }
         }
     }
@@ -418,10 +420,9 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
     }
     else { 
         if(isset($_GET['add']) && $_GET['add'] === '1' && !empty($_GET['siteurl']) && !empty($_GET['sitename'])) {
-            $rssurl = DetectRedirect(escape($_GET['rssurl']));
-            if( isset($rssurl['error']) )
-                $form .= '<p>Erreur : '. $rssurl['error'] .'<br>';
-            else {
+            try {
+                $rssurl = DetectRedirect(escape($_GET['rssurl']));
+           
                 $siteurl = escape($_GET['siteurl']);
                 $sitename = escape($_GET['sitename']);
                 $sitetype = updateType($siteurl); // Disabled input doesn't send POST data
@@ -439,13 +440,14 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                     $form .= '</ul>';
                 }
             }
-                $form .= '<a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
+            catch (Exception $e) {
+                $form .= $e->getMessage();
+            }
+            $form .= '<a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
         }
         else {
-            $rssurl = DetectRedirect(escape($_GET['rssurl']));
-            if( isset($rssurl['error']) )
-                $form .= '<p>Erreur : '. $rssurl['error'] .'<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
-            else {
+            try {
+                $rssurl = DetectRedirect(escape($_GET['rssurl']));            
                 $datafeed = file_get_contents($rssurl);
                 if( $datafeed !== false ) {
                     $siteurl = get_link_from_datafeed($datafeed);
@@ -465,6 +467,9 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                 else {
                     $form .= '<p>URL du flux RSS incorrecte.<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
                 }
+            }
+            catch (Exception $e) {
+                $form .= $e->getMessage() .'<br><a href="#" onclick="window.close()">Fermer la fenêtre.</a></p>';
             }
         }
     }
@@ -499,18 +504,28 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) { 
             $sitetype = 'microblog'; 
             $siteurl= NoProtocolSiteURL(escape($_POST['statusneturl'])); 
-            $rssurl = DetectRedirect("http://".$siteurl."/api/statuses/user_timeline/$socialaccount.rss"); 
-            $siteurl = DetectRedirect("http://".$siteurl."/$socialaccount"); 
+            try {
+                $rssurl = DetectRedirect("http://".$siteurl."/api/statuses/user_timeline/$socialaccount.rss"); 
+                $siteurl = DetectRedirect("http://".$siteurl."/$socialaccount"); 
+            }
+            catch (Exception $e) {
+                echo $error[] = $e->getMessage();
+            }            
         } 
         elseif($socialinstance === 'shaarli' && !empty($_POST['shaarliurl'])) { 
             $sitetype = 'shaarli'; 
             $siteurl = NoProtocolSiteURL(escape($_POST['shaarliurl'])); 
-            $siteurl = DetectRedirect("http://".$siteurl."/"); 
+            try {
+                $siteurl = DetectRedirect("http://".$siteurl."/"); 
+            }
+            catch (Exception $e) {
+                echo $error[] = $e->getMessage();
+            }
             $rssurl = $siteurl."?do=rss";
             $socialaccount = get_title_from_feed($rssurl); 
         } 
         
-        if( !isset($rssurl['error']) && !isset($siteurl['error']) ) {
+        if( empty($error) ) {
             // Twitterbridge do NOT allow this user yet => No check
             if( $sitetype != 'twitter' ) {
                 $headers = get_headers($rssurl, 1);
@@ -524,7 +539,6 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
                     $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
             }
         }
-        else $error[] = (isset($rssurl['error'])) ? $rssurl['error'] : $siteurl['error'];
     }
     else 
         $error[] = 'Antibot : Chiffres incorrects.';
@@ -542,8 +556,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
         {$error[] = "Antibot : Ce n'est pas le bon nombre.";} 
 
     if(empty($error)) {
-        $rssurl = DetectRedirect(escape($_POST['rssurl']));
-        if( !isset($rssurl['error']) ) {
+        try {
+            $rssurl = DetectRedirect(escape($_POST['rssurl']));
+                
             if(!empty($_POST['siteurl'])) {
 
                 $siteurl = escape($_POST['siteurl']);           
@@ -575,8 +590,10 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 <input type="hidden" name="antibot" value="'. escape($_POST['antibot']) .'" /><input type="submit" value="Créer"></form>';
                 
             }   
-        } 
-        else $error[] = $rssurl['error'];
+        }
+        catch (Exception $e) {
+            echo $error[] = $e->getMessage();
+        }
     }
 }
 
