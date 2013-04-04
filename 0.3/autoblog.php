@@ -720,9 +720,9 @@ echo '
 </head>
 <body>
 <div class="header">
-    <h1><a href="'.escape(LOCAL_URL) .'.." style="font-size:0.8em;">PROJET AUTOBLOG'. (!empty($head_title) ? ' ~ '. escape($head_title) : '') .'</a></h1>
+    <h1><a href="./" style="font-size:0.8em;">PROJET AUTOBLOG'. (!empty($head_title) ? ' ~ '. escape($head_title) : '') .'</a></h1>
     <hr>
-    <h1><a href="'.escape(LOCAL_URL).'">'.escape($config->site_title).'</a></h1>';
+    <h1><a href="./">'.escape($config->site_title).'</a></h1>';
 
 if (!empty($config->site_description))
     echo '<p>'.$config->site_description.'<br><a href="../">&lArr; retour index</a></p>';
