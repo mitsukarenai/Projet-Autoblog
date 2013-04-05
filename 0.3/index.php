@@ -837,6 +837,26 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             </div>
 <?php   } ?>
 
+        <?php
+        $directory = "./". DOC_FOLDER;
+        $docs = array();
+        if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
+            $subdirs = glob($directory . "*");            
+            foreach($subdirs as $unit)
+            {
+                if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
+                    $docs[] = '<a href="'. $unit . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>';
+               }                
+            }
+        }
+        if(!empty( $docs )) {
+            echo '<div class="pbloc"><h2>Autres documents</h2><ul>';
+            foreach( $docs as $value ) 
+                echo '<li>'. $value .'</li>';
+            echo '</ul></div>';
+        }
+        ?>
+            
         <div class="pbloc">
             <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="rss.png" alt="rss"/></a></h2>
             <p>

@@ -5,6 +5,7 @@ if(!defined('ROOT_DIR'))
 }
 define('LOCAL_URI', '');
 if (!defined('RSS_FILE')) define('RSS_FILE', 'rss.xml');
+if (!defined('DOC_FOLDER')) define('DOC_FOLDER', 'docs/');
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
