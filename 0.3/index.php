@@ -255,7 +255,7 @@ if (isset($_GET['export'])) {
     $subdirs = glob($directory . "*");
     
     foreach($subdirs as $unit) {
-        if(is_dir($unit)) {
+        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             $config = new stdClass;
@@ -289,7 +289,7 @@ if (isset($_GET['export_twitter'])) {
     $response = array();
 
     foreach($subdirs as $unit) {
-        if(is_dir($unit)) {
+        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             if( $ini['SITE_TYPE'] == 'twitter' ) {
@@ -323,7 +323,7 @@ if (isset($_GET['exportopml'])) // OPML
     $subdirs = glob($directory . "*");
     
     foreach($subdirs as $unit) {
-        if(is_dir($unit)) { 
+        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) { 
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             $config = new stdClass;
@@ -395,7 +395,7 @@ if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
     $directory = "./";
     $subdirs = glob($directory . "*");
     foreach($subdirs as $unit) {
-        if(is_dir($unit)) {
+        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
             if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
                 file_get_contents(serverUrl() . substr($_SERVER['PHP_SELF'], 0, -9) . $unit . '/index.php');                
             }
@@ -406,7 +406,7 @@ if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
 $antibot = generate_antibot();
 $form = '<form method="POST"><input type="hidden" name="generic" value="1" />
             <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl"><br>
-            <input placeholder="Antibot : Ecrivez '. $antibot .' en chiffre" type="text" name="number" id="number"><br>
+            <input placeholder="Antibot : Ecrivez '. $antibot .' en chiffre" type="text" name="number"><br>
             <input type="hidden" name="antibot" value="'. $antibot .'" />
             <input type="submit" value="Vérifier">
         </form>';
@@ -589,7 +589,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 <input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
                 <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl" value="'.$rssurl.'"><label for="rssurl">&larr; adresse du flux</label><br>
                 <input placeholder=""Type de site" type="text" name="sitetype" id="sitetype" value="'.$sitetype.'" '.( $datafeed === false?'':'disabled').'><label for="sitetype">&larr; type de site</label><br>
-                <input placeholder="Antibot: '. escape($_POST['antibot']) .' en chiffre" type="text" name="number" id="number" value="'. escape($_POST['number']) .'"><label for="number">&larr; antibot</label><br>
+                <input placeholder="Antibot: '. escape($_POST['antibot']) .' en chiffre" type="text" name="number"  value="'. escape($_POST['number']) .'"><label for="number">&larr; antibot</label><br>
                 <input type="hidden" name="antibot" value="'. escape($_POST['antibot']) .'" /><input type="submit" value="Créer"></form>';
                 
             }   
@@ -778,7 +778,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">                  
                             <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type="submit" value="Créer">
                         </form>
@@ -790,7 +790,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                         <form method="POST">
                             <input type="hidden" name="socialaccount" value="shaarli">
                             <input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type="submit" value="Créer">
                         </form>
@@ -804,7 +804,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                         <form enctype='multipart/form-data' method='POST'>
                             <input type='hidden' name='opml_file' value='1' />
                             <input type='file' name='file' /><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type='submit' value='Importer' />
                         </form>
@@ -819,7 +819,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                         <form method="POST">
                             <input type="hidden" name="opml_link" value="1">
                             <input placeholder="Lien vers OPML" type="text" name="opml_url" id="opml_url" class="smallinput"><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number" id="number" class="smallinput"><br>
+                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type="submit" value="Envoyer">
                         </form>
@@ -875,7 +875,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             $autoblogs = array();
             foreach($subdirs as $unit)
             {
-                if(is_dir($unit))
+                if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE)
                 {
                     if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
                         $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
@@ -936,3 +936,4 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         
     </body>
 </html>
+
