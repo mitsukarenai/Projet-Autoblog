@@ -557,36 +557,38 @@ $site_type = escape($config->site_type);
 
 if (isset($_GET['feed'])) // FEED
 {
-    header('Content-Type: application/xhtml+xml; charset=utf-8');
+    header('Content-Type: application/atom+xml; charset=UTF-8');
     echo '<?xml version="1.0" encoding="UTF-8"?>
-    <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-    <channel>
-        <title>'.escape($config->site_title).'</title>
-        <link>'.escape($config->site_url).'</link>
-        <description>'.escape(html_entity_decode(strip_tags($config->site_description), ENT_COMPAT, 'UTF-8')).'</description>
-        <language></language>
-        <copyright></copyright>';
+	<feed xmlns="http://www.w3.org/2005/Atom" xmlns:thr="http://purl.org/syndication/thread/1.0" xml:lang="fr-FR">
+        <title type="text">'.escape($config->site_title).'</title>
+        <subtitle type="text">'.escape(html_entity_decode(strip_tags($config->site_description), ENT_COMPAT, 'UTF-8')).'</subtitle>
+		<updated>'.date(DATE_ATOM, filemtime(ARTICLES_DB_FILE)).'</updated>
+        <link rel="alternate" type="text/html" href="'.str_replace('?feed./', '', LOCAL_URL).'" />
+		<id>'.LOCAL_URL.'</id>
+		<link rel="self" type="application/atom+xml" href="'.LOCAL_URL.'" />
+		<generator uri="https://github.com/mitsukarenai/Projet-Autoblog" version="3">Projet Autoblog</generator>';
 
     foreach($vvb->listLastArticles() as $art)
     {
         echo '
-            <item>
-                <title>'.escape($art['title']).'</title>
-                <guid>'.escape($art['feed_id']).'</guid>
-                <link>'.$vvb->getLocalURL($art).'</link>
-                <pubDate>'.date(DATE_RSS, $art['date']).'</pubDate>
-                <description>
-                    <![CDATA['.escape_content($art['content']).']]>
-                </description>
-                <content:encoded>
-                    <![CDATA['.escape_content($art['content']).']]>
-                </content:encoded>
-            </item>';
+            <entry>
+					<author>
+					<name>'.escape($config->site_title).'</name>
+					<uri>'.escape($config->site_url).'</uri>
+					</author>
+                <title type="html"><![CDATA['.escape($art['title']).']]></title>
+				<link rel="alternate" type="text/html" href="'.str_replace('?feed', '?', LOCAL_URL).urlencode(str_replace('./?', '', $vvb->getLocalURL($art))).'" />
+                <id>'.str_replace('?feed', '?', LOCAL_URL).urlencode(str_replace('./?', '', $vvb->getLocalURL($art))).'</id>
+                <updated>'.date(DATE_ATOM, $art['date']).'</updated>
+
+                <content type="html">
+                    <![CDATA[(<a href="'.escape($art['feed_id']).'">source</a>)<br />'.escape_content($art['content']).']]>
+                </content>
+            </entry>';
     }
 
     echo '
-    </channel>
-    </rss>';
+    </feed>';
     exit;
 }
 
@@ -713,7 +715,7 @@ echo '
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>'.escape($config->site_title).'</title>
     <link rel="canonical" href="'.escape($config->site_url).'">
-    <link rel="alternate" type="application/rss+xml" title="'.__('RSS Feed').'" href="?feed">
+    <link rel="alternate" type="application/atom+xml" title="'.__('ATOM Feed').'" href="?feed">
     <style type="text/css" media="screen,projection">
     '.$css.'
     </style>
@@ -826,7 +828,7 @@ else
 
 echo '
 <div class="footer">
-    <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog '.$vvbversion.'</a> - <a href="?feed">'.__('RSS Feed').'</a></p>
+    <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog '.$vvbversion.'</a> - <a href="?feed">'.__('ATOM Feed').'</a></p>
     <p>'.__('Download:').' <a href="./'.basename(CONFIG_FILE).'">'.__('configuration').'</a> (<a href="?opml">OPML</a>)
         - <a href="./'.basename(ARTICLES_DB_FILE).'">'.__('articles').'</a><p/>
     <p><a href="./?media">'.__('Media export').' <sup> JSON</sup></a></p>

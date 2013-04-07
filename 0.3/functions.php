@@ -178,8 +178,8 @@ function __($str)
             return 'Plus anciens';
         case 'Newer':
             return 'Plus récents';
-        case 'RSS Feed':
-            return 'Flux RSS';
+        case 'ATOM Feed':
+            return 'Flux ATOM';
         case 'Update complete!':
             return 'Mise à jour terminée !';
         case 'Click here to reload this webpage.':
