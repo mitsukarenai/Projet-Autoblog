@@ -566,7 +566,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 $error = array_merge( $error, createAutoblog('generic', $sitename, $siteurl, $rssurl, $error));
 
                 if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
             }
             else {
                 // checking procedure
