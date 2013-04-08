@@ -2,4 +2,6 @@
 0.3/.xsaflock
 0.3/rss.xml
 .project
-0.3/user.css
+0.3/resources/user.css
+0.3/autoblogs/*
+!0.3/autoblogs/autoblog.php
