@@ -69,9 +69,9 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
 		return $error;
 	}
 
-	$foldername = urlToFolderSlash($siteurl);	
+	$foldername = AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl);	
 	
-	if ( mkdir('./'. $foldername, 0755, false) ) {
+	if ( mkdir($foldername, 0755, false) ) {
         
         /** 
          * RSS
@@ -80,12 +80,12 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         $rss = new AutoblogRSS(RSS_FILE);
         $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
          
-        $fp = fopen('./'. $foldername .'/index.php', 'w+');
+        $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
             $error[] = "Impossible d'écrire le fichier index.php";
         fclose($fp);
 
-        $fp = fopen('./'. $foldername .'/vvb.ini', 'w+');
+        $fp = fopen($foldername .'/vvb.ini', 'w+');
         if( !fwrite($fp, '[VroumVroumBlogConfig]
 SITE_TYPE="'. $type .'"
 SITE_TITLE="'. $sitename .'"
