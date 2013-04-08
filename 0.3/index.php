@@ -358,7 +358,7 @@ if (isset($_GET['sitemap']))
     $directory = "./";
     $subdirs = glob($directory . "*");
     foreach($subdirs as $unit) {
-        if(is_dir($unit)) {
+        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
             $unit=substr($unit, 2);
             $proto=(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'])=='on')?"https://":"http://";
             echo '<url><loc>'.$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
