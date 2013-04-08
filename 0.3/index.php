@@ -658,6 +658,11 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></title>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . RSS_FILE;?>" />
     <link href="autoblog.css" rel="stylesheet" type="text/css">
+    <?php
+      if(file_exists('user.css')){
+        echo '<link href="user.css" rel="stylesheet" type="text/css">';
+      }
+    ?>
     </head>
     <body>
         <h1><a href="<?php echo serverUrl(true); ?>">PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></a></h1>
