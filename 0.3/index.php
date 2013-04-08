@@ -353,10 +353,9 @@ if (isset($_GET['sitemap']))
 			echo '<url><loc>'.'http' . (!empty($_SERVER['HTTPS']) ? 's' : '')."://{$_SERVER['HTTP_HOST']}".str_replace('?sitemap', '', $_SERVER['REQUEST_URI'])."</loc>\n";
             echo '<lastmod>'.date('c', time())."</lastmod>\n";
             echo '<changefreq>daily</changefreq></url>';
-    $directory = "./";
-    $subdirs = glob($directory . "*");
+    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
     foreach($subdirs as $unit) {
-        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
+        if(is_dir($unit)) {
             $unit=substr($unit, 2);
             $proto=(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'])=='on')?"https://":"http://";
             echo '<url><loc>'.$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
