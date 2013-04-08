@@ -4,6 +4,7 @@ if(!defined('ROOT_DIR'))
     define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
 }
 define('LOCAL_URI', '');
+if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
 if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
 if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
 if (!defined('RSS_FILE')) define('RSS_FILE', RESOURCES_FOLDER.'rss.xml');

@@ -251,11 +251,10 @@ if (isset($_GET['check']))
  **/
 if (isset($_GET['export'])) {
     header('Content-Type: application/json');
-    $directory = "./";
-    $subdirs = glob($directory . "*");
+    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
 
     foreach($subdirs as $unit) {
-        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
+        if(is_dir($unit)) {
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             $config = new stdClass;
@@ -284,12 +283,11 @@ if (isset($_GET['export'])) {
  **/
 if (isset($_GET['export_twitter'])) {
     header('Content-Type: application/json');
-    $directory = "./";
-    $subdirs = glob($directory . "*");
+    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
     $response = array();
 
     foreach($subdirs as $unit) {
-        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
+        if(is_dir($unit)) {
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             if( $ini['SITE_TYPE'] == 'twitter' ) {
@@ -319,11 +317,10 @@ if (isset($_GET['exportopml'])) // OPML
     $opmlhead->addChild('dateCreated', date('r', time()));
     $opmlbody = $opmlfile->addChild('body');
 
-    $directory = "./";
-    $subdirs = glob($directory . "*");
+    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
 
     foreach($subdirs as $unit) {
-        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
+        if(is_dir($unit)) {
             $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
             $config = new stdClass;
@@ -347,6 +344,7 @@ if (isset($_GET['exportopml'])) // OPML
 
 /**
  * Site map
+ * NEW AUTOBLOG FOLDER - Need update
  **/
 if (isset($_GET['sitemap']))
 {
@@ -392,10 +390,9 @@ if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
         }
     }
 
-    $directory = "./";
-    $subdirs = glob($directory . "*");
+    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
     foreach($subdirs as $unit) {
-        if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE) {
+        if(is_dir($unit)) {
             if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
                 file_get_contents(serverUrl() . substr($_SERVER['PHP_SELF'], 0, -9) . $unit . '/index.php');
             }
@@ -816,7 +813,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 <?php   } ?>
 
         <?php
-        $directory = "./". DOC_FOLDER;
+        $directory = DOC_FOLDER;
         $docs = array();
         if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
             $subdirs = glob($directory . "*");
@@ -845,12 +842,11 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
 
             <?php
-            $directory = "./";
-            $subdirs = glob($directory . "*");
+            $subdirs = glob(AUTOBLOGS_FOLDER . "*");
             $autoblogs = array();
             foreach($subdirs as $unit)
             {
-                if(is_dir($unit) && strpos($unit.'/', DOC_FOLDER) === FALSE)
+                if(is_dir($unit))
                 {
                     if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
                         $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');

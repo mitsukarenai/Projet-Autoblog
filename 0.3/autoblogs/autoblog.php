@@ -21,13 +21,13 @@ libxml_disable_entity_loader(true);
 
 // Config and data file locations
 
-if (file_exists(__DIR__ . '/config.php')) {
-    require_once __DIR__ . '/config.php';
+if (file_exists(__DIR__ . '/../config.php')) {
+    require_once __DIR__ . '/../config.php';
 }
 else die("Configuration file not found.");
 
-if (file_exists(__DIR__ . '/functions.php')){
-    require_once __DIR__ . '/functions.php';
+if (file_exists(__DIR__ . '/../functions.php')){
+    require_once __DIR__ . '/../functions.php';
 }
 else die("Functions file not found.");
 
@@ -722,12 +722,12 @@ echo '
 </head>
 <body>
 <div class="header">
-    <h1><a href="./" style="font-size:0.8em;">PROJET AUTOBLOG'. (!empty($head_title) ? ' ~ '. escape($head_title) : '') .'</a></h1>
+    <h1><a href="../../" style="font-size:0.8em;">PROJET AUTOBLOG'. (!empty($head_title) ? ' ~ '. escape($head_title) : '') .'</a></h1>
     <hr>
     <h1><a href="./">'.escape($config->site_title).'</a></h1>';
 
 if (!empty($config->site_description))
-    echo '<p>'.$config->site_description.'<br><a href="../">&lArr; retour index</a></p>';
+    echo '<p>'.$config->site_description.'<br><a href="../../">&lArr; retour index</a></p>';
 
 echo '
     <form method="get" action="'.escape(LOCAL_URL).'" class="searchForm">
