@@ -1,6 +1,6 @@
 0.3/.versionlock
 0.3/.xsaflock
-0.3/rss.xml
+0.3/resources/rss.xml
 .project
 0.3/resources/user.css
 0.3/autoblogs/*
