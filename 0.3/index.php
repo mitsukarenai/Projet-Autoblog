@@ -162,16 +162,16 @@ function versionCheck() {
 /**
 *   RSS Feed
 **/
+if( !file_exists(RSS_FILE)) {
+    require_once('class_rssfeed.php');
+    $rss = new AutoblogRSS(RSS_FILE);
+    $rss->create('Projet Autoblog'. ((!empty($head_title)) ? ' | '. $head_title : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . RSS_FILE);
+}
 if (isset($_GET['rss'])) {
     require_once('class_rssfeed.php');
     $rss = new AutoblogRSS(RSS_FILE);
     $rss->displayXML();
     die;
-}
-if( !file_exists(RSS_FILE)) {
-    require_once('class_rssfeed.php');
-    $rss = new AutoblogRSS(RSS_FILE);
-    $rss->create('Projet Autoblog'. ((!empty($head_title)) ? ' | '. $head_title : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . '/' . RSS_FILE);
 }
 
 /**
