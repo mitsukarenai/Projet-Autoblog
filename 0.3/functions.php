@@ -81,7 +81,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
          
         $fp = fopen('./'. $foldername .'/index.php', 'w+');
-        if( !fwrite($fp, "<?php require_once dirname(__DIR__) . '/autoblog.php'; ?>") )
+        if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
             $error[] = "Impossible d'écrire le fichier index.php";
         fclose($fp);
 
