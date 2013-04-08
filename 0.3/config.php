@@ -4,8 +4,9 @@ if(!defined('ROOT_DIR'))
     define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
 }
 define('LOCAL_URI', '');
-if (!defined('RSS_FILE')) define('RSS_FILE', 'rss.xml');
-if (!defined('DOC_FOLDER')) define('DOC_FOLDER', 'docs/');
+if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
+if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
+if (!defined('RSS_FILE')) define('RSS_FILE', RESOURCES_FOLDER.'rss.xml');
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
@@ -32,7 +33,7 @@ define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 $apitwitter = FALSE;
 
 // Logo à utiliser
-$logo="./icon-logo.svg";
+$logo=RESOURCES_FOLDER .'icon-logo.svg';
 
 // Marquez ici votre propre message qui apparaîtra en bas de page.
 // exemple : 

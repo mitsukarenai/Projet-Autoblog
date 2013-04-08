@@ -657,10 +657,10 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     <meta charset="utf-8">
     <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></title>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . RSS_FILE;?>" />
-    <link href="autoblog.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
-      if(file_exists('user.css')){
-        echo '<link href="user.css" rel="stylesheet" type="text/css">';
+      if(file_exists(RESOURCES_FOLDER .'user.css')){
+        echo '<link href="'. RESOURCES_FOLDER .'user.css" rel="stylesheet" type="text/css">';
       }
     ?>
     </head>
@@ -668,7 +668,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         <h1><a href="<?php echo serverUrl(true); ?>">PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></a></h1>
 
         <div class="pbloc">
-            <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo './icon-logo.svg'; } ?>" alt="">
+            <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo RESOURCES_FOLDER.'icon-logo.svg'; } ?>" alt="">
 
             <h2>Présentation</h2>
 
@@ -836,7 +836,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         ?>
 
         <div class="pbloc">
-            <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="rss.png" alt="rss"/></a></h2>
+            <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="<?php echo RESOURCES_FOLDER; ?>rss.png" alt="rss"/></a></h2>
             <p>
                 <b>Autres fermes</b>
                 &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>

@@ -1,0 +1,10 @@
+/**
+ * user.css 
+ * ------------
+ * Feel free to add your custom CSS and override original CSS in this file.
+ * Don't forget to rename user.css.example to user.css to make it works.
+ */
+
+body {
+    background-color: red;
+}
