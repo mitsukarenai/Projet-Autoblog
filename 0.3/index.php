@@ -839,48 +839,47 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             </p>
 
             <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
-
-            <?php
-            $subdirs = glob(AUTOBLOGS_FOLDER . "*");
-            $autoblogs = array();
-            foreach($subdirs as $unit)
-            {
-                if(is_dir($unit))
+              <div id="contentVignette">
+                <?php
+                $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+                $autoblogs = array();
+                foreach($subdirs as $unit)
                 {
-                    if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
-                        $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
-                        if($ini)
-                        {
-                            $config = new stdClass;
-                            $unit=substr($unit, 2);
-                            foreach ($ini as $key=>$value)
+                    if(is_dir($unit))
+                    {
+                        if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
+                            $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
+                            if($ini)
                             {
-                                    $key = strtolower($key);
-                                    $config->$key = $value;
+                                $config = new stdClass;
+                                $unit=substr($unit, 2);
+                                foreach ($ini as $key=>$value)
+                                {
+                                        $key = strtolower($key);
+                                        $config->$key = $value;
+                                }
+                                $autoblogs[$unit] = $config;
+                                unset($ini);
                             }
-                            $autoblogs[$unit] = $config;
-                            unset($ini);
                         }
                     }
                 }
-            }
 
-            uasort($autoblogs, "objectCmp");
-            $autoblogs_display = '';
+                uasort($autoblogs, "objectCmp");
+                $autoblogs_display = '';
 
-            if(!empty($autoblogs)){
-                foreach ($autoblogs as $key => $autoblog) {
-                    $opml_link='<a href="'.$key.'/?opml">opml</a>';
-                    $autoblogs_display .= '<div class="vignette">
-                            <div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
-                            <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
-                        </div>';
+                if(!empty($autoblogs)){
+                    foreach ($autoblogs as $key => $autoblog) {
+                        $opml_link='<a href="'.$key.'/?opml">opml</a>';
+                        $autoblogs_display .= '<div class="vignette">
+                                <div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
+                                <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
+                            </div>';
+                    }
                 }
-            }
-
-            echo $autoblogs_display;
-            ?>
-
+                echo $autoblogs_display;
+                ?>
+            </div>
             <div class="clear"></div>
 
             <?php echo "<p>".count($autoblogs)." autoblogs hébergés</p>"; ?>
