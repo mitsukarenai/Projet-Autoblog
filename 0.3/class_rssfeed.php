@@ -211,7 +211,7 @@ class AutoblogRSS extends FileRSSFeed {
     public function addUnavailable($title, $folder, $siteurl, $rssurl) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
-                $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
+                $_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
         parent::addItem( 'L\'autoblog "'. $title.'" est indisponible', $autobHref, 
             'Autoblog: <a href="'. $autobHref .'">'.$title.'</a><br>
@@ -227,7 +227,7 @@ class AutoblogRSS extends FileRSSFeed {
     public function addAvailable($title, $folder, $siteurl, $rssurl) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
-                $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
+                $_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
         parent::addItem( 'L\'autoblog "'. $title.'" est de nouveau disponible', $autobHref, 
             'Autoblog : <a href="'. $autobHref .'">'.$title.'</a><br>
@@ -243,7 +243,7 @@ class AutoblogRSS extends FileRSSFeed {
     public function addCodeChanged($title, $folder, $siteurl, $rssurl, $code) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
-            $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
+            $_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
         parent::addItem( 'L\'autoblog "'. $title.'" a renvoyé un code imprévu', $autobHref, 
             'Code: '. $code .'<br>
@@ -260,7 +260,7 @@ class AutoblogRSS extends FileRSSFeed {
     public function addNewAutoblog($title, $folder, $siteurl, $rssurl) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
         $autobHref = 'http'.(!empty($_SERVER['HTTPS'])?'s':'').'://'.
-            $_SERVER["SERVER_NAME"].$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
+            $_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"]. $path['dirname'].'/'.$folder;
 
         parent::addItem( 'L\'autoblog "'. $title.'" a été ajouté à la ferme', $autobHref, 
             'Autoblog : <a href="'. $autobHref .'">'.$title.'</a><br>
