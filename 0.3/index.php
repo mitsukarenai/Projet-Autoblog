@@ -890,7 +890,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             <?php echo "<p>".count($autoblogs)." autoblogs hébergés</p>"; ?>
         </div>
         Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog 0.3</a> de <a href="https://www.suumitsu.eu/">Mitsu</a>, <a href="https://www.ecirtam.net/">Oros</a> et <a href="http://hoa.ro">Arthur Hoaro</a> (Domaine Public)
-        <?php if(isset($HTML_footer)){ echo "<br/>".$HTML_footer; } ?>
+        <?php if(defined(FOOTER) && strlen(FOOTER)>0 ){ echo "<br/>".FOOTER; } ?>
         <iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
 
         <script type="text/javascript">
