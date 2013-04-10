@@ -12,14 +12,13 @@ a:hover {color:darkred;}
 h1 {text-align:center;font-size:40pt;text-shadow: #ccc 0px 5px 5px;}
 h2 {text-align:center;font-size: 16pt;margin:0 0 1em 0;font-style:italic;text-shadow: #ccc 0px 5px 5px; }
 .pbloc {background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;text-align:justify;box-shadow:0px 5px 7px #aaa;}
-input {width:30em;}
+input[type="text"]{width:20em;}
 input[type="radio"] {width:1em;}
 input[type="submit"] {width:8em;}
-input[type="text"]#socialaccount, input[type="text"]#statusneturl, input[type="text"]#shaarliurl,input[type="text"].smallinput {width:20em;}
 div.form {padding:0.2em;border:1px solid #fff;}
 div.form:hover {background-color:#FAF4DA;border:1px dotted;}
 #contentVignette {text-align: center;}
-.vignette {width:20em;height:2em;display: inline-block;text-align:justify;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
+.vignette {width:27%;height:2em;display: inline-block;text-align:justify;margin:0; padding:20px;background-color:#eee;border: 1px solid #888;}
 .vignette:hover {background-color:#fff;}
 .vignette .title {font-size: 14pt;text-shadow: #ccc 0px 5px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .vignette .title a:hover {color:darkred; text-decoration:none;}
@@ -35,3 +34,15 @@ div.form:hover {background-color:#FAF4DA;border:1px dotted;}
 .button:hover{background:0;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52',endColorstr='#b8e356');background-color:#a5cc52;}
 .button:active{position:relative;top:1px;}
 .buttonactive{background-color:#aaa;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #83c41a;display:inline-block;color:#fff;font-family:arial;font-size:14px;font-weight:700;text-decoration:none;text-shadow:1px 1px 0 #86ae47;padding:6px 24px;}
+@media screen and (max-width:1024px) {
+    .vignette { width: 40%; }
+}
+@media screen and (max-width:640px) { 
+    h1 { font-size:20pt; }
+    .button, .button:hover, .button:active, .buttonactive { display: block; margin: auto; text-align:center; } 
+    .vignette { width: 80%; }
+}
+@media screen and (max-width:480px) { 
+    #logo { max-width: 250px; }
+    input[type="text"]{width:15em;} 
+}
