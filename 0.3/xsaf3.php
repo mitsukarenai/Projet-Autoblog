@@ -155,8 +155,8 @@ function xsafimport($xsafremote, $max_exec_time) {
 }
 	
 if( DEBUG ) echo '<html><body>';
-if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF && !empty($autoblog_farm) ) {
-	foreach( $autoblog_farm AS $value ) {
+if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF && !empty($friends_autoblog_farm) ) {
+	foreach( $friends_autoblog_farm AS $value ) {
 		if( !empty($value) )
 			xsafimport($value, EXEC_TIME);
 	}

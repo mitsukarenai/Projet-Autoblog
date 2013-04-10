@@ -1,6 +1,19 @@
 <?php
 
+// Technical configuration
+if(!defined('ROOT_DIR'))
+{
+    define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
+}
+define('LOCAL_URI', '');
+if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
+if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
+if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
+if (!defined('RSS_FILE')) define('RSS_FILE', RESOURCES_FOLDER.'rss.xml');
+date_default_timezone_set('Europe/Paris');
+setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
+// Functions
 function NoProtocolSiteURL($url) {
 	$protocols = array("http://", "https://");
 	$siteurlnoproto = str_replace($protocols, "", $url);
@@ -47,7 +60,7 @@ function urlToFolderSlash($url) {
 }
 
 function folderExists($url) {
-	return file_exists(urlToFolder($url)) || file_exists(urlToFolderSlash($url));
+	return file_exists(AUTOBLOGS_FOLDER . urlToFolder($url)) || file_exists(AUTOBLOGS_FOLDER . urlToFolderSlash($url));
 }
 
 function escape($str) {

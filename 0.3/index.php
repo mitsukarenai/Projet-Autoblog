@@ -165,7 +165,7 @@ function versionCheck() {
 if( !file_exists(RSS_FILE)) {
     require_once('class_rssfeed.php');
     $rss = new AutoblogRSS(RSS_FILE);
-    $rss->create('Projet Autoblog'. ((!empty($head_title)) ? ' | '. $head_title : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . RSS_FILE);
+    $rss->create('Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . RSS_FILE);
 }
 if (isset($_GET['rss'])) {
     require_once('class_rssfeed.php');
@@ -487,10 +487,10 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         $socialinstance = strtolower(escape($_POST['socialinstance']));
 
         if($socialinstance === 'twitter') {
-            if( $apitwitter !== FALSE ) {
+            if( API_TWITTER !== FALSE ) {
                 $sitetype = 'twitter';
                 $siteurl = "http://twitter.com/$socialaccount";
-                $rssurl = $apitwitter.$socialaccount;
+                $rssurl = API_TWITTER.$socialaccount;
             }
             else
                 $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
@@ -651,7 +651,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 <html lang="en" dir="ltr">
     <head>
     <meta charset="utf-8">
-    <title>Projet Autoblog<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></title>
+    <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . RSS_FILE;?>" />
     <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
@@ -661,11 +661,16 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     ?>
     </head>
     <body>
-        <h1><a href="<?php echo serverUrl(true); ?>">PROJET AUTOBLOG<?php if(!empty($head_title)) { echo " | " . escape($head_title); } ?></a></h1>
+        <h1><a href="<?php echo serverUrl(true); ?>">
+            PROJET AUTOBLOG
+            <?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?>
+        </a></h1>
 
         <div class="pbloc">
-            <img id="logo" src="<?php if(isset($logo)) { echo $logo; }else{ echo RESOURCES_FOLDER.'icon-logo.svg'; } ?>" alt="">
-
+        <?php
+            if (defined('LOGO'))
+                echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
+        ?>
             <h2>Présentation</h2>
 
             <p>
@@ -743,7 +748,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                         <form method="POST">
                             <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
                             <?php
-                            if( $apitwitter !== FALSE )
+                            if( API_TWITTER !== FALSE )
                                 echo '<input type="radio" name="socialinstance" value="twitter">Twitter<br>';
                             else echo '<s>Twitter</s><br>'; ?>
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
