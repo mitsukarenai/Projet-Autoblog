@@ -21,21 +21,20 @@
 define('XSAF_VERSION', 3);
 define('ROOT_DIR', __DIR__);
 
+$error = array();
+$success = array();
+
 if(file_exists("config.php")){
-    include "config.php";
+    require_once "config.php";
 }else{
-    echo "config.php not found !";
-    die;
+    $error[] = "config.php not found !";
 }
 if(file_exists("functions.php")){
-    include "functions.php";
+    require_once "functions.php";
 }else{
     echo "functions.php not found !";
     die;
 }
-
-$error = array();
-$success = array();
 
 function get_title_from_feed($url) {
     return get_title_from_datafeed(file_get_contents($url));

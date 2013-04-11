@@ -24,7 +24,7 @@ libxml_disable_entity_loader(true);
 if (file_exists(__DIR__ . '/../config.php')) {
     require_once __DIR__ . '/../config.php';
 }
-else die("Configuration file not found.");
+//else die("Configuration file not found.");
 
 if (file_exists(__DIR__ . '/../functions.php')){
     require_once __DIR__ . '/../functions.php';
