@@ -89,9 +89,14 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         /** 
          * RSS
          **/
-        require_once('class_rssfeed.php');
-        $rss = new AutoblogRSS(RSS_FILE);
-        $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
+        try {
+            require_once('class_rssfeed.php');
+            $rss = new AutoblogRSS(RSS_FILE);
+            $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
+        }
+        catch (Exception $e) {
+            ;
+        }
          
         $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )

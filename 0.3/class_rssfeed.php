@@ -198,8 +198,8 @@ class FileRSSFeed extends RSSFeed {
     	foreach($merger->getFeeds(20) as $f) {
             parent::addItem($f->title,$f->link,$f->description,$f->author,$f->guid,$f->time);
         }
-    	
-    	file_put_contents( $this->filename, $this->xml->asXML() );        
+        
+    	file_put_contents( $this->filename, $this->xml->asXML(), LOCK_EX );
     }
 }
 
