@@ -118,7 +118,7 @@ function create_from_opml($opml) {
                 $error = array_merge( $error, createAutoblog( $sitetype, $sitename, $siteurl, $rssurl, $error ) );
 
                 if( empty ( $error ))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
             }
             catch (Exception $e) {
                 $error[] = $e->getMessage();
@@ -534,7 +534,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
             if( empty($error) ) {
                 $error = array_merge( $error, createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error));
                 if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'.urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
             }
         }
     }
