@@ -1,9 +1,9 @@
-Projet Autoblog serie 0.1
+Projet Autoblog serie 0.2
 ==============
 
-- version VroumVroumBlog 0.1.32
+- version VroumVroumBlog 0.2.11
 
-Auteur: Sebastien Sauvage
+Auteurs: BohwaZ (VVB) & Arthur Hoaro, Mitsukarenai, Oros (index ferme d'autoblogs)
 
 Licence: Domaine Public
 
@@ -11,10 +11,14 @@ Licence: Domaine Public
 
 lire: http://sebsauvage.net/streisand.me/fr/
 
-- Contraintes techniques
+- Présentation et Instructions pour VVB 0.2 (par BohwaZ)
 
-voir: http://sebsauvage.net/streisand.me/fr/tech.html
+voir: http://blogs.kd2.org/bohwaz/?2011/07/14/369-auto-blog-vroumvroumblog-et-effet-streisand
 
-- Instructions
+- Présentation et Instructions pour la ferme d'autoblogs (par Arthur Hoaro)
 
-Personnalisez vvb.ini. Envoyez index.php et vvb.ini sur votre site web, dans le répertoire de votre choix. Terminé !
+voir: http://wiki.hoa.ro/doku.php?id=web%3Aferme-autoblog
+
+- Améliorations pour la ferme d'autoblogs et XSAF (par Mitsukarenai et Oros)
+
+voir: https://www.suumitsu.eu/2012/08/autoblogs-petites-ameliorations/
