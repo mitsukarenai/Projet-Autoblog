@@ -1,10 +1,20 @@
-Projet-Autoblog
-===============
+Projet Autoblog serie 0.1
+==============
 
-Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ )
+- version VroumVroumBlog 0.1.32
 
-- serie 0.1 par Sebsauvage
+Auteur: Sebastien Sauvage
 
-- serie 0.2 par BohwaZ, Arthur Hoaro, Mitsu, Oros
+Licence: Domaine Public
 
-- serie 0.3 par Mitsu, Oros, Arthur Hoaro
+- À propos du Projet Autoblog
+
+lire: http://sebsauvage.net/streisand.me/fr/
+
+- Contraintes techniques
+
+voir: http://sebsauvage.net/streisand.me/fr/tech.html
+
+- Instructions
+
+Personnalisez vvb.ini. Envoyez index.php et vvb.ini sur votre site web, dans le répertoire de votre choix. Terminé !
