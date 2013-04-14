@@ -895,15 +895,15 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         <script type="text/javascript">
             <?php if( !empty($_POST['generic']) && !empty($_POST['siteurl']) || empty($_POST['generic']) )
             echo "document.getElementById('add_generic').style.display = 'none';"; ?>
-            document.getElementById('add_social').style.display = 'none';
-            document.getElementById('add_shaarli').style.display = 'none';
-            document.getElementById('add_opmlfile').style.display = 'none';
-            document.getElementById('add_bookmark').style.display = 'none';
-            document.getElementById('add_opmllink').style.display = 'none';
-            document.getElementById('button_list').style.display = 'block';
+            if(document.getElementById('add_social') != null) { document.getElementById('add_social').style.display = 'none'; }
+            if(document.getElementById('add_shaarli') != null) { document.getElementById('add_shaarli').style.display = 'none'; }
+            if(document.getElementById('add_opmlfile') != null) { document.getElementById('add_opmlfile').style.display = 'none'; }
+            if(document.getElementById('add_bookmark') != null) { document.getElementById('add_bookmark').style.display = 'none'; }
+            if(document.getElementById('add_opmllink') != null) { document.getElementById('add_opmllink').style.display = 'none'; }
+            if(document.getElementById('button_list') != null) { document.getElementById('button_list').style.display = 'block'; }
             function show_form(str){
                 document.getElementById('add_'+str).style.display = (document.getElementById('add_'+str).style.display != 'block' ? 'block' : 'none' );
-        document.getElementById('button_'+str).className = (document.getElementById('button_'+str).className != 'buttonactive' ? 'buttonactive' : 'button' );
+                document.getElementById('button_'+str).className = (document.getElementById('button_'+str).className != 'buttonactive' ? 'buttonactive' : 'button' );
             }
         </script>
 
