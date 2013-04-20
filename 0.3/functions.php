@@ -111,7 +111,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         /** 
          * RSS
          **/
-        try {
+        try { // à déplacer après la tentative de création de l'autoblog crée avec succès ?
             require_once('class_rssfeed.php');
             $rss = new AutoblogRSS(RSS_FILE);
             $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
@@ -140,7 +140,7 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
     }
     else
         $error[] = "Impossible de créer le répertoire.";
-
+	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl); /*  éventuellement une conditionnelle ici:  if(empty($error)) ?  */
     return $error;
 }
 
@@ -238,27 +238,65 @@ function __($str)
     }
 }
 
+function updateXML($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed)
+{
+$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
+$json[] = array(
+	'timestamp'=>time(),
+	'autoblog_url'=>$autoblog_url,
+	'autoblog_title'=>$autoblog_title,
+	'autoblog_sourceurl'=>$autoblog_sourceurl,
+	'autoblog_sourcefeed'=>$autoblog_sourcefeed,
+	'status'=>$status,
+	'response_code'=>$response_code
+	);
+file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX);
+}
+
+function displayXMLstatus_tmp($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed) {
+    switch ($status)
+	{
+	case 'unavailable':
+		return 'Autoblog "'.$autoblog_title.'": site distant inaccessible (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	case 'moved':
+		return 'Autoblog "'.$autoblog_title.'": site distant redirigé (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	case 'not_found':
+		return 'Autoblog "'.$autoblog_title.'": site distant introuvable (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	case 'remote_error':
+		return 'Autoblog "'.$autoblog_title.'": site distant a problème serveur (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	case 'available':
+		return 'Autoblog "'.$autoblog_title.'": site distant à nouveau opérationnel (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	case 'new_autoblog_added':
+		return 'Autoblog "'.$autoblog_title.'" ajouté (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+	}
+}
+
 function displayXML_tmp() {
 header('Content-type: application/rss+xml; charset=utf-8');
 echo '<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>';
-echo '<atom:link href="'.serverUrl(true) . '?rss_tmp" rel="self" type="application/rss+xml">'.serverUrl(true).'</atom:link><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>'.serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.".'</description>';
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><link>'.serverUrl(true).'</link>';
+echo '<atom:link href="'.serverUrl(false) . '/?rss_tmp" rel="self" type="application/rss+xml"/><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>'.serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.".'</description>';
 if(file_exists(RESOURCES_FOLDER.'rss.json'))
 {
 	$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
 	foreach ($json as $item)
 	{
-	echo '<item>';
-	echo '<title>'.$item[autoblog_title].'</title>';
-	echo '<description>'.$item[status].$item[response_code].$item[autoblog_url].$item[autoblog_title].$item[autoblog_sourceurl].$item[autoblog_sourcefeed].'</description>';
-	echo '<link>'.serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url].'</link>';
-	echo '<guid isPermaLink="h">'.serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url].'</guid>';
-	echo '<author>admin@'.serverUrl(true).'</author>';
-	echo '<pubDate>'.date("r", $item[timestamp]).'</pubDate>';
-	echo '</item>';
+	$description = displayXMLstatus_tmp($item[status],$item[response_code],$item[autoblog_url],$item[autoblog_title],$item[autoblog_sourceurl],$item[autoblog_sourcefeed]);
+	$link = serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url];
+	$date = date("r", $item[timestamp]);
+	print <<<EOT
+
+<item>
+	<title>{$item[autoblog_title]}</title>
+	<description><![CDATA[{$description}]]></description>
+	<link>{$link}</link>
+	<guid isPermaLink="false">{$item[timestamp]}</guid>
+	<author>admin@{$_SERVER[SERVER_NAME]}</author>
+	<pubDate>{$date}</pubDate>
+</item>
+EOT;
 	}
 }
-echo '</channel>
-</rss>';
+echo '</channel></rss>';
 }
 ?>

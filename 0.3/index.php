@@ -173,6 +173,10 @@ if (isset($_GET['rss'])) {
     die;
 }
 
+if( !file_exists(RESOURCES_FOLDER.'rss.json')) {
+	file_put_contents(RESOURCES_FOLDER.'rss.json', '', LOCK_EX);
+}
+
 if (isset($_GET['rss_tmp'])) {
     displayXML_tmp();
     die;
@@ -222,6 +226,7 @@ if (isset($_GET['check']))
                 require_once('class_rssfeed.php');
                 $rss = new AutoblogRSS(RSS_FILE);
                 $rss->addUnavailable($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL']);
+				updateXML('unavailable', 'nxdomain', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '..');
             die($svg_rouge);
@@ -233,6 +238,7 @@ if (isset($_GET['check']))
                 require_once('class_rssfeed.php');
                 $rss = new AutoblogRSS(RSS_FILE);
                 $rss->addAvailable($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL']);
+				updateXML('available', '200', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '');
             die($svg_vert);
@@ -243,6 +249,7 @@ if (isset($_GET['check']))
                 require_once('class_rssfeed.php');
                 $rss = new AutoblogRSS(RSS_FILE);
                 $rss->addCodeChanged($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL'], $code[1]);
+				updateXML('moved', '3xx', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '.');
             die($svg_jaune);
