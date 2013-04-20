@@ -173,6 +173,11 @@ if (isset($_GET['rss'])) {
     die;
 }
 
+if (isset($_GET['rss_tmp'])) {
+    displayXML_tmp();
+    die;
+}
+
 /**
  * SVG
  **/

@@ -237,4 +237,28 @@ function __($str)
             return $str;
     }
 }
+
+function displayXML_tmp() {
+header('Content-type: application/rss+xml; charset=utf-8');
+echo '<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>';
+echo '<atom:link href="'.serverUrl(true) . '?rss_tmp" rel="self" type="application/rss+xml">'.serverUrl(true).'</atom:link><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>'.serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.".'</description>';
+if(file_exists(RESOURCES_FOLDER.'rss.json'))
+{
+	$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
+	foreach ($json as $item)
+	{
+	echo '<item>';
+	echo '<title>'.$item[autoblog_title].'</title>';
+	echo '<description>'.$item[status].$item[response_code].$item[autoblog_url].$item[autoblog_title].$item[autoblog_sourceurl].$item[autoblog_sourcefeed].'</description>';
+	echo '<link>'.serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url].'</link>';
+	echo '<guid isPermaLink="h">'.serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url].'</guid>';
+	echo '<author>admin@'.serverUrl(true).'</author>';
+	echo '<pubDate>'.date("r", $item[timestamp]).'</pubDate>';
+	echo '</item>';
+	}
+}
+echo '</channel>
+</rss>';
+}
 ?>
