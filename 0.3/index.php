@@ -852,6 +852,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                     if(is_dir($unit))
                     {
                         if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
+							if( file_exists(ROOT_DIR . '/' . $unit . '/vvb.ini')) {
                             $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
                             if($ini)
                             {
@@ -865,6 +866,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                                 $autoblogs[$unit] = $config;
                                 unset($ini);
                             }
+							}
                         }
                     }
                 }
