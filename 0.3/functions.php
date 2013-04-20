@@ -281,17 +281,17 @@ if(file_exists(RESOURCES_FOLDER.'rss.json'))
 	$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
 	foreach ($json as $item)
 	{
-	$description = displayXMLstatus_tmp($item[status],$item[response_code],$item[autoblog_url],$item[autoblog_title],$item[autoblog_sourceurl],$item[autoblog_sourcefeed]);
-	$link = serverUrl(true).AUTOBLOGS_FOLDER.$item[autoblog_url];
-	$date = date("r", $item[timestamp]);
+	$description = displayXMLstatus_tmp($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
+	$link = serverUrl(true).AUTOBLOGS_FOLDER.$item['autoblog_url'];
+	$date = date("r", $item['timestamp']);
 	print <<<EOT
 
 <item>
-	<title>{$item[autoblog_title]}</title>
+	<title>{$item['autoblog_title']}</title>
 	<description><![CDATA[{$description}]]></description>
 	<link>{$link}</link>
-	<guid isPermaLink="false">{$item[timestamp]}</guid>
-	<author>admin@{$_SERVER[SERVER_NAME]}</author>
+	<guid isPermaLink="false">{$item['timestamp']}</guid>
+	<author>admin@{$_SERVER['SERVER_NAME']}</author>
 	<pubDate>{$date}</pubDate>
 </item>
 EOT;
