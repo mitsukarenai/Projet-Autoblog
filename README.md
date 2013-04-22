@@ -1,18 +1,31 @@
-Projet Autoblog serie 0.3
-============== 
+Projet Autoblog
+===============
 
-- version VroumVroumBlog 0.3.0 BETA
+Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ ).
 
-Auteurs: Mitsu (https://www.suumitsu.eu/), Oros (https://www.ecirtam.net/) et Arthur Hoaro (http://hoa.ro)
+Serie 0.3 par Mitsu, Oros, Arthur Hoaro
 
-Licence: Domaine Public
+Nouveautés majeures
+===================
 
-- À propos du Projet Autoblog
+- "ferme" d'autoblogs avec ajout facile par différents formulaires (générique, microblogging, OPML, marque-pages)
+- échange de références entre fermes avec XSAF (Cross-Site Autoblog Farming)
+- vérification du statut des sites distants, et flux de suivi des changements
+- export facile des références, articles et médias
+- contrôle de version et alerte de mise à jour
+- apparence de l'autoblog selon son type
+- CSS utilisateur personnalisable
+- hébergement de documents spécifiques
 
-lire: http://sebsauvage.net/streisand.me/fr/
+Branches :
+===================
 
-Instructions
+ - [master](https://github.com/mitsukarenai/Projet-Autoblog/tree/master/) _(développement)_ : Autoblog Project serie 0.3 par Mitsu, Oros, Arthur Hoaro
+ - [legacy-0.2](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.2) : version VroumVroumBlog 0.2.11 par BohwaZ (VVB) & Arthur Hoaro, Mitsukarenai, Oros (index ferme d'autoblogs)
+ - [legacy-0.1](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.1) : version VroumVroumBlog 0.1.32 par Sebastien Sauvage
+ - [legacy-0.2to0.3](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.2to0.3) : script de migration 0.2 to 0.3 par Oros et Arthur Hoaro
 
-- uploader les fichiers sur un serveur avec PHP 5.3+
+Pré-requis techniques
+=====================
 
-- ..c'est tout. Hackez le code pour apprendre comment ça marche et comment le personnaliser :)
+- serveur web avec PHP 5.3 et son support SQLite
