@@ -113,15 +113,15 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl) {
         
         /** 
          * RSS
-         *
+         */
         try { // à déplacer après la tentative de création de l'autoblog crée avec succès ?
             require_once('class_rssfeed.php');
             $rss = new AutoblogRSS(RSS_FILE);
             $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
         }
         catch (Exception $e) {
-            ;
-        }*/
+            ; // DO NOTHING
+        }
          
         $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
