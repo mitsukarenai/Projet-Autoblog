@@ -1,27 +1,18 @@
-Projet Autoblog
-===============
+Projet Autoblog serie 0.3
+==============
 
-Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ )
+- version VroumVroumBlog 0.3.0 BETA
 
-Branche MASTER:
+Auteurs: Mitsu (https://www.suumitsu.eu/), Oros (https://www.ecirtam.net/) et Arthur Hoaro (http://hoa.ro)
 
-- script de migration 0.2 to 0.3 par Arthur Hoaro
+Licence: Domaine Public
 
-- Autoblog Project serie 0.3 par Mitsu, Oros, Arthur Hoaro
+- À propos du Projet Autoblog
 
-Nouveautés majeures
-===================
+lire: http://sebsauvage.net/streisand.me/fr/
 
-- "ferme" d'autoblogs avec ajout facile par différents formulaires (générique, microblogging, OPML, marque-pages)
-- échange de références entre fermes avec XSAF (Cross-Site Autoblog Farming)
-- vérification du statut des sites distants, et flux de suivi des changements
-- export facile des références, articles et médias
-- contrôle de version et alerte de mise à jour
-- apparence de l'autoblog selon son type
-- CSS utilisateur personnalisable
-- hébergement de documents spécifiques
+Instructions
 
-Pré-requis techniques
-=====================
+- uploader les fichiers sur un serveur avec PHP 5.3+
 
-- serveur web avec PHP 5.3 et son support SQLite
+- ..c'est tout. Hackez le code pour apprendre comment ça marche et comment le personnaliser :)

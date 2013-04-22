@@ -1,8 +1,8 @@
-0.3/config.php
-0.3/.versionlock
-0.3/.xsaflock
-0.3/resources/rss.xml
+config.php
+.versionlock
+.xsaflock
+resources/rss.xml
 .project
-0.3/resources/user.css
-0.3/autoblogs/*
-!0.3/autoblogs/autoblog.php
+resources/user.css
+autoblogs/*
+!autoblogs/autoblog.php
