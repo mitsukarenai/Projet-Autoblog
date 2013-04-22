@@ -1,5 +1,5 @@
 Projet Autoblog serie 0.3
-==============
+============== 
 
 - version VroumVroumBlog 0.3.0 BETA
 
