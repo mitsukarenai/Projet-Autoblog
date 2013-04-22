@@ -36,21 +36,6 @@ if(file_exists("functions.php")){
     die;
 }
 
-/**
- * gets the data from a URL 
- * http://davidwalsh.name/curl-download 
- **/
-function get_data($url) {
-    $ch = curl_init();
-	$timeout = 5;
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-	$data = curl_exec($ch);
-	curl_close($ch);
-	return $data;
-}
-
 function get_title_from_feed($url) {
     return get_title_from_datafeed(file_get_contents($url));
 }
@@ -140,9 +125,11 @@ function create_from_opml($opml) {
 
                 createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
                 
+                $message = 'Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
                 // Do not print iframe on big import (=> heavy and useless)
                 if( ++$cpt < 10 )
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>'
+                    $success[] = $message;
             }
             catch (Exception $e) {
                 $error[] = $e->getMessage();
@@ -675,7 +662,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         if(parse_url($opml_url, PHP_URL_HOST)==FALSE) {
             $error[] = "URL du fichier OPML non valide.";
         } else {
-            if ( ($opml = simplexml_load_string( get_data($opml_url) )) !== false ) {
+            if ( ($opml = simplexml_load_file( $opml_url )) !== false ) {
                 create_from_opml($opml);
             } else {
                 $error[] = "Impossible de lire le contenu du fichier OPML ou d'accéder à l'URL donnée.";
