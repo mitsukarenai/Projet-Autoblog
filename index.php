@@ -128,8 +128,8 @@ function create_from_opml($opml) {
                 $message = 'Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
                 // Do not print iframe on big import (=> heavy and useless)
                 if( ++$cpt < 10 )
-                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>'
-                    $success[] = $message;
+                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>';
+                $success[] = $message;
             }
             catch (Exception $e) {
                 $error[] = $e->getMessage();
