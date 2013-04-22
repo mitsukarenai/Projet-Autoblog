@@ -132,7 +132,7 @@ function create_from_opml($opml) {
  **/
 function versionCheck() {
     $versionfile = 'version';
-    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/master/0.3/version';
+    $lastestUrl = 'https://raw.github.com/mitsukarenai/Projet-Autoblog/master/version';
 
     $expire = time() - 84600 ; // 23h30 en secondes
     $lockfile = '.versionlock';
