@@ -1,13 +1,9 @@
 Projet Autoblog
 ===============
 
-Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ )
+Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ ).
 
-Branches :
- - master (_développement_) : Autoblog Project serie 0.3 par Mitsu, Oros, Arthur Hoaro
- - legacy-0.2 : version VroumVroumBlog 0.2.11 par BohwaZ (VVB) & Arthur Hoaro, Mitsukarenai, Oros (index ferme d'autoblogs)
- - legacy-0.1 : version VroumVroumBlog 0.1.32 par Sebastien Sauvage
- - legacy-0.2to0.3 : script de migration 0.2 to 0.3 par Oros et Arthur Hoaro
+Serie 0.3 par Mitsu, Oros, Arthur Hoaro
 
 Nouveautés majeures
 ===================
@@ -20,6 +16,14 @@ Nouveautés majeures
 - apparence de l'autoblog selon son type
 - CSS utilisateur personnalisable
 - hébergement de documents spécifiques
+
+Branches :
+===================
+
+ - [master](https://github.com/mitsukarenai/Projet-Autoblog/tree/master/) _(développement)_ : Autoblog Project serie 0.3 par Mitsu, Oros, Arthur Hoaro
+ - [legacy-0.2](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.2) : version VroumVroumBlog 0.2.11 par BohwaZ (VVB) & Arthur Hoaro, Mitsukarenai, Oros (index ferme d'autoblogs)
+ - [legacy-0.1](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.1) : version VroumVroumBlog 0.1.32 par Sebastien Sauvage
+ - [legacy-0.2to0.3](https://github.com/mitsukarenai/Projet-Autoblog/tree/legacy-0.2to0.3) : script de migration 0.2 to 0.3 par Oros et Arthur Hoaro
 
 Pré-requis techniques
 =====================
