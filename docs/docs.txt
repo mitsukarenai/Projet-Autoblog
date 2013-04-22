@@ -1,0 +1,4 @@
+You can manually add files in the /docs/ directory, such as PDF, docs, images, etc.
+You can also add subfolders in /docs/ for website mirroring. Be sure that your subfolder contains a file named index.html.
+
+Delete this file to hide the 'Autres documents' block in your autoblogs homepage. 
