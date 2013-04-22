@@ -36,6 +36,21 @@ if(file_exists("functions.php")){
     die;
 }
 
+/**
+ * gets the data from a URL 
+ * http://davidwalsh.name/curl-download 
+ **/
+function get_data($url) {
+    $ch = curl_init();
+	$timeout = 5;
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	$data = curl_exec($ch);
+	curl_close($ch);
+	return $data;
+}
+
 function get_title_from_feed($url) {
     return get_title_from_datafeed(file_get_contents($url));
 }
@@ -105,19 +120,28 @@ function check_antibot($number, $text_number) {
 
 function create_from_opml($opml) {
     global $error, $success;
-
+    $cpt = 0;
     foreach( $opml->body->outline as $outline ) {
         if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
             try {
-                $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
-
                 $sitename = escape( $outline['title'] );
                 $siteurl = escape($outline['htmlUrl']);
-                $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { $sitetype = 'generic'; }
+                
+                // Lighten process by checking folderExists first
+                // A CHANGER SELON ISSUE #20
+                if(folderExists($siteurl))
+                    throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
+                    
+                $sitetype = escape($outline['text']); 
+                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' ) 
+                    $sitetype = 'generic'; 
+                    
+                $rssurl = DetectRedirect(escape($outline['xmlUrl']));
 
-                $error = array_merge( $error, createAutoblog( $sitetype, $sitename, $siteurl, $rssurl, $error ) );
-
-                if( empty ( $error ))
+                createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
+                
+                // Do not print iframe on big import (=> heavy and useless)
+                if( ++$cpt < 10 )
                     $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
             }
             catch (Exception $e) {
@@ -438,7 +462,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                 $sitetype = updateType($siteurl); // Disabled input doesn't send POST data
                 $sitetype = $sitetype['type'];
 
-                $error = array_merge( $error, createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error));
+                createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
+
                 if( empty($error)) {
                     $form .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'/index.php"></iframe>';
                     $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
@@ -500,16 +525,16 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         if($socialinstance === 'twitter') {
             if( API_TWITTER !== FALSE ) {
                 $sitetype = 'twitter';
-                $siteurl = "http://twitter.com/$socialaccount";
+                $siteurl = 'http://twitter.com/$socialaccount';
                 $rssurl = API_TWITTER.$socialaccount;
             }
             else
-                $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
+                $error[] = 'Vous devez définir une API Twitter -> RSS dans votre fichier de configuration (see <a href="https://github.com/mitsukarenai/twitterbridge">TwitterBridge</a>).';
         }
         elseif($socialinstance === 'identica') {
             $sitetype = 'identica';
-            $siteurl = "http://identi.ca/$socialaccount";
-            $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss";
+            $siteurl = 'http://identi.ca/$socialaccount';
+            $rssurl = 'http://identi.ca/api/statuses/user_timeline/$socialaccount.rss';
         }
         elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) {
             $sitetype = 'microblog';
@@ -535,18 +560,22 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
             $socialaccount = get_title_from_feed($rssurl);
         }
 
+
         if( empty($error) ) {
-            // Twitterbridge do NOT allow this user yet => No check
-            if( $sitetype != 'twitter' ) {
-                $headers = get_headers($rssurl, 1);
-                if (strpos($headers[0], '200') == FALSE) {
-                    $error[] = "Flux inaccessible (compte inexistant ?)";
+            try {
+                // TwitterBridge user will be allowed after Autoblog creation
+                // TODO: Twitter user does not exist ?
+                if($sitetype != 'twitter') {
+                    $headers = get_headers($rssurl, 1);
+                    if (strpos($headers[0], '200') === FALSE) 
+                        throw new Exception('Flux inaccessible (compte inexistant ?)');
                 }
+                
+                createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
             }
-            if( empty($error) ) {
-                $error = array_merge( $error, createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error));
-                if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+            catch (Exception $e) {
+                echo $error[] = $e->getMessage();
             }
         }
     }
@@ -574,10 +603,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 $siteurl = escape($_POST['siteurl']);
                 $sitename = get_title_from_feed($rssurl);
 
-                $error = array_merge( $error, createAutoblog('generic', $sitename, $siteurl, $rssurl, $error));
+                createAutoblog('generic', $sitename, $siteurl, $rssurl);
 
-                if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
             }
             else {
                 // checking procedure
@@ -647,7 +675,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         if(parse_url($opml_url, PHP_URL_HOST)==FALSE) {
             $error[] = "URL du fichier OPML non valide.";
         } else {
-            if ( ($opml = simplexml_load_file( $opml_url )) !== false ) {
+            if ( ($opml = simplexml_load_string( get_data($opml_url) )) !== false ) {
                 create_from_opml($opml);
             } else {
                 $error[] = "Impossible de lire le contenu du fichier OPML ou d'accéder à l'URL donnée.";
@@ -678,10 +706,10 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         </a></h1>
 
         <div class="pbloc">
-        <?php
-            if (defined('LOGO'))
-                echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
-        ?>
+            <?php
+                if (defined('LOGO'))
+                    echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
+            ?>
             <h2>Présentation</h2>
 
             <p>
@@ -693,6 +721,11 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             <p>
                 Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i>
                 (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).
+            </p>
+            
+            <p>
+                <b>Autres fermes</b>
+                &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
             </p>
         </div>
 
@@ -849,11 +882,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 
         <div class="pbloc">
             <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="<?php echo RESOURCES_FOLDER; ?>rss.png" alt="rss"/></a></h2>
-            <p>
-                <b>Autres fermes</b>
-                &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
-            </p>
-
+            
             <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
               <div id="contentVignette">
                 <?php

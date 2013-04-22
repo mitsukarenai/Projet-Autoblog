@@ -35,7 +35,9 @@ if( !defined('LOGO')) define( 'LOGO', 'icon-logo.svg' );
 if( !defined('HEAD_TITLE')) define( 'HEAD_TITLE', '');
 if( !defined('FOOTER')) define( 'FOOTER', 'D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.');
 
-// Functions
+/**
+ * Functions
+ **/
 function NoProtocolSiteURL($url) {
 	$protocols = array("http://", "https://");
 	$siteurlnoproto = str_replace($protocols, "", $url);
@@ -56,15 +58,17 @@ function NoProtocolSiteURL($url) {
 function DetectRedirect($url)
 {
 	if(parse_url($url, PHP_URL_HOST)==FALSE) {
-		//die('Not a URL');
 		throw new Exception('Not a URL: '. escape ($url) );
 	}
-	$response = get_headers($url, 1);
+    
+    try { $response = get_headers($url, 1); }
+    catch (Exception $e) { throw new Exception('RSS URL unreachable: '. escape($url) ); } 
 	if(!empty($response['Location'])) {
-		$response2 = get_headers($response['Location'], 1);
+        try { $response2 = get_headers($response['Location'], 1); }
+        catch (Exception $e) { throw new Exception('RSS URL unreachable: '. escape($url) ); } 
+        
 		if(!empty($response2['Location'])) {
-			//die('too much redirection');
-			throw new Exception('too much redirection: '. escape ($url) );
+			throw new Exception('Too much redirection: '. escape ($url) );
 		}
 		else { return $response['Location']; }
 	}
@@ -89,7 +93,7 @@ function escape($str) {
     return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
 }
 
-function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
+function createAutoblog($type, $sitename, $siteurl, $rssurl) {
     if( $type == 'generic' || empty( $type )) {
         $var = updateType( $siteurl );
         $type = $var['type'];
@@ -100,8 +104,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
     }
     
 	if(folderExists($siteurl)) { 
-		$error[] = 'Erreur : l\'autoblog '. $sitename .' existe déjà.'; 
-		return $error;
+		throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
 	}
 
 	$foldername = AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl);	
@@ -110,7 +113,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         
         /** 
          * RSS
-         **/
+         *
         try { // à déplacer après la tentative de création de l'autoblog crée avec succès ?
             require_once('class_rssfeed.php');
             $rss = new AutoblogRSS(RSS_FILE);
@@ -118,11 +121,11 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
         }
         catch (Exception $e) {
             ;
-        }
+        }*/
          
         $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
-            $error[] = "Impossible d'écrire le fichier index.php";
+        	throw new Exception('Impossible d\'écrire le fichier index.php');
         fclose($fp);
 
         $fp = fopen($foldername .'/vvb.ini', 'w+');
@@ -135,13 +138,14 @@ FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="'. getArticlesPerPage( $type ) .'"
 UPDATE_INTERVAL="'. getInterval( $type ) .'"
 UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
-            $error[] = "Impossible d'écrire le fichier vvb.ini";
+        	throw new Exception('Impossible d\'écrire le fichier vvb.ini');
         fclose($fp);
     }
     else
-        $error[] = "Impossible de créer le répertoire.";
-	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl); /*  éventuellement une conditionnelle ici:  if(empty($error)) ?  */
-    return $error;
+    	throw new Exception('Impossible de créer le répertoire.');
+
+    /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
+	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
 }
 
 function getArticlesPerPage( $type ) {
