@@ -145,7 +145,9 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
     	throw new Exception('Impossible de créer le répertoire.');
 
     /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
-	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
+	/* Comme ça ? :) */
+	if(updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl) === FALSE)
+		{ throw new Exception('Impossible d\'écrire le fichier rss.json'); }
 }
 
 function getArticlesPerPage( $type ) {
@@ -254,7 +256,9 @@ $json[] = array(
 	'status'=>$status,
 	'response_code'=>$response_code
 	);
-file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX);
+if(file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX) === FALSE)
+	{ return FALSE; }
+	else { return TRUE; }
 }
 
 function displayXMLstatus_tmp($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed) {
