@@ -498,11 +498,11 @@ class VroumVroum_Blog
             $from['path'] = '';
         }
 
-        preg_match_all('!(src|href)\s*=\s*[\'"]?([^"\'<>\s]+\.(?:'.$extensions.'))[\'"]?!i', $content, $match, PREG_SET_ORDER);
+        preg_match_all('!(src|href)\s*=\s*[\'"]?([^"\'<>\s]+\.(?:'.$extensions.')[\'"])[\'"]?!i', $content, $match, PREG_SET_ORDER);
 
         foreach ($match as $m)
         {
-            $url = parse_url($m[2]);
+            $url = parse_url(substr($m[2], 0, -1));
 
             if (empty($url['scheme']))
                 $url['scheme'] = $from['scheme'];
