@@ -105,22 +105,31 @@ function check_antibot($number, $text_number) {
 
 function create_from_opml($opml) {
     global $error, $success;
-
+    $cpt = 0;
     foreach( $opml->body->outline as $outline ) {
         if ( !empty( $outline['title'] ) && !empty( $outline['text'] ) && !empty( $outline['xmlUrl']) && !empty( $outline['htmlUrl'] )) {
             try {
-                $rssurl = DetectRedirect(escape( $outline['xmlUrl']));
-
                 $sitename = escape( $outline['title'] );
                 $siteurl = escape($outline['htmlUrl']);
+                
+                // Lighten process by checking folderExists first
+                // A CHANGER SELON ISSUE #20
+                if(folderExists($siteurl))
+                    throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
+                    
                 $sitetype = escape($outline['text']); 
                 if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' ) 
                     $sitetype = 'generic'; 
+                    
+                $rssurl = DetectRedirect(escape($outline['xmlUrl']));
 
                 createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
-
-                if( empty ( $error ))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                
+                $message = 'Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                // Do not print iframe on big import (=> heavy and useless)
+                if( ++$cpt < 10 )
+                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>';
+                $success[] = $message;
             }
             catch (Exception $e) {
                 $error[] = $e->getMessage();
@@ -541,11 +550,14 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
 
         if( empty($error) ) {
             try {
-                $headers = get_headers($rssurl, 1);
-                if (strpos($headers[0], '200') === FALSE) {
-                    throw new Exception('Flux inaccessible (compte inexistant ?)');
+                // TwitterBridge user will be allowed after Autoblog creation
+                // TODO: Twitter user does not exist ?
+                if($sitetype != 'twitter') {
+                    $headers = get_headers($rssurl, 1);
+                    if (strpos($headers[0], '200') === FALSE) 
+                        throw new Exception('Flux inaccessible (compte inexistant ?)');
                 }
-            
+                
                 createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
                 $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
             }
@@ -681,10 +693,10 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         </a></h1>
 
         <div class="pbloc">
-        <?php
-            if (defined('LOGO'))
-                echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
-        ?>
+            <?php
+                if (defined('LOGO'))
+                    echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
+            ?>
             <h2>Présentation</h2>
 
             <p>
@@ -696,6 +708,11 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             <p>
                 Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i>
                 (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).
+            </p>
+            
+            <p>
+                <b>Autres fermes</b>
+                &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
             </p>
         </div>
 
@@ -852,11 +869,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 
         <div class="pbloc">
             <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="<?php echo RESOURCES_FOLDER; ?>rss.png" alt="rss"/></a></h2>
-            <p>
-                <b>Autres fermes</b>
-                &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
-            </p>
-
+            
             <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
               <div id="contentVignette">
                 <?php

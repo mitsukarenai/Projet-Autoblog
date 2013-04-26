@@ -35,7 +35,9 @@ if( !defined('LOGO')) define( 'LOGO', 'icon-logo.svg' );
 if( !defined('HEAD_TITLE')) define( 'HEAD_TITLE', '');
 if( !defined('FOOTER')) define( 'FOOTER', 'D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.');
 
-// Functions
+/**
+ * Functions
+ **/
 function NoProtocolSiteURL($url) {
 	$protocols = array("http://", "https://");
 	$siteurlnoproto = str_replace($protocols, "", $url);
@@ -58,11 +60,15 @@ function DetectRedirect($url)
 	if(parse_url($url, PHP_URL_HOST)==FALSE) {
 		throw new Exception('Not a URL: '. escape ($url) );
 	}
-	$response = get_headers($url, 1);
+    
+    try { $response = get_headers($url, 1); }
+    catch (Exception $e) { throw new Exception('RSS URL unreachable: '. escape($url) ); } 
 	if(!empty($response['Location'])) {
-		$response2 = get_headers($response['Location'], 1);
+        try { $response2 = get_headers($response['Location'], 1); }
+        catch (Exception $e) { throw new Exception('RSS URL unreachable: '. escape($url) ); } 
+        
 		if(!empty($response2['Location'])) {
-			throw new Exception('too much redirection: '. escape ($url) );
+			throw new Exception('Too much redirection: '. escape ($url) );
 		}
 		else { return $response['Location']; }
 	}
@@ -107,14 +113,14 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl) {
         
         /** 
          * RSS
-         **/
+         */
         try { // à déplacer après la tentative de création de l'autoblog crée avec succès ?
             require_once('class_rssfeed.php');
             $rss = new AutoblogRSS(RSS_FILE);
             $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
         }
         catch (Exception $e) {
-            ;
+            ; // DO NOTHING
         }
          
         $fp = fopen($foldername .'/index.php', 'w+');
@@ -139,7 +145,9 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
     	throw new Exception('Impossible de créer le répertoire.');
 
     /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
-	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
+	/* Comme ça ? :) */
+	if(updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl) === FALSE)
+		{ throw new Exception('Impossible d\'écrire le fichier rss.json'); }
 }
 
 function getArticlesPerPage( $type ) {
@@ -248,7 +256,9 @@ $json[] = array(
 	'status'=>$status,
 	'response_code'=>$response_code
 	);
-file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX);
+if(file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX) === FALSE)
+	{ return FALSE; }
+	else { return TRUE; }
 }
 
 function displayXMLstatus_tmp($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed) {
