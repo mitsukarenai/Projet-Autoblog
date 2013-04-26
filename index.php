@@ -113,9 +113,11 @@ function create_from_opml($opml) {
 
                 $sitename = escape( $outline['title'] );
                 $siteurl = escape($outline['htmlUrl']);
-                $sitetype = escape($outline['text']); if ( $sitetype == 'generic' or $sitetype == 'microblog' or $sitetype == 'shaarli') { } else { $sitetype = 'generic'; }
+                $sitetype = escape($outline['text']); 
+                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' ) 
+                    $sitetype = 'generic'; 
 
-                $error = array_merge( $error, createAutoblog( $sitetype, $sitename, $siteurl, $rssurl, $error ) );
+                createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
 
                 if( empty ( $error ))
                     $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
@@ -438,7 +440,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                 $sitetype = updateType($siteurl); // Disabled input doesn't send POST data
                 $sitetype = $sitetype['type'];
 
-                $error = array_merge( $error, createAutoblog($sitetype, $sitename, $siteurl, $rssurl, $error));
+                createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
+
                 if( empty($error)) {
                     $form .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'/index.php"></iframe>';
                     $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
@@ -500,16 +503,16 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         if($socialinstance === 'twitter') {
             if( API_TWITTER !== FALSE ) {
                 $sitetype = 'twitter';
-                $siteurl = "http://twitter.com/$socialaccount";
+                $siteurl = 'http://twitter.com/$socialaccount';
                 $rssurl = API_TWITTER.$socialaccount;
             }
             else
-                $error[] = "Twitter veut mettre à mort son API ouverte. Du coup on peut plus faire ça comme ça.";
+                $error[] = 'Vous devez définir une API Twitter -> RSS dans votre fichier de configuration (see <a href="https://github.com/mitsukarenai/twitterbridge">TwitterBridge</a>).';
         }
         elseif($socialinstance === 'identica') {
             $sitetype = 'identica';
-            $siteurl = "http://identi.ca/$socialaccount";
-            $rssurl = "http://identi.ca/api/statuses/user_timeline/$socialaccount.rss";
+            $siteurl = 'http://identi.ca/$socialaccount';
+            $rssurl = 'http://identi.ca/api/statuses/user_timeline/$socialaccount.rss';
         }
         elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) {
             $sitetype = 'microblog';
@@ -535,18 +538,19 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
             $socialaccount = get_title_from_feed($rssurl);
         }
 
+
         if( empty($error) ) {
-            // Twitterbridge do NOT allow this user yet => No check
-            if( $sitetype != 'twitter' ) {
+            try {
                 $headers = get_headers($rssurl, 1);
-                if (strpos($headers[0], '200') == FALSE) {
-                    $error[] = "Flux inaccessible (compte inexistant ?)";
+                if (strpos($headers[0], '200') === FALSE) {
+                    throw new Exception('Flux inaccessible (compte inexistant ?)');
                 }
+            
+                createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
             }
-            if( empty($error) ) {
-                $error = array_merge( $error, createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl, $error));
-                if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+            catch (Exception $e) {
+                echo $error[] = $e->getMessage();
             }
         }
     }
@@ -574,10 +578,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 $siteurl = escape($_POST['siteurl']);
                 $sitename = get_title_from_feed($rssurl);
 
-                $error = array_merge( $error, createAutoblog('generic', $sitename, $siteurl, $rssurl, $error));
+                createAutoblog('generic', $sitename, $siteurl, $rssurl);
 
-                if( empty($error))
-                    $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
             }
             else {
                 // checking procedure

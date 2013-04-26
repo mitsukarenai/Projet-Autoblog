@@ -56,14 +56,12 @@ function NoProtocolSiteURL($url) {
 function DetectRedirect($url)
 {
 	if(parse_url($url, PHP_URL_HOST)==FALSE) {
-		//die('Not a URL');
 		throw new Exception('Not a URL: '. escape ($url) );
 	}
 	$response = get_headers($url, 1);
 	if(!empty($response['Location'])) {
 		$response2 = get_headers($response['Location'], 1);
 		if(!empty($response2['Location'])) {
-			//die('too much redirection');
 			throw new Exception('too much redirection: '. escape ($url) );
 		}
 		else { return $response['Location']; }
@@ -89,7 +87,7 @@ function escape($str) {
     return htmlspecialchars($str, ENT_COMPAT, 'UTF-8', false);
 }
 
-function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
+function createAutoblog($type, $sitename, $siteurl, $rssurl) {
     if( $type == 'generic' || empty( $type )) {
         $var = updateType( $siteurl );
         $type = $var['type'];
@@ -100,8 +98,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
     }
     
 	if(folderExists($siteurl)) { 
-		$error[] = 'Erreur : l\'autoblog '. $sitename .' existe déjà.'; 
-		return $error;
+		throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
 	}
 
 	$foldername = AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl);	
@@ -122,7 +119,7 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl, $error = array()) {
          
         $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
-            $error[] = "Impossible d'écrire le fichier index.php";
+        	throw new Exception('Impossible d\'écrire le fichier index.php');
         fclose($fp);
 
         $fp = fopen($foldername .'/vvb.ini', 'w+');
@@ -135,13 +132,14 @@ FEED_URL="'. $rssurl .'"
 ARTICLES_PER_PAGE="'. getArticlesPerPage( $type ) .'"
 UPDATE_INTERVAL="'. getInterval( $type ) .'"
 UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
-            $error[] = "Impossible d'écrire le fichier vvb.ini";
+        	throw new Exception('Impossible d\'écrire le fichier vvb.ini');
         fclose($fp);
     }
     else
-        $error[] = "Impossible de créer le répertoire.";
-	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl); /*  éventuellement une conditionnelle ici:  if(empty($error)) ?  */
-    return $error;
+    	throw new Exception('Impossible de créer le répertoire.');
+
+    /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
+	updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
 }
 
 function getArticlesPerPage( $type ) {
