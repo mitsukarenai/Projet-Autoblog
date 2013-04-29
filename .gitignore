@@ -2,6 +2,7 @@ config.php
 .versionlock
 .xsaflock
 resources/rss.xml
+resources/rss.json
 .project
 resources/user.css
 autoblogs/*

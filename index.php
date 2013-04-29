@@ -125,10 +125,10 @@ function create_from_opml($opml) {
 
                 createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
                 
-                $message = 'Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>.';
+                $message = 'Autoblog "'. $sitename .'" crée avec succès. &rarr; <a target="_blank" href="'. urlToFolder( $siteurl, $rssurl ) .'">afficher l\'autoblog</a>.';
                 // Do not print iframe on big import (=> heavy and useless)
                 if( ++$cpt < 10 )
-                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe>';
+                    $message .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>';
                 $success[] = $message;
             }
             catch (Exception $e) {
@@ -171,24 +171,13 @@ function versionCheck() {
 
 /**
 *   RSS Feed
+*   
 **/
-if( !file_exists(RSS_FILE)) {
-    require_once('class_rssfeed.php');
-    $rss = new AutoblogRSS(RSS_FILE);
-    $rss->create('Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : ''), serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.", serverUrl(true) . RSS_FILE);
-}
-if (isset($_GET['rss'])) {
-    require_once('class_rssfeed.php');
-    $rss = new AutoblogRSS(RSS_FILE);
-    $rss->displayXML();
-    die;
-}
-
 if( !file_exists(RESOURCES_FOLDER.'rss.json')) {
 	file_put_contents(RESOURCES_FOLDER.'rss.json', '', LOCK_EX);
 }
 
-if (isset($_GET['rss_tmp'])) {
+if (isset($_GET['rss'])) {
     displayXML_tmp();
     die;
 }
@@ -452,8 +441,8 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
                 createAutoblog( $sitetype, $sitename, $siteurl, $rssurl );
 
                 if( empty($error)) {
-                    $form .= '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'/index.php"></iframe>';
-                    $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
+                    $form .= '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>';
+                    $form .= '<p><span style="color:darkgreen">Autoblog <a href="'. urlToFolder( $siteurl, $rssurl ) .'">'. $sitename .'</a> ajouté avec succès.</span><br>';
                 }
                 else {
                     $form .= '<ul>';
@@ -559,7 +548,8 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
                 }
                 
                 createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
-                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. AUTOBLOGS_FOLDER .urlToFolderSlash( $siteurl ).'">ajouté avec succès</a>.</b>';
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>
+                <b style="color:darkgreen">'.ucfirst($socialinstance) .' - '. $socialaccount.' <a href="'. urlToFolder( $siteurl, $rssurl ) .'">ajouté avec succès</a>.</b>';
             }
             catch (Exception $e) {
                 echo $error[] = $e->getMessage();
@@ -592,7 +582,8 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 
                 createAutoblog('generic', $sitename, $siteurl, $rssurl);
 
-                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'/index.php"></iframe><b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. AUTOBLOGS_FOLDER . urlToFolderSlash( $siteurl ) .'">afficher l\'autoblog</a>';
+                $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>
+                <b style="color:darkgreen">Autoblog '. $sitename .' crée avec succès.</b> &rarr; <a target="_blank" href="'. urlToFolder( $siteurl, $rssurl ) .'">afficher l\'autoblog</a>';
             }
             else {
                 // checking procedure
@@ -605,7 +596,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
                 $siteurl = get_link_from_datafeed($datafeed);
                 $sitename = get_title_from_datafeed($datafeed);
 
-                $form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire.</span><br>
+                $form = '<span style="color:blue">Merci de vérifier les informations suivantes, corrigez si nécessaire. Tous les champs doivent être renseignés.</span><br>
                 <form method="POST"><input type="hidden" name="generic" value="1" />
                 <input style="color:black" type="text" id="sitename" value="'.$sitename.'" '.( $datafeed === false?'':'disabled').'><label for="sitename">&larr; titre du site (auto)</label><br>
                 <input placeholder="Adresse du site" type="text" name="siteurl" id="siteurl" value="'.$siteurl.'"><label for="siteurl">&larr; page d\'accueil (auto)</label><br>
@@ -678,7 +669,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     <head>
     <meta charset="utf-8">
     <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . RSS_FILE;?>" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . '?rss_tmp';?>" />
     <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
       if(file_exists(RESOURCES_FOLDER .'user.css')){

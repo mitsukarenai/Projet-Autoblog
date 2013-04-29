@@ -13,6 +13,7 @@ if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
 if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
 if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
 if (!defined('RSS_FILE')) define('RSS_FILE', RESOURCES_FOLDER.'rss.xml');
+if (!defined('FOLDER_MAX_LENGTH')) define('FOLDER_MAX_LENGTH', 80);
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
@@ -77,16 +78,16 @@ function DetectRedirect($url)
 	}
 }
 
-function urlToFolder($url) {
-    return sha1(NoProtocolSiteURL($url));
+function urlHash($rssurl) {
+    return sha1(NoProtocolSiteURL($rssurl));
 }
 
-function urlToFolderSlash($url) {
-    return sha1(NoProtocolSiteURL($url).'/');
+function urlToFolder($siteurl, $rssurl) {
+    return AUTOBLOGS_FOLDER . substr(preg_replace("/[^a-z0-9]/", '', strtolower(NoProtocolSiteURL($siteurl))), 0, FOLDER_MAX_LENGTH) .'_'. urlHash($rssurl) .'/';
 }
 
-function folderExists($url) {
-	return file_exists(AUTOBLOGS_FOLDER . urlToFolder($url)) || file_exists(AUTOBLOGS_FOLDER . urlToFolderSlash($url));
+function folderExists($siteurl, $rssurl) {
+	return file_exists(urlToFolder($siteurl, $rssurl));
 }
 
 function escape($str) {
@@ -103,25 +104,13 @@ function createAutoblog($type, $sitename, $siteurl, $rssurl) {
         }
     }
     
-	if(folderExists($siteurl)) { 
+	if(folderExists($siteurl, $rssurl)) { 
 		throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
 	}
 
-	$foldername = AUTOBLOGS_FOLDER . urlToFolderSlash($siteurl);	
+	$foldername = urlToFolder($siteurl, $rssurl);	
 	
 	if ( mkdir($foldername, 0755, false) ) {
-        
-        /** 
-         * RSS
-         */
-        try { // à déplacer après la tentative de création de l'autoblog crée avec succès ?
-            require_once('class_rssfeed.php');
-            $rss = new AutoblogRSS(RSS_FILE);
-            $rss->addNewAutoblog($sitename, $foldername, $siteurl, $rssurl);
-        }
-        catch (Exception $e) {
-            ; // DO NOTHING
-        }
          
         $fp = fopen($foldername .'/index.php', 'w+');
         if( !fwrite($fp, "<?php require_once '../autoblog.php'; ?>") )
@@ -146,8 +135,10 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
 
     /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
 	/* Comme ça ? :) */
-	if(updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl) === FALSE)
-		{ throw new Exception('Impossible d\'écrire le fichier rss.json'); }
+    /* Arthur 29/04/13 : En fait c'était une mauvaise idée : on rend de nouveau bloquant l'écrire du flux RSS, qui est une feature mineure */
+	// if(updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl) === FALSE)
+	// 	{ throw new Exception('Impossible d\'écrire le fichier rss.json'); }
+    updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
 }
 
 function getArticlesPerPage( $type ) {

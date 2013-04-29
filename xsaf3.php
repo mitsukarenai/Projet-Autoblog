@@ -95,45 +95,48 @@ function xsafimport($xsafremote, $max_exec_time) {
 
 				/* autoblog */
 				if( $result === true ) {
-					$foldername = urlToFolderSlash($siteurl);
+					$foldername = urlToFolder($sitename, $rssurl);
 
-					$errors = createAutoblog($sitetype, $sitename, $siteurl, $rssurl);
-					foreach( $errors AS $value) {
-						if( DEBUG )
-							echo '<p>'. $value .'</p>';
-					}
-					if( empty($errors) && DEBUG ) {
-						echo '<p>autoblog '. $sitename .' crée avec succès (DL DB : '. var_dump($get_remote_db) .' - DL media : '. var_dump($get_remote_media) .') : '. $foldername .'</p>';
-						if( !ALLOW_REMOTE_DB_DL && !ALLOW_REMOTE_MEDIA_DL )
-							echo '<iframe width="1" height="1" frameborder="0" src="'. $foldername .'/index.php"></iframe>';
-					}
+					try {
+						createAutoblog($sitetype, $sitename, $siteurl, $rssurl);
 
-					/* ============================================================================================================================================================================== */
-					/* récupération de la DB distante */
-					if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {	
-				        $remote_db = str_replace("?export", $foldername."/articles.db", $xsafremote); 
-				        copy($remote_db, './'. $foldername .'/articles.db');         
-				    }
+						if( DEBUG ) {
+							echo '<p>autoblog '. $sitename .' crée avec succès (DL DB : '. var_dump($get_remote_db) .' - DL media : '. var_dump($get_remote_media) .') : '. $foldername .'</p>';
+							if( !ALLOW_REMOTE_DB_DL && !ALLOW_REMOTE_MEDIA_DL )
+								echo '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>';
+						}
 
-					if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
-						$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
-						$json_media_import = file_get_contents($remote_media);
-						if(!empty($json_media_import))
-							{
-							mkdir('./'.$foldername.'/media/');
-							$json_media_import = json_decode($json_media_import, true);
-							$media_path=$json_media_import['url'];
-							if(!empty($json_media_import['files'])) {
-								foreach ($json_media_import['files'] as $value)	{
-									copy($media_path.$value, './'.$foldername.'/media/'.$value);
+						/* ============================================================================================================================================================================== */
+						/* récupération de la DB distante */
+						if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {	
+					        $remote_db = str_replace("?export", $foldername."/articles.db", $xsafremote); 
+					        copy($remote_db, './'. $foldername .'/articles.db');         
+					    }
+
+						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
+							$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
+							$json_media_import = file_get_contents($remote_media);
+							if(!empty($json_media_import))
+								{
+								mkdir('./'.$foldername.'/media/');
+								$json_media_import = json_decode($json_media_import, true);
+								$media_path=$json_media_import['url'];
+								if(!empty($json_media_import['files'])) {
+									foreach ($json_media_import['files'] as $value)	{
+										copy($media_path.$value, './'.$foldername.'/media/'.$value);
+									}
 								}
 							}
 						}
-					}
 
-					/* ============================================================================================================================================================================== */
-					//TODO : tester si articles.db est une DB valide
-					//$to_update[] = serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+						/* ============================================================================================================================================================================== */
+						//TODO : tester si articles.db est une DB valide
+						//$to_update[] = serverUrl().preg_replace("/(.*)\/(.*)$/i","$1/".$foldername , $_SERVER['SCRIPT_NAME']); // url of the new autoblog
+					}
+					catch (Exception $e) {
+						if( DEBUG )
+		                	echo $e->getMessage();
+		            }
 				}
 
 				if( DEBUG )
