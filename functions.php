@@ -12,7 +12,6 @@ define('LOCAL_URI', '');
 if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
 if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
 if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
-if (!defined('RSS_FILE')) define('RSS_FILE', RESOURCES_FOLDER.'rss.xml');
 if (!defined('FOLDER_MAX_LENGTH')) define('FOLDER_MAX_LENGTH', 80);
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
@@ -133,11 +132,6 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
     else
     	throw new Exception('Impossible de créer le répertoire.');
 
-    /* @Mitsu: Il faudrait remonter les erreurs d'I/O */
-	/* Comme ça ? :) */
-    /* Arthur 29/04/13 : En fait c'était une mauvaise idée : on rend de nouveau bloquant l'écrire du flux RSS, qui est une feature mineure */
-	// if(updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl) === FALSE)
-	// 	{ throw new Exception('Impossible d\'écrire le fichier rss.json'); }
     updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
 }
 
@@ -252,7 +246,7 @@ if(file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX) =
 	else { return TRUE; }
 }
 
-function displayXMLstatus_tmp($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed) {
+function displayXMLstatus($status, $response_code, $autoblog_url, $autoblog_title, $autoblog_sourceurl, $autoblog_sourcefeed) {
     switch ($status)
 	{
 	case 'unavailable':
@@ -270,17 +264,17 @@ function displayXMLstatus_tmp($status, $response_code, $autoblog_url, $autoblog_
 	}
 }
 
-function displayXML_tmp() {
+function displayXML() {
 header('Content-type: application/rss+xml; charset=utf-8');
 echo '<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><link>'.serverUrl(true).'</link>';
-echo '<atom:link href="'.serverUrl(false) . '/?rss_tmp" rel="self" type="application/rss+xml"/><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>'.serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.".'</description>';
+echo '<atom:link href="'.serverUrl(false) . '/?rss" rel="self" type="application/rss+xml"/><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>'.serverUrl(true),"Projet Autoblog - RSS : Ajouts et changements de disponibilité.".'</description>';
 if(file_exists(RESOURCES_FOLDER.'rss.json'))
 {
 	$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
 	foreach ($json as $item)
 	{
-	$description = displayXMLstatus_tmp($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
+	$description = displayXMLstatus($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
 	$link = serverUrl(true).AUTOBLOGS_FOLDER.$item['autoblog_url'];
 	$date = date("r", $item['timestamp']);
 	print <<<EOT

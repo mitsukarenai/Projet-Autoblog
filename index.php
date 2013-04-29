@@ -178,7 +178,7 @@ if( !file_exists(RESOURCES_FOLDER.'rss.json')) {
 }
 
 if (isset($_GET['rss'])) {
-    displayXML_tmp();
+    displayXML();
     die;
 }
 
@@ -223,9 +223,6 @@ if (isset($_GET['check']))
         /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
         if(empty($headers) || $headers === FALSE ) {
             if( $oldvalue !== null && $oldvalue != '..' ) {
-                require_once('class_rssfeed.php');
-                $rss = new AutoblogRSS(RSS_FILE);
-                $rss->addUnavailable($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL']);
 				updateXML('unavailable', 'nxdomain', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '..');
@@ -235,9 +232,6 @@ if (isset($_GET['check']))
         /* code retour 200: flux disponible */
         if($code[1] == "200") {
             if( $oldvalue !== null && $oldvalue != '' ) {
-                require_once('class_rssfeed.php');
-                $rss = new AutoblogRSS(RSS_FILE);
-                $rss->addAvailable($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL']);
 				updateXML('available', '200', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '');
@@ -246,9 +240,6 @@ if (isset($_GET['check']))
         /* autre code retour: un truc a changé (redirection, changement de CMS, .. bref vvb.ini doit être corrigé) */
         else {
             if( $oldvalue !== null && $oldvalue != '.' ) {
-                require_once('class_rssfeed.php');
-                $rss = new AutoblogRSS(RSS_FILE);
-                $rss->addCodeChanged($ini['SITE_TITLE'], escape($_GET['check']), $ini['SITE_URL'], $ini['FEED_URL'], $code[1]);
 				updateXML('moved', '3xx', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '.');
@@ -355,7 +346,6 @@ if (isset($_GET['exportopml'])) // OPML
 
 /**
  * Site map
- * NEW AUTOBLOG FOLDER - Need update
  **/
 if (isset($_GET['sitemap']))
 {
@@ -541,6 +531,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
             try {
                 // TwitterBridge user will be allowed after Autoblog creation
                 // TODO: Twitter user does not exist ?
+				// TODO: get remote like http://wwz.suumitsu.eu/twitter/whitelist.json, decode, check if is in array, return error or continue
                 if($sitetype != 'twitter') {
                     $headers = get_headers($rssurl, 1);
                     if (strpos($headers[0], '200') === FALSE) 
@@ -669,7 +660,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     <head>
     <meta charset="utf-8">
     <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . '?rss_tmp';?>" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(false) . '/?rss';?>" />
     <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
       if(file_exists(RESOURCES_FOLDER .'user.css')){
