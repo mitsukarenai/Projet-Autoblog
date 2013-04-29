@@ -3,7 +3,7 @@ Projet Autoblog
 
 Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ ).
 
-Serie 0.3 par Mitsu, Oros, Arthur Hoaro
+Serie 0.3 par [Mitsu](https://github.com/mitsukarenai/), [Oros](https://github.com/Oros42), [Arthur Hoaro](https://github.com/ArthurHoaro).
 
 Nouveautés majeures
 ===================
