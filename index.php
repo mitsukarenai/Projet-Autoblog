@@ -481,15 +481,17 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
 /**
  * ADD BY SOCIAL / SHAARLI
  **/
-if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
-{
-    if( !empty($_POST['number']) && !empty($_POST['antibot']) && check_antibot($_POST['number'], $_POST['antibot']) ) {
+if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
+{;
+    $socialinstance = strtolower(escape($_POST['socialinstance']));
+    $socialaccount = (!empty($_POST['socialaccount'])) ? strtolower(escape($_POST['socialaccount'])) : false;
+    if( $socialaccount === false && $socialinstance !== 'shaarli')
+        $error[] = 'Le compte social doit être renseigné.';
 
-        $socialaccount = strtolower(escape($_POST['socialaccount']));
-        $socialinstance = strtolower(escape($_POST['socialinstance']));
+    if( !empty($_POST['number']) && !empty($_POST['antibot']) && check_antibot($_POST['number'], $_POST['antibot']) && empty($error)) {
 
         if($socialinstance === 'twitter') {
-            if( API_TWITTER !== FALSE ) {
+            if( API_TWITTER !== FALSE ) {               
                 $sitetype = 'twitter';
                 $siteurl = 'http://twitter.com/'. $socialaccount;
                 $rssurl = API_TWITTER.$socialaccount;
@@ -777,7 +779,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                         <h3>Ajouter un Shaarli</h3>
 
                         <form method="POST">
-                            <input type="hidden" name="socialaccount" value="shaarli">
+                            <input type="hidden" name="socialinstance" value="shaarli">
                             <input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
                             <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
