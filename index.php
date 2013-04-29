@@ -501,7 +501,7 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         if($socialinstance === 'twitter') {
             if( API_TWITTER !== FALSE ) {
                 $sitetype = 'twitter';
-                $siteurl = 'http://twitter.com/$socialaccount';
+                $siteurl = 'http://twitter.com/'. $socialaccount;
                 $rssurl = API_TWITTER.$socialaccount;
             }
             else
@@ -509,8 +509,8 @@ if(!empty($_POST['socialaccount']) && !empty($_POST['socialinstance']) && ALLOW_
         }
         elseif($socialinstance === 'identica') {
             $sitetype = 'identica';
-            $siteurl = 'http://identi.ca/$socialaccount';
-            $rssurl = 'http://identi.ca/api/statuses/user_timeline/$socialaccount.rss';
+            $siteurl = 'http://identi.ca/'.$socialaccount;
+            $rssurl = 'http://identi.ca/api/statuses/user_timeline/'.$socialaccount.rss;
         }
         elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) {
             $sitetype = 'microblog';
