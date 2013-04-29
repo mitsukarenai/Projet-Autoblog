@@ -272,6 +272,7 @@ echo '<atom:link href="'.serverUrl(false) . '/?rss" rel="self" type="application
 if(file_exists(RESOURCES_FOLDER.'rss.json'))
 {
 	$json = json_decode(file_get_contents(RESOURCES_FOLDER.'rss.json'), true);
+	rsort($json);
 	foreach ($json as $item)
 	{
 	$description = displayXMLstatus($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
