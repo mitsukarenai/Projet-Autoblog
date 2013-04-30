@@ -139,6 +139,10 @@ function getArticlesPerPage( $type ) {
 	switch( $type ) {
 		case 'microblog':
 			return 20;
+		case 'twitter':
+			return 20;
+		case 'identica':
+			return 20;
 		case 'shaarli':
 			return 20;
 		default:
@@ -150,6 +154,10 @@ function getInterval( $type ) {
 	switch( $type ) {
 		case 'microblog':
 			return 300;
+		case 'twitter':
+			return 300;
+		case 'identica':
+			return 300;
 		case 'shaarli':
 			return 1800;
 		default:
@@ -160,6 +168,10 @@ function getInterval( $type ) {
 function getTimeout( $type ) {
 	switch( $type ) {
 		case 'microblog':
+			return 30;
+		case 'twitter':
+			return 30;
+		case 'identica':
 			return 30;
 		case 'shaarli':
 			return 30;
