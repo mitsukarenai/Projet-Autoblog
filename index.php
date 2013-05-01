@@ -373,31 +373,55 @@ if (isset($_GET['sitemap']))
  * This action can be very slow and consume CPU if you have a lot of autoblogs
  **/
 if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
-
+    $max_exec_time=time()+4; // scipt have 4 seconds to update autoblogs
     $expire = time() - 84600 ; // 23h30 en secondes
     $lockfile = ".updatealllock";
-    if (file_exists($lockfile) && filemtime($lockfile) > $expire) {
-              echo "too early";
-            die;
-    }
-    else {
-        if( file_exists($lockfile) )
-            unlink($lockfile);
-
-        if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
-            echo "Merci d'ajouter des droits d'écriture sur le fichier.";
-            die;
+    $lockfile_contents = array();
+    if (file_exists($lockfile)){
+        $lockfile_contents = file_get_contents($lockfile);
+        if( !isset($lockfile_contents[0]) || $lockfile_contents[0] != "a") { // détection d'une serialisation
+            if( filemtime($lockfile) > $expire){
+                echo "too early";
+                die;
+            }else{
+                // need update of all autoblogs
+                unlink($lockfile);
+            }
         }
+        // else we need to update some autoblogs
+    } 
+    if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
+        echo "Merci d'ajouter des droits d'écriture sur le fichier.";
+        die;
     }
 
-    $subdirs = glob(AUTOBLOGS_FOLDER . "*");
-    foreach($subdirs as $unit) {
+    if(!empty($lockfile_contents)) {
+        $subdirs = unserialize($lockfile_contents);
+        unset($lockfile_contents);
+    }else{
+        $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+    }    
+    $todo_subdirs = $subdirs;
+    foreach($subdirs as $key => $unit) {
         if(is_dir($unit)) {
             if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
                 file_get_contents(serverUrl() . substr($_SERVER['PHP_SELF'], 0, -9) . $unit . '/index.php');
+                unset($todo_subdirs[$key]);
             }
         }
+        if(time() >= $max_exec_time){
+            break;
+        }
     }
+    if(!empty($todo_subdirs)){
+        // if update is not finish
+        // save list of autoblogs who need update
+        file_put_contents($lockfile, serialize($todo_subdirs), LOCK_EX);
+        echo "Not finish";
+    }else{
+        echo "Done";
+    }
+    exit;
 }
 
 $antibot = generate_antibot();
