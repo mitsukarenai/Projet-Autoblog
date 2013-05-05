@@ -29,3 +29,8 @@ Pré-requis techniques
 =====================
 
 - serveur web avec PHP 5.3 et son support SQLite
+
+Licence
+=====================
+
+- domaine public
