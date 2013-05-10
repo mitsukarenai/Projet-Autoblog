@@ -519,6 +519,9 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
                 $sitetype = 'twitter';
                 $siteurl = 'http://twitter.com/'. $socialaccount;
                 $rssurl = API_TWITTER.$socialaccount;
+				// check
+				$twitterbridge = get_headers($rssurl, 1);
+				if ($twitterbridge['0'] == 'HTTP/1.1 403 Forbidden') { $error[] = "La twitterbridge a refusé ce nom d'utilisateur: <br>\n<pre>".htmlentities($twitterbridge['X-twitterbridge']).'</pre>'; }
             }
             else
                 $error[] = 'Vous devez définir une API Twitter -> RSS dans votre fichier de configuration (see <a href="https://github.com/mitsukarenai/twitterbridge">TwitterBridge</a>).';
@@ -555,14 +558,9 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
 
         if( empty($error) ) {
             try {
-                // TwitterBridge user will be allowed after Autoblog creation
-                // TODO: Twitter user does not exist ?
-				// TODO: get remote like http://wwz.suumitsu.eu/twitter/whitelist.json, decode, check if is in array, return error or continue
-                if($sitetype != 'twitter') {
                     $headers = get_headers($rssurl, 1);
                     if (strpos($headers[0], '200') === FALSE) 
                         throw new Exception('Flux inaccessible (compte inexistant ?)');
-                }
                 
                 createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
                 $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>
@@ -788,7 +786,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                             <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
                             <?php
                             if( API_TWITTER !== FALSE )
-                                echo '<input type="radio" name="socialinstance" value="twitter">Twitter<br>';
+                                echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.substr(API_TWITTER, 0, -2).'status">twitterbridge</a>)<br>';
                             else echo '<s>Twitter</s><br>'; ?>
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">

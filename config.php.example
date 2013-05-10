@@ -29,6 +29,7 @@
 
 /**
  * More about TwitterBridge : https://github.com/mitsukarenai/twitterbridge
+ * replace FALSE with the twitterbridge request URL (example: 'http://www.suumitsu.eu/twitter/?u=' )
  **/
 // define( 'API_TWITTER', FALSE );
 
