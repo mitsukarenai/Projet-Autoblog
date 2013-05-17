@@ -262,17 +262,17 @@ function displayXMLstatus($status, $response_code, $autoblog_url, $autoblog_titl
     switch ($status)
 	{
 	case 'unavailable':
-		return 'Autoblog "'.$autoblog_title.'": site distant inaccessible (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'": site distant inaccessible (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'moved':
-		return 'Autoblog "'.$autoblog_title.'": site distant redirigé (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'": site distant redirigé (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'not_found':
-		return 'Autoblog "'.$autoblog_title.'": site distant introuvable (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'": site distant introuvable (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'remote_error':
-		return 'Autoblog "'.$autoblog_title.'": site distant a problème serveur (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'": site distant a problème serveur (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'available':
-		return 'Autoblog "'.$autoblog_title.'": site distant à nouveau opérationnel (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'": site distant à nouveau opérationnel (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'new_autoblog_added':
-		return 'Autoblog "'.$autoblog_title.'" ajouté (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(false).AUTOBLOGS_FOLDER.$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
+		return 'Autoblog "'.$autoblog_title.'" ajouté (code '.$response_code.')<br>Autoblog: <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site: <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS: <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	}
 }
 
@@ -288,7 +288,7 @@ if(file_exists(RESOURCES_FOLDER.'rss.json'))
 	foreach ($json as $item)
 	{
 	$description = displayXMLstatus($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
-	$link = serverUrl(true).AUTOBLOGS_FOLDER.$item['autoblog_url'];
+	$link = serverUrl(true).$item['autoblog_url'];
 	$date = date("r", $item['timestamp']);
 	print <<<EOT
 
