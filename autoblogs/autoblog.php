@@ -41,7 +41,7 @@ if (!defined('MEDIA_DIR'))          define('MEDIA_DIR', ROOT_DIR . '/media');
 if (!defined('LOCAL_URL'))
 {
     // Automagic URL discover
-    define('LOCAL_URL', 'http' . (!empty($_SERVER['HTTPS']) ? 's' : '')."://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+    define('LOCAL_URL', 'http' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's' : '')."://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 }
 
 if (!defined('LOCAL_URI'))
