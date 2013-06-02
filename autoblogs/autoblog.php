@@ -466,6 +466,7 @@ class VroumVroum_Blog
         $res = $this->articles->query('SELECT id, uri, title, content
             FROM articles
             WHERE content LIKE \'%'.$this->articles->escapeString($query).'%\'
+            OR title LIKE \'%'.$this->articles->escapeString($query).'%\'
             ORDER BY id DESC
             LIMIT 0,100;');
 
