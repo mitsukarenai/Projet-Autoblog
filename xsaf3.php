@@ -112,20 +112,13 @@ function xsafimport($xsafremote, $max_exec_time) {
 					        $remote_db = str_replace("?export", $foldername."/articles.db", $xsafremote); 
 					        copy($remote_db, './'. $foldername .'/articles.db');         
 					    }
-
+						/* préparation à la récupération des médias distants */
 						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
 							$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
 							$json_media_import = file_get_contents($remote_media);
 							if(!empty($json_media_import))
-								{
-								mkdir('./'.$foldername.'/media/');
-								$json_media_import = json_decode($json_media_import, true);
-								$media_path=$json_media_import['url'];
-								if(!empty($json_media_import['files'])) {
-									foreach ($json_media_import['files'] as $value)	{
-										copy($media_path.$value, './'.$foldername.'/media/'.$value);
-									}
-								}
+							{
+							file_put_contents('./'. $foldername .'/import.json', $json_media_import);
 							}
 						}
 
