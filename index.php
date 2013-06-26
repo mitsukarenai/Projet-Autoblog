@@ -351,17 +351,17 @@ if (isset($_GET['sitemap']))
 {
     header('Content-Type: application/xml');
 	$proto=(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'])=='on')?"https://":"http://";
-    echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-			echo '<url><loc>'.$proto."{$_SERVER['HTTP_HOST']}".str_replace('?sitemap', '', $_SERVER['REQUEST_URI'])."</loc>\n";
-            echo '<lastmod>'.date('c', time())."</lastmod>\n";
-            echo '<changefreq>daily</changefreq></url>';
+    echo '<?xml version="1.0" encoding="UTF-8"?>'."\n".'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+			echo "<url>\n <loc>".$proto."{$_SERVER['HTTP_HOST']}".str_replace('?sitemap', '', $_SERVER['REQUEST_URI'])."</loc>\n";
+            echo '  <lastmod>'.date('c', time())."</lastmod>\n";
+            echo "  <changefreq>daily</changefreq>\n</url>\n";
     $subdirs = glob(AUTOBLOGS_FOLDER . "*");
     foreach($subdirs as $unit) {
         if(is_dir($unit)) {
             $unit=substr($unit, 2);
-            echo '<url><loc>'.$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
-            echo '<lastmod>'.date('c', filemtime($unit))."</lastmod>\n";
-            echo '<changefreq>hourly</changefreq></url>';
+            echo "<url>\n <loc>".$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
+            echo ' <lastmod>'.date('c', filemtime($unit))."</lastmod>\n";
+            echo " <changefreq>hourly</changefreq>\n</url>\n\n";
         }
     }
     echo '</urlset>';
