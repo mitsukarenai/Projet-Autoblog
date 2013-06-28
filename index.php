@@ -554,8 +554,11 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             $rssurl = $siteurl."?do=rss";
             $socialaccount = get_title_from_feed($rssurl);
         }
-
-
+        elseif($socialinstance === 'youtube') {
+            $sitetype = 'generic';
+            $siteurl = 'https://www.youtube.com/user/'.$socialaccount;
+            $rssurl = 'https://gdata.youtube.com/feeds/base/users/'.$socialaccount.'/uploads?alt=atom&orderby=published';
+        }
         if( empty($error) ) {
             try {
                     $headers = get_headers($rssurl, 1);
@@ -791,6 +794,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">
                             <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
+                            <input type="radio" name="socialinstance" value="youtube">Youtube<br>
                             <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
                             <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
                             <input type="submit" value="Créer">
