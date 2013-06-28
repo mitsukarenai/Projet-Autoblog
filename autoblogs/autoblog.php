@@ -622,7 +622,7 @@ if (isset($_GET['feed'])) // FEED
                 <updated>'.date(DATE_ATOM, $art['date']).'</updated>
 
                 <content type="html">
-                    <![CDATA[(<a href="'.escape($art['feed_id']).'">source</a>)<br />'.escape_content($art['content']).']]>
+                    <![CDATA[(<a href="'.escape($art['url']).'">source</a>)<br />'.escape_content($art['content']).']]>
                 </content>
             </entry>';
     }
