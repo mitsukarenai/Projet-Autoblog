@@ -717,7 +717,7 @@ $css='    * { margin: 0; padding: 0; }
     #error { position: fixed; top: 0; left: 0; right: 0; padding: 1%; background: #fff; border-bottom: 2px solid red; color: darkred; }
 ';
 
-if($site_type == 'generic') // custom CSS for generic
+if($site_type == 'generic' || $site_type == 'youtube') // custom CSS for generic
 	{
     $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
     .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }

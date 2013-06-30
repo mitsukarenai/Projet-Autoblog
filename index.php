@@ -551,7 +551,7 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             $socialaccount = get_title_from_feed($rssurl);
         }
         elseif($socialinstance === 'youtube') {
-            $sitetype = 'generic';
+            $sitetype = 'youtube';
             $siteurl = 'https://www.youtube.com/user/'.$socialaccount;
             $rssurl = 'https://gdata.youtube.com/feeds/base/users/'.$socialaccount.'/uploads?alt=atom&orderby=published';
         }
