@@ -184,9 +184,9 @@ function updateType($siteurl) {
     elseif( strpos( $siteurl, 'shaarli' ) !== FALSE ) { 
         return array('type' => 'shaarli', 'name' => 'shaarli');
     }
-    elseif( strpos( $siteurl, 'youtube.com' ) !== FALSE ) { 
-        return array('type' => 'youtube', 'name' => 'youtube');
-    }
+    //elseif( strpos( $siteurl, 'youtube.com' ) !== FALSE ) { 
+    //    return array('type' => 'youtube', 'name' => 'youtube');
+    //}
     else
         return array('type' => 'generic', 'name' => '');
 }
