@@ -7,3 +7,5 @@ resources/rss.json
 resources/user.css
 autoblogs/*
 !autoblogs/autoblog.php
+docs/*
+!docs/docs.txt

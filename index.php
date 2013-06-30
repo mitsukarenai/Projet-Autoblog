@@ -861,7 +861,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             foreach($subdirs as $unit)
             {
                 if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
-                    $docs[] = '<a href="'. $unit . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>';
+                    $docs[] = '<a href="'. urlencode($unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>';
                }
             }
         }
