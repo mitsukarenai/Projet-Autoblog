@@ -568,7 +568,7 @@ if(file_exists('import.json'))
 			$file = array_shift($json['files']);  /* get first element while unstacking */
 			if(!empty($file))
 			{ copy($remoteurl.$file, "media/$file"); file_put_contents('import.json', json_encode($json)); }  /* TOCHECK: get_headers() & filesize() when header "content-lenght" */
-			else { unlink('import.json'); }  /* first element empty: import finished */
+			else { unlink('import.json'); break; }  /* first element empty: import finished */
 			$time = time();
 			}
 		$count = count($json['files']); 
