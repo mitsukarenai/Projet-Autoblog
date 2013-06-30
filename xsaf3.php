@@ -1,11 +1,11 @@
 <?php
 
-define('DEBUG', false);
+define('DEBUG', true);
 define('XSAF_VERSION', 3);
 define('AUTOBLOG_FILE_NAME', 'autoblog.php');
-define('ALLOW_REMOTE_DB_DL', false);
-define('ALLOW_REMOTE_MEDIA_DL', false);
-define('EXEC_TIME', 5);
+define('ALLOW_REMOTE_DB_DL', true);
+define('ALLOW_REMOTE_MEDIA_DL', true);
+define('EXEC_TIME', 10);
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
@@ -120,7 +120,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 							$json_media_import = file_get_contents($remote_media);
                             if(DEBUG)
                                 debug($json_media_import);
-							if(!empty($json_media_import) && !&& !strpos($json_media_import, '[]}"'))
+							if(!empty($json_media_import) && !strpos($json_media_import, '[]}"'))
 							{
 							file_put_contents('./'. $foldername .'/import.json', $json_media_import);
 							}
