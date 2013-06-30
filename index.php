@@ -255,11 +255,6 @@ function svg_status($fill, $stroke, $text)
     else /* ..sinon, lancer la procédure de contrôle */
     {
         $ini = parse_ini_file("./". escape( $_GET['check'] ) ."/vvb.ini") or die;
-
-        if(strpos(strtolower($ini['SITE_TITLE']), 'twitter') !== FALSE) { die($svg_twitter); } /* Twitter */
-        if(strpos(strtolower($ini['SITE_TITLE']), 'identica') !== FALSE) { die($svg_identica); } /* Identica */
-        if(strpos(strtolower($ini['SITE_TYPE']), 'microblog') !== FALSE) { die($svg_statusnet); } /* Statusnet */
-
         $headers = get_headers($ini['FEED_URL']);
         /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
         if(empty($headers) || $headers === FALSE ) {
