@@ -26,8 +26,6 @@ $success = array();
 
 if(file_exists("config.php")){
     require_once "config.php";
-}else{
-    $error[] = "config.php not found !";
 }
 if(file_exists("functions.php")){
     require_once "functions.php";
