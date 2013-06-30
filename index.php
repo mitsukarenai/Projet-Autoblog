@@ -183,6 +183,47 @@ if (isset($_GET['rss'])) {
 /**
  * SVG
  **/
+if (isset($_GET['icon']))
+{
+header('Content-type: image/svg+xml');
+function svg_base($color)
+	{
+	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:'.$color.';stroke-width:4;stroke-miterlimit:4" /></svg>';
+	return $svg;
+	}
+
+    $svg_twitter=svg_base('#3aaae1');
+    $svg_youtube=svg_base('#a00000');
+    $svg_statusnet=svg_base('#ff6a00');
+    $svg_shaarli=svg_base('#008000');
+    $svg_generic=svg_base('#000000');
+
+$svg_type = '';
+
+	switch ($_GET['icon']) {
+    	case "twitter":
+        	$svg_type = $svg_twitter;
+        	break;
+    	case "microblog":
+        	$svg_type = $svg_statusnet;
+        	break;
+    	case "youtube":
+        	$svg_type = $svg_youtube;
+        	break;
+    	case "identica":
+        	$svg_type = $svg_youtube;
+        	break;
+    	case "shaarli":
+        	$svg_type = $svg_shaarli;
+        	break;
+    	case "generic":
+        	$svg_type = $svg_generic;
+        	break;
+	}
+
+die($svg_type);
+}
+
 if (isset($_GET['check']))
 {
     header('Content-type: image/svg+xml');
@@ -190,12 +231,15 @@ if (isset($_GET['check']))
     $expire=time() -$randomtime ;
 
     /* SVG minimalistes */
-    $svg_vert='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:#00ff00;stroke:#008000"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">OK</tspan></text></svg>';
-    $svg_jaune='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:#ffff00;stroke:#ffcc00"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">mv</tspan></text></svg>';
-    $svg_rouge='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:#ff0000;stroke:#800000"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">err</tspan></text></svg>';
-    $svg_twitter='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#3aaae1;stroke-width:4;stroke-miterlimit:4" /></svg>';
-    $svg_identica='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#a00000;stroke-width:4;stroke-miterlimit:4" /></svg>';
-    $svg_statusnet='<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:#ff6a00;stroke-width:4;stroke-miterlimit:4" /></svg>';
+
+function svg_status($fill, $stroke, $text)
+	{
+	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:'.$fill.';stroke:'.$stroke.'"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">'.$text.'</tspan></text></svg>';
+	}
+
+	$svg_vert=svg_status('#00ff00', '#008000', 'OK');
+	$svg_jaune=svg_status('#ffff00', '#ffcc00', 'mv');
+	$svg_rouge=svg_status('#ff0000', '#800000', 'err');
 
     $errorlog="./".escape( $_GET['check'] ) ."/error.log";
 
@@ -912,7 +956,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                     foreach ($autoblogs as $key => $autoblog) {
                         $opml_link='<a href="'.$key.'/?opml">opml</a>';
                         $autoblogs_display .= '<div class="vignette">
-                                <div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
+                                <div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?icon='.escape($autoblog->site_type).'"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
                                 <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
                             </div>';
                     }
