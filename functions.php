@@ -145,6 +145,8 @@ function getArticlesPerPage( $type ) {
 			return 20;
 		case 'shaarli':
 			return 20;
+        case 'youtube':
+            return 10;
 		default:
 			return 5;
 	}
@@ -167,14 +169,6 @@ function getInterval( $type ) {
 
 function getTimeout( $type ) {
 	switch( $type ) {
-		case 'microblog':
-			return 30;
-		case 'twitter':
-			return 30;
-		case 'identica':
-			return 30;
-		case 'shaarli':
-			return 30;
 		default:
 			return 30;
 	}
@@ -189,6 +183,9 @@ function updateType($siteurl) {
     }
     elseif( strpos( $siteurl, 'shaarli' ) !== FALSE ) { 
         return array('type' => 'shaarli', 'name' => 'shaarli');
+    }
+    elseif( strpos( $siteurl, 'youtube.com' ) !== FALSE ) { 
+        return array('type' => 'youtube', 'name' => 'youtube');
     }
     else
         return array('type' => 'generic', 'name' => '');

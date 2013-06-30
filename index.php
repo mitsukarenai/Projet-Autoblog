@@ -116,7 +116,7 @@ function create_from_opml($opml) {
                     throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
                     
                 $sitetype = escape($outline['text']); 
-                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' ) 
+                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' && $sitetype != 'youtube') 
                     $sitetype = 'generic'; 
                     
                 $rssurl = DetectRedirect(escape($outline['xmlUrl']));
@@ -185,7 +185,6 @@ if (isset($_GET['rss'])) {
  **/
 if (isset($_GET['check']))
 {
-    //echo "1";
     header('Content-type: image/svg+xml');
     $randomtime=rand(86400, 259200); /* intervalle de mise à jour: de 1 à 3 jours  (pour éviter que le statut de tous les autoblogs soit rafraichi en bloc et bouffe le CPU) */
     $expire=time() -$randomtime ;
@@ -504,13 +503,12 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
  * ADD BY SOCIAL / SHAARLI
  **/
 if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_SOCIAL)
-{;
+{
     $socialinstance = strtolower(escape($_POST['socialinstance']));
     $socialaccount = (!empty($_POST['socialaccount'])) ? strtolower(escape($_POST['socialaccount'])) : false;
     if( $socialaccount === false && $socialinstance !== 'shaarli')
         $error[] = 'Le compte social doit être renseigné.';
-
-    if( !empty($_POST['number']) && !empty($_POST['antibot']) && check_antibot($_POST['number'], $_POST['antibot']) && empty($error)) {
+    elseif( !empty($_POST['number']) && !empty($_POST['antibot']) && check_antibot($_POST['number'], $_POST['antibot'])) {
 
         if($socialinstance === 'twitter') {
             if( API_TWITTER !== FALSE ) {               
@@ -553,7 +551,7 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             $socialaccount = get_title_from_feed($rssurl);
         }
         elseif($socialinstance === 'youtube') {
-            $sitetype = 'generic';
+            $sitetype = 'youtube';
             $siteurl = 'https://www.youtube.com/user/'.$socialaccount;
             $rssurl = 'https://gdata.youtube.com/feeds/base/users/'.$socialaccount.'/uploads?alt=atom&orderby=published';
         }
