@@ -235,6 +235,7 @@ if (isset($_GET['check']))
 function svg_status($fill, $stroke, $text)
 	{
 	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:'.$fill.';stroke:'.$stroke.'"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">'.$text.'</tspan></text></svg>';
+	return $svg;
 	}
 
 	$svg_vert=svg_status('#00ff00', '#008000', 'OK');
