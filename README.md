@@ -1,23 +1,23 @@
 Projet Autoblog
 ===============
 
-Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/ ).
+Création, gestion et échange de blogs automatiques contre la censure (à propos: http://sebsauvage.net/streisand.me/fr/).
 
 Serie 0.3 par [Mitsu](https://github.com/mitsukarenai/), [Oros](https://github.com/Oros42), [Arthur Hoaro](https://github.com/ArthurHoaro).
 
 Nouveautés majeures
 ===================
 
-- "ferme" d'autoblogs avec ajout facile par différents formulaires (générique, microblogging, OPML, marque-pages)
-- échange de références entre fermes avec XSAF (Cross-Site Autoblog Farming)
-- vérification du statut des sites distants, et flux de suivi des changements
-- export facile des références, articles et médias
-- contrôle de version et alerte de mise à jour
-- apparence de l'autoblog selon son type
-- CSS utilisateur personnalisable
-- hébergement de documents spécifiques
+- Ferme d'autoblogs avec ajout facile par différents formulaires (générique, microblogging, OPML, marque-pages).
+- Échange de références entre fermes avec XSAF ([Cross-Site Autoblog Farming](https://github.com/mitsukarenai/Projet-Autoblog/wiki/XSAF---Cross-Site-Autoblog-Farming)).
+- Vérification du statut des sites distants, et flux de suivi des changements.
+- Export des références, articles et médias.
+- Contrôle de version de la ferme et alerte de mise à jour.
+- Identification du type d'autoblog.
+- CSS utilisateur personnalisable.
+- Hébergement de documents divers (PDF, images, réplique de site web, etc.).
 
-Branches :
+Branches
 ===================
 
  - [master](https://github.com/mitsukarenai/Projet-Autoblog/tree/master/) _(développement)_ : Autoblog Project serie 0.3 par Mitsu, Oros, Arthur Hoaro
@@ -28,9 +28,11 @@ Branches :
 Pré-requis techniques
 =====================
 
-- serveur web avec PHP 5.3 et son support SQLite
+- Serveur web (Apache, nginx, etc.)
+- PHP 5.3 ou supérieur 
+- Support SQLite 3 pour PHP
 
 Licence
 =====================
 
-- domaine public
+Domaine public.
