@@ -95,7 +95,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 
 				/* autoblog */
 				if( $result === true ) {
-					$foldername = urlToFolder($sitename, $rssurl);
+					$foldername = urlToFolder($siteurl, $rssurl);
 
 					try {
 						createAutoblog($sitetype, $sitename, $siteurl, $rssurl);
@@ -114,8 +114,12 @@ function xsafimport($xsafremote, $max_exec_time) {
 					    }
 						/* préparation à la récupération des médias distants */
 						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
-							$remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
+                            $remote_media=str_replace("?export", $foldername."/?media", $xsafremote);
+                            if(DEBUG)
+                                debug("Récupération de la liste des médias à $remote_media <br>");
 							$json_media_import = file_get_contents($remote_media);
+                            if(DEBUG)
+                                debug($json_media_import);
 							if(!empty($json_media_import))
 							{
 							file_put_contents('./'. $foldername .'/import.json', $json_media_import);
