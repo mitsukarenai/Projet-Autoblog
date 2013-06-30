@@ -72,7 +72,7 @@ function get_link_from_datafeed($data) {
         return $link->item(0)->nodeValue;
     }
     else {
-        return $channel['link'];
+        return escape($channel['link']);
     }
 }
 
@@ -685,7 +685,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     <head>
     <meta charset="utf-8">
     <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(false) . '/?rss';?>" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . '?rss';?>" />
     <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
       if(file_exists(RESOURCES_FOLDER .'user.css')){
