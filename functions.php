@@ -29,7 +29,7 @@ if( !defined('ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK')) define( 'ALLOW_NEW_AUTOBLOGS_B
 if( !defined('ALLOW_NEW_AUTOBLOGS_BY_XSAF')) define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 // More about TwitterBridge : https://github.com/mitsukarenai/twitterbridge
-if( !defined('API_TWITTER')) define( 'API_TWITTER', FALSE );
+if( !defined('API_TWITTER')) define( 'API_TWITTER', 'LOCAL' );
 
 if( !defined('LOGO')) define( 'LOGO', 'icon-logo.svg' );
 if( !defined('HEAD_TITLE')) define( 'HEAD_TITLE', '');

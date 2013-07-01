@@ -11,7 +11,8 @@
 if(file_exists("config.php")) require_once "config.php";
 if( !defined('API_TWITTER')) {header("HTTP/1.1 404 Not Found"); die('API_TWITTER is undefined: make it LOCAL in "config.php" if you want me to work for you.');}
 if ('API_TWITTER' === FALSE) {header("HTTP/1.1 404 Not Found"); die('Twitter support disabled in "config.php". Sorry.');}
-if ('API_TWITTER' !== 'LOCAL') {header("HTTP/1.1 404 Not Found"); die('Custom twitterbridge defined in "config.php": leave me alone.');}
+$api = API_TWITTER;
+if ($api === 'LOCAL') { } else {header("HTTP/1.1 404 Not Found"); die('Custom twitterbridge defined in "config.php": leave me alone.');}
 if(!isset($_GET['u'])) {header("HTTP/1.1 404 Not Found"); die('no username provided');}
 $exclude_reply = '@'; // if you want twitter2feed to return replies too:  $exclude_reply = '';  
 // ----------------------------
