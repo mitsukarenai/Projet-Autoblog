@@ -3,13 +3,21 @@
  * Récupération du flux RSS d'un compte Twitter
  * Passez le nom du compte en Paramètre. Exemple: http://monsite.com/twit2rss.php?name=Craftbukkit
  * 2013 - by Tronics
- *  -- ajout exclusion de réponses par Mitsu >> suggéré pour Projet Autoblog
  */
 
-  if (!isset($_GET["name"]))
-    die ();
+// ----------------------------
+//  Autoblog Project inclusion
+// ----------------------------
+if(file_exists("config.php")) require_once "config.php";
+if( !defined('API_TWITTER')) {header("HTTP/1.1 404 Not Found"); die('API_TWITTER is undefined: make it LOCAL in "config.php" if you want me to work for you.');}
+if ('API_TWITTER' === FALSE) {header("HTTP/1.1 404 Not Found"); die('Twitter support disabled in "config.php". Sorry.');}
+if ('API_TWITTER' !== 'LOCAL') {header("HTTP/1.1 404 Not Found"); die('Custom twitterbridge defined in "config.php": leave me alone.');}
+if(!isset($_GET['u'])) {header("HTTP/1.1 404 Not Found"); die('no username provided');}
+$exclude_reply = '@'; // if you want twitter2feed to return replies too:  $exclude_reply = '';  
+// ----------------------------
+// Let's rock !
 
-  $name = $_GET["name"];
+  $name = $_GET["u"];
   $str = file_get_contents("https://twitter.com/$name");
 
   $nb = preg_match_all('%<div class="tweet original-tweet(.*)'.
@@ -90,7 +98,7 @@
       $footer = "<br/>\r\n<a href=\"https://twitter.com/$mname/status/$id\">Afficher la conversation</a>";
       $message = "$header$rt$message$footer";
       $message = htmlspecialchars($message);
-	if(substr($title, 0, 1) !== '@') { // exclude response
+	if(substr($title, 0, 1) !== $exclude_reply) {
       echo <<<HTML
   <entry>
     <title>$title</title>
@@ -106,7 +114,7 @@
     </author>
   </entry>
 HTML;
-				}  // end exclude response
+				}
     }
   }
 

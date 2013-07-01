@@ -232,15 +232,15 @@ if (isset($_GET['check']))
 
     /* SVG minimalistes */
 
-function svg_status($fill, $stroke, $text)
+function svg_status($fill, $text, $back)
 	{
-	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><g><rect width="15" height="15" x="0" y="0" style="fill:'.$fill.';stroke:'.$stroke.'"/></g><text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial"><tspan x="7" y="11">'.$text.'</tspan></text></svg>';
+	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15">'.$back.'<text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial;fill:'.$fill.';"><tspan x="8" y="14">'.$text.'</tspan></text></svg>';
 	return $svg;
 	}
 
-	$svg_vert=svg_status('#00ff00', '#008000', 'OK');
-	$svg_jaune=svg_status('#ffff00', '#ffcc00', 'mv');
-	$svg_rouge=svg_status('#ff0000', '#800000', 'err');
+	$svg_ok=svg_status('#008000', 'ok', '');
+	$svg_mv=svg_status('#0000ff', 'mv', '<rect width="100%" height="100%" fill="#ffd800"/>');
+	$svg_err=svg_status('#000000', 'err', '<rect width="100%" height="100%" fill="#ff0000"/>');
 
     $errorlog="./".escape( $_GET['check'] ) ."/error.log";
 
@@ -249,9 +249,9 @@ function svg_status($fill, $stroke, $text)
     if(file_exists($errorlog) && filemtime($errorlog) < $expire) { unlink($errorlog); } /* errorlog périmé ? Suppression. */
     if(file_exists($errorlog)) /* errorlog existe encore ? se contenter de lire sa taille pour avoir le statut */
     {
-        if(filesize($errorlog) == "0") {die($svg_vert);}
-        else if(filesize($errorlog) == "1") {die($svg_jaune);}
-        else {die($svg_rouge);}
+        if(filesize($errorlog) == "0") {die($svg_ok);}
+        else if(filesize($errorlog) == "1") {die($svg_mv);}
+        else {die($svg_err);}
     }
     else /* ..sinon, lancer la procédure de contrôle */
     {
@@ -263,7 +263,7 @@ function svg_status($fill, $stroke, $text)
 				updateXML('unavailable', 'nxdomain', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '..');
-            die($svg_rouge);
+            die($svg_err);
         }
         $code=explode(" ", $headers[0]);
         /* code retour 200: flux disponible */
@@ -272,7 +272,7 @@ function svg_status($fill, $stroke, $text)
 				updateXML('available', '200', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '');
-            die($svg_vert);
+            die($svg_ok);
         }
         /* autre code retour: un truc a changé (redirection, changement de CMS, .. bref vvb.ini doit être corrigé) */
         else {
@@ -280,7 +280,7 @@ function svg_status($fill, $stroke, $text)
 				updateXML('moved', '3xx', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '.');
-            die($svg_jaune);
+            die($svg_mv);
         }
     }
 }
@@ -554,10 +554,15 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             if( API_TWITTER !== FALSE ) {               
                 $sitetype = 'twitter';
                 $siteurl = 'http://twitter.com/'. $socialaccount;
-                $rssurl = API_TWITTER.$socialaccount;
+		if ( API_TWITTER === 'LOCAL' ) {
+                	$rssurl = serverUrl(true).'twitter2feed.php?u='.$socialaccount;
+		}
+		else {
+                	$rssurl = API_TWITTER.$socialaccount;
 				// check
 				$twitterbridge = get_headers($rssurl, 1);
 				if ($twitterbridge['0'] == 'HTTP/1.1 403 Forbidden') { $error[] = "La twitterbridge a refusé ce nom d'utilisateur: <br>\n<pre>".htmlentities($twitterbridge['X-twitterbridge']).'</pre>'; }
+		}
             }
             else
                 $error[] = 'Vous devez définir une API Twitter -> RSS dans votre fichier de configuration (see <a href="https://github.com/mitsukarenai/twitterbridge">TwitterBridge</a>).';
@@ -825,7 +830,12 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
                             <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
                             <?php
                             if( API_TWITTER !== FALSE )
-                                echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.substr(API_TWITTER, 0, -2).'status">twitterbridge</a>)<br>';
+				{
+				if( API_TWITTER === 'LOCAL' )
+					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (local)<br>';
+				else
+					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.substr(API_TWITTER, 0, -2).'status">twitterbridge</a>)<br>';
+				}
                             else echo '<s>Twitter</s><br>'; ?>
                             <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">

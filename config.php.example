@@ -28,10 +28,11 @@
 // define( 'ALLOW_NEW_AUTOBLOGS_BY_XSAF', TRUE );
 
 /**
- * More about TwitterBridge : https://github.com/mitsukarenai/twitterbridge
- * replace FALSE with the twitterbridge request URL (example: 'http://www.suumitsu.eu/twitter/?u=' )
+ * More about TwitterBridge : https://github.com/mitsukarenai/twitterbridge and twitter2feed: https://github.com/mitsukarenai/twitter2feed
+ * replace LOCAL with the twitterbridge request URL (example: 'http://www.suumitsu.eu/twitter/?u=' ) or leave LOCAL to use the included twitter2feed.php.
+ * set to FALSE if you want to fully disable Twitter support
  **/
-// define( 'API_TWITTER', FALSE );
+// define( 'API_TWITTER', LOCAL );
 
 /**
  * Import autoblogs from friend's autoblog farm - Add a link to the JSON export
