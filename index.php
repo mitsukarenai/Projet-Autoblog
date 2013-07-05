@@ -257,15 +257,18 @@ function svg_status($fill, $text, $back)
     {
         $ini = parse_ini_file("./". escape( $_GET['check'] ) ."/vvb.ini") or die;
         $headers = get_headers($ini['FEED_URL']);
+        
+        if(!empty($headers)) 
+            $code=explode(" ", $headers[0]);
+        
         /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
-        if(empty($headers) || $headers === FALSE ) {
+        if(empty($headers) || $headers === FALSE || (!empty($code) && ($code[1] == '500' || $code[1] == '404'))) {
             if( $oldvalue !== null && $oldvalue != '..' ) {
 				updateXML('unavailable', 'nxdomain', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '..');
             die($svg_err);
         }
-        $code=explode(" ", $headers[0]);
         /* code retour 200: flux disponible */
         if($code[1] == "200") {
             if( $oldvalue !== null && $oldvalue != '' ) {
