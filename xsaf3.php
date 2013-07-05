@@ -3,8 +3,8 @@
 define('DEBUG', false);
 define('XSAF_VERSION', 3);
 define('AUTOBLOG_FILE_NAME', 'autoblog.php');
-define('ALLOW_REMOTE_DB_DL', false);
-define('ALLOW_REMOTE_MEDIA_DL', false);
+define('ALLOW_REMOTE_DB_DL', true);
+define('ALLOW_REMOTE_MEDIA_DL', true);
 define('EXEC_TIME', 10);
 
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
