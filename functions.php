@@ -228,11 +228,14 @@ function __($str)
             return 'Source :';
         case '_date_format':
             return '%A %e %B %Y à %H:%M';
-        case 'configuration':
-        case 'articles':
-            return $str;
         case 'Media export':
             return 'Export fichiers media';
+        case 'Import running: ':
+            return 'Import en cours : ';
+        case ' files remaining':
+            return ' fichiers restants';
+        case 'The page should refresh every second. If not, <a href="javascript:window.location.reload()">refresh manually</a>.':
+            return 'La page devrait se rafraîchir toutes les secondes. Si non, <a href="javascript:window.location.reload()">rafraîchissez là manuellement.</a>.';
         default:
             return $str;
     }

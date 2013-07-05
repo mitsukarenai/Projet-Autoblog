@@ -327,6 +327,17 @@ class VroumVroum_Blog
 
         return true;
     }
+    
+    public function mustUpdateXsaf()
+    {
+        if( file_exists('import.json') ) {
+            /*$out = file_get_contents('import.json');
+            if( !is_numeric($out))
+                return false;*/
+            return true;
+        }
+        else return false;
+    }
 
     protected function _getStreamContext()
     {
@@ -423,6 +434,36 @@ class VroumVroum_Blog
         $this->articles->exec('END TRANSACTION;');
 
         return $updated;
+    }
+    
+    public function updateXsaf() {
+        if($this->mustUpdateXsaf()) {
+    	    $json = json_decode(file_get_contents('import.json'), true);
+    		$count = count($json['files']);
+    		file_put_contents('import.lock', $count); /* one-process locking */
+    		$remoteurl = $json['url'];
+    		if (!file_exists('media'))  { 
+                mkdir('media'); 
+            }
+    		$time = time();
+    		$maxtime = $time + 3;   /* max exec time: 3 seconds */
+            
+    		while ($time <= $maxtime) {
+    			$file = array_shift($json['files']);  /* get first element while unstacking */
+    			if(!empty($file)) { 
+                    $this->_copy($remoteurl.$file, "media/$file"); 
+                    file_put_contents('import.json', json_encode($json)); 
+                }  /* TOCHECK: get_headers() & filesize() when header "content-lenght" */
+    			else { 
+                    unlink('import.json'); 
+                    break; 
+                }  /* first element empty: import finished */
+    			$time = time();
+			}
+            
+    		$count = count($json['files']); 
+    		unlink('import.lock');
+		}
     }
 
     public function listArticlesByPage($page = 1)
@@ -526,6 +567,11 @@ class VroumVroum_Blog
             if (!file_exists(MEDIA_DIR . '/' . $filename))
             {
                 try {
+                    $limit = 512000; // 512ko
+                    $fr = fopen($filePath, 'r');
+                    $limitedContent = fread($fr, $limit);
+                    $fw = fopen($filePath, 'w');
+                    fwrite($fw, $limitedContent);
                     $copied = $this->_copy($url, MEDIA_DIR . '/' . $filename);
                 }
                 catch (ErrorException $e)
@@ -536,6 +582,13 @@ class VroumVroum_Blog
                 $content = str_replace($m[0], $m[1] . '="'.'media/'.$filename.'" data-original-source="'.$url.'"', $content);
         }
         return $content;
+    }
+    
+    public function getXsafCounter() {
+        if($this->mustUpdateXsaf()) {
+            $json = json_decode(file_get_contents('import.json'), true);
+            return count($json['files']);
+        }
     }
 
     /* copy() is buggy with http streams and safe_mode enabled (which is bad), so here's a workaround */
@@ -551,8 +604,8 @@ class VroumVroum_Blog
 }
 
 // MEDIA IMPORT PROCESSING
-
-if(file_exists('import.json'))
+// A SUPPRIMER
+if(false && file_exists('import.json'))
 	{
 	if(!file_exists('import.lock'))
 		{
@@ -758,7 +811,11 @@ echo '
     <link rel="alternate" type="application/atom+xml" title="'.__('ATOM Feed').'" href="?feed">
     <style type="text/css" media="screen,projection">
     '.$css.'
-    </style>
+    </style>';
+    if( $vvb->mustUpdateXsaf()) {
+        echo '<meta http-equiv="Refresh" content="1">';
+    }
+echo '
 </head>
 <body>
 <div class="header">
@@ -779,7 +836,19 @@ echo '
 </div>
 ';
 
-if ($vvb->mustUpdate())
+if( $vvb->mustUpdateXsaf()) {
+    echo '
+    <div class="article">
+        <div class="title">
+            <h2>'.__('Update').'</h2>
+        </div>
+        <div class="content" id="update">
+            '.__('Import running: '). $vvb->getXsafCounter() . __(' files remaining').'<br>
+            '.__('The page should refresh every second. If not, <a href="javascript:window.location.reload()">refresh manually</a>.').'
+        </div>
+    </div>';
+}
+elseif ($vvb->mustUpdate())
 {
     echo '
     <div class="article">
@@ -874,7 +943,29 @@ echo '
     <p><a href="./?media">'.__('Media export').' <sup> JSON</sup></a></p>
 </div>';
 
-if ($vvb->mustUpdate())
+if( $vvb->mustUpdateXsaf() ) {
+    try {
+        ob_end_flush();
+        flush();
+    }
+    catch (Exception $e)
+    {
+        // Silent, not critical
+    }
+
+    try {
+        $updated = $vvb->updateXsaf();
+    }
+    catch (VroumVroum_Feed_Exception $e)
+    {
+        echo '
+        <div id="error">
+            '.escape($e->getMessage()).'
+        </div>';
+        $updated = 0;
+    }
+}
+elseif ($vvb->mustUpdate())
 {
     try {
         ob_end_flush();
