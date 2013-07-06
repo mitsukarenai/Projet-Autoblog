@@ -75,8 +75,8 @@ function xsafimport($xsafremote, $max_exec_time) {
 		$get_remote_media = ($json_import['meta']['xsaf-media_transfer'] == "true") ? true : false;
 		
 		if(!empty($json_import['autoblogs'])) {
-		 	foreach ($json_import['autoblogs'] as $value) {
-		 		
+		 	foreach ($json_import['autoblogs'] as $remote_folder => $value) {
+		 		if(DEBUG) debug('remote = '. $remote_folder);
 		 		if(count($value)==4 && !empty($value['SITE_TYPE']) && !empty($value['SITE_TITLE']) && !empty($value['SITE_URL']) && !empty($value['FEED_URL'])) {
 					$sitetype = escape($value['SITE_TYPE']);
 					$sitename = escape($value['SITE_TITLE']);
@@ -108,13 +108,13 @@ function xsafimport($xsafremote, $max_exec_time) {
 
 						/* ============================================================================================================================================================================== */
 						/* récupération de la DB distante */
-						if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {	
-					        $remote_db = str_replace("?export", $foldername."/articles.db", $xsafremote); 
+						if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {
+					        $remote_db = str_replace("?export", $remote_folder."/articles.db", $xsafremote); 
 					        copy($remote_db, './'. $foldername .'/articles.db');         
 					    }
 						/* préparation à la récupération des médias distants */
 						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
-                            $remote_media=str_replace("?export", $foldername."?media", $xsafremote);
+                            $remote_media=str_replace("?export", $remote_folder."?media", $xsafremote);
                             if(DEBUG)
                                 debug("Récupération de la liste des médias à $remote_media <br>");
 							$json_media_import = file_get_contents($remote_media);
