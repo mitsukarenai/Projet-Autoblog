@@ -293,7 +293,7 @@ function displayXML() {
 			
 			$description = displayXMLstatus($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
 			$link = serverUrl(true).$item['autoblog_url'];
-			$date = date("r", $item['timestamp']);
+			$date = date(DATE_RFC822, $item['timestamp']);
 			print <<<EOT
 
 <item>
