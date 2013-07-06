@@ -278,7 +278,7 @@ function displayXMLstatus($status, $response_code, $autoblog_url, $autoblog_titl
 function displayXML() {
 	header('Content-type: application/rss+xml; charset=utf-8');
 	echo '<?xml version="1.0" encoding="UTF-8" ?>
-	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><link>'.serverUrl(true).'</link>';
+	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><link>'.serverUrl(true).'</link>';
 	echo '<atom:link href="'.serverUrl(true) . '/?rss" rel="self" type="application/rss+xml"/><title>Projet Autoblog'. ((strlen(HEAD_TITLE)>0) ? ' | '. HEAD_TITLE : '').'</title><description>Projet Autoblog - RSS : Ajouts et changements de disponibilité.</description>';
 	if(file_exists(RESOURCES_FOLDER.'rss.json'))
 	{
@@ -293,7 +293,7 @@ function displayXML() {
 			
 			$description = displayXMLstatus($item['status'],$item['response_code'],$item['autoblog_url'],$item['autoblog_title'],$item['autoblog_sourceurl'],$item['autoblog_sourcefeed']);
 			$link = serverUrl(true).$item['autoblog_url'];
-			$date = date(DATE_RFC822, $item['timestamp']);
+			$date = date(DATE_RSS, $item['timestamp']);
 			print <<<EOT
 
 <item>
