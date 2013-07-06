@@ -329,14 +329,8 @@ class VroumVroum_Blog
     }
     
     public function mustUpdateXsaf()
-    {
-        if( file_exists('import.json') ) {
-            /*$out = file_get_contents('import.json');
-            if( !is_numeric($out))
-                return false;*/
-            return true;
-        }
-        else return false;
+    {          
+        return file_exists('import.json');
     }
 
     protected function _getStreamContext()
@@ -453,15 +447,13 @@ class VroumVroum_Blog
     			if(!empty($file)) { 
                     $this->_copy($remoteurl.$file, "media/$file"); 
                     file_put_contents('import.json', json_encode($json)); 
-                }  /* TOCHECK: get_headers() & filesize() when header "content-lenght" */
+                }
     			else { 
                     unlink('import.json'); 
                     break; 
                 }  /* first element empty: import finished */
     			$time = time();
-			}
-            
-    		$count = count($json['files']); 
+			}            
     		unlink('import.lock');
 		}
     }
@@ -567,11 +559,6 @@ class VroumVroum_Blog
             if (!file_exists(MEDIA_DIR . '/' . $filename))
             {
                 try {
-                    $limit = 512000; // 512ko
-                    $fr = fopen($filePath, 'r');
-                    $limitedContent = fread($fr, $limit);
-                    $fw = fopen($filePath, 'w');
-                    fwrite($fw, $limitedContent);
                     $copied = $this->_copy($url, MEDIA_DIR . '/' . $filename);
                 }
                 catch (ErrorException $e)
@@ -602,45 +589,6 @@ class VroumVroum_Blog
         return $size;
     }
 }
-
-// MEDIA IMPORT PROCESSING
-// A SUPPRIMER
-if(false && file_exists('import.json'))
-	{
-	if(!file_exists('import.lock'))
-		{
-		$json = json_decode(file_get_contents('import.json'), true);
-		$count = count($json['files']);
-		file_put_contents('import.lock', $count); /* one-process locking */
-		$remoteurl = $json['url'];
-		if (!file_exists('media'))  { mkdir('media'); }
-		$time = time();
-		$maxtime = $time + 3;   /* max exec time: 3 seconds */
-		while ($time <= $maxtime)
-			{
-			$file = array_shift($json['files']);  /* get first element while unstacking */
-			if(!empty($file))
-			{ copy($remoteurl.$file, "media/$file"); file_put_contents('import.json', json_encode($json)); }  /* TOCHECK: get_headers() & filesize() when header "content-lenght" */
-			else { unlink('import.json'); break; }  /* first element empty: import finished */
-			$time = time();
-			}
-		$count = count($json['files']); 
-		unlink('import.lock');
-		}
-/* return import information page */ ?>
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="Refresh" content="1">
-<title>Autoblog media import</title>
-</head>
-<body>
-Import running: <?php if(isset($count)) { echo $count; } else { echo file_get_contents('import.lock'); } ?> files remaining.<br>
-The page should refresh every second. If not, <a href="javascript:window.location.reload()">refresh manually</a>.
-</body>
-</html>
-<?php exit;}
 
 // DISPLAY AND CONTROLLERS
 
