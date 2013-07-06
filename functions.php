@@ -270,7 +270,6 @@ function displayXMLstatus($status, $response_code, $autoblog_url, $autoblog_titl
 	case 'remote_error':
 		return 'Autoblog "'.$autoblog_title.'" : site distant a problème serveur (code '.$response_code.')<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'available':
-		return 'Autoblog "'.$autoblog_title.'" : site distant à nouveau opérationnel (code '.$response_code.')<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'new_autoblog_added':
 		return 'Autoblog "'.$autoblog_title.'" ajouté.<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	}
@@ -302,7 +301,7 @@ function displayXML() {
 	<description><![CDATA[{$description}]]></description>
 	<link>{$link}</link>
 	<guid isPermaLink="false">{$item['timestamp']}</guid>
-	<author>admin@{$_SERVER['SERVER_NAME']}</author>
+	<dc:creator>Autoblog</dc:creator>
 	<pubDate>{$date}</pubDate>
 </item>
 EOT;
