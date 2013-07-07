@@ -718,35 +718,35 @@ $css='    * { margin: 0; padding: 0; }
     #error { position: fixed; top: 0; left: 0; right: 0; padding: 1%; background: #fff; border-bottom: 2px solid red; color: darkred; }
 ';
 
-if($site_type == 'generic' || $site_type == 'youtube') // custom CSS for generic
-	{
-    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
-    .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
-    .article .title h2 a { color:#000; text-decoration:none; }
-	.article .source { font-size: 0.8em; color: #666; }
-    .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
-    .footer { text-align:center; font-size: small; color:#333; clear: both; }';
-    }
-	else if($site_type == 'microblog' || $site_type == 'twitter') // custom CSS for microblog
-	{
-    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
-    .article .title h2 { width: 10em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 0.7em;margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
-    .article .title h2 a { color:#333; text-decoration:none; }
-    .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:0 auto;box-shadow:0px 5px 7px #aaa; }
-    .article .source { font-size: 0.8em; color: #666; }
-    .footer { margin-top:1em;text-align:center; font-size: small; color:#333; clear: both; }
-	.content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}';
-	}
-	else if($site_type == 'shaarli') // custom CSS for shaarli
-	{
-    $css = $css.'.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
-    .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
-    .article .title h2 a { color:#000; text-decoration:none; }
-    .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
-    .article .source { margin-top:1em;font-size: 0.8em; color: #666; }
-    .footer { text-align:center; font-size: small; color:#333; clear: both; }';
-	}
-
+switch($site_type) {
+    case 'microblog':
+    case 'twitter':
+        $css .= '.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
+            .article .title h2 { width: 10em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 0.7em;margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
+            .article .title h2 a { color:#333; text-decoration:none; }
+            .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:0 auto;box-shadow:0px 5px 7px #aaa; }
+            .article .source { font-size: 0.8em; color: #666; }
+            .footer { margin-top:1em;text-align:center; font-size: small; color:#333; clear: both; }
+            .content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}';
+        break;
+    case 'shaarli':
+        $css .= '.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px; }
+            .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
+            .article .title h2 a { color:#000; text-decoration:none; }
+            .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
+            .article .source { margin-top:1em;font-size: 0.8em; color: #666; }
+            .footer { text-align:center; font-size: small; color:#333; clear: both; }';
+        break;
+    case 'generic':
+    case 'youtube':
+    default:
+        $css .= '.header h1 a { color: #333;font-size:40pt;text-shadow: #ccc 0px 5px 5px;text-transform:uppercase; }
+            .article .title h2 { margin: 0; color:#333; text-shadow: 1px 1px 1px #fff; }
+            .article .title h2 a { color:#000; text-decoration:none; }
+            .article .source { font-size: 0.8em; color: #666; }
+            .article { background-color:white;padding: 12px 10px 12px 10px;border:1px solid #aaa;max-width:70em;margin:1em auto;box-shadow:0px 5px 7px #aaa; }
+            .footer { text-align:center; font-size: small; color:#333; clear: both; }';
+}
 
 // HTML HEADER
 echo '
