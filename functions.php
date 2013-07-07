@@ -141,8 +141,6 @@ function getArticlesPerPage( $type ) {
 			return 20;
 		case 'twitter':
 			return 20;
-		case 'identica':
-			return 20;
 		case 'shaarli':
 			return 20;
         case 'youtube':
@@ -157,8 +155,6 @@ function getInterval( $type ) {
 		case 'microblog':
 			return 300;
 		case 'twitter':
-			return 300;
-		case 'identica':
 			return 300;
 		case 'shaarli':
 			return 1800;
@@ -177,9 +173,6 @@ function getTimeout( $type ) {
 function updateType($siteurl) {
     if( strpos($siteurl, 'twitter.com') !== FALSE ) {
         return array('type' => 'twitter', 'name' => 'twitter');
-    }
-    elseif ( strpos( $siteurl, 'identi.ca') !== FALSE ) {
-        return array('type' => 'identica', 'name' => 'identica');
     }
     elseif( strpos( $siteurl, 'shaarli' ) !== FALSE ) { 
         return array('type' => 'shaarli', 'name' => 'shaarli');

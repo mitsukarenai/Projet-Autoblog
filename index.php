@@ -116,7 +116,7 @@ function create_from_opml($opml) {
                     throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
                     
                 $sitetype = escape($outline['text']); 
-                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'identica' && $sitetype != 'youtube') 
+                if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'youtube') 
                     $sitetype = 'generic'; 
                     
                 $rssurl = DetectRedirect(escape($outline['xmlUrl']));
@@ -208,9 +208,6 @@ $svg_type = '';
         	$svg_type = $svg_statusnet;
         	break;
     	case "youtube":
-        	$svg_type = $svg_youtube;
-        	break;
-    	case "identica":
         	$svg_type = $svg_youtube;
         	break;
     	case "shaarli":
@@ -570,11 +567,6 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             else
                 $error[] = 'Vous devez définir une API Twitter -> RSS dans votre fichier de configuration (see <a href="https://github.com/mitsukarenai/twitterbridge">TwitterBridge</a>).';
         }
-        elseif($socialinstance === 'identica') {
-            $sitetype = 'identica';
-            $siteurl = 'http://identi.ca/'.$socialaccount;
-            $rssurl = 'http://identi.ca/api/statuses/user_timeline/'.$socialaccount.'.rss';
-        }
         elseif($socialinstance === 'statusnet' && !empty($_POST['statusneturl'])) {
             $sitetype = 'microblog';
             $siteurl= NoProtocolSiteURL(escape($_POST['statusneturl']));
@@ -840,7 +832,6 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.substr(API_TWITTER, 0, -2).'status">twitterbridge</a>)<br>';
 				}
                             else echo '<s>Twitter</s><br>'; ?>
-                            <input type="radio" name="socialinstance" value="identica">Identica<br>
                             <input type="radio" name="socialinstance" value="statusnet">
                             <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
                             <input type="radio" name="socialinstance" value="youtube">Youtube<br>
