@@ -120,7 +120,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 							$json_media_import = file_get_contents($remote_media);
                             if(DEBUG)
                                 debug($json_media_import);
-							if(!empty($json_media_import) && !strpos($json_media_import, '[]}'))
+							if(!empty($json_media_import) && !strpos($json_media_import, '[]}') && json_decode($json_media_import) !== null)
 							{
 							    file_put_contents('./'. $foldername .'/import.json', $json_media_import);
 							}
