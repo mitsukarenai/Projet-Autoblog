@@ -350,16 +350,19 @@ class VroumVroum_Blog
     {
         if (!$this->mustUpdate())
             return false;
-
-        try {
-            $body = file_get_contents($this->config->feed_url, false, $this->_getStreamContext());
-        }
-        catch (ErrorException $e)
-        {
-            $this->log_update(false, $e->getMessage() . "\n\n" . (!empty($http_response_header) ? implode("\n", $http_response_header) : ''));
-            throw new VroumVroum_Feed_Exception("Can't retrieve feed: ".$e->getMessage());
-        }
-
+	if(isset($this->config->off)) {
+		throw new VroumVroum_Feed_Exception('This autoblog has been turned off');
+		}
+	else {
+        	try {
+           	 $body = file_get_contents($this->config->feed_url, false, $this->_getStreamContext());
+        	}
+        	catch (ErrorException $e)
+        	{
+           	 $this->log_update(false, $e->getMessage() . "\n\n" . (!empty($http_response_header) ? implode("\n", $http_response_header) : ''));
+           	 throw new VroumVroum_Feed_Exception("Can't retrieve feed: ".$e->getMessage());
+        	}
+	}
         libxml_use_internal_errors(true);
         $xml = @simplexml_load_string($body);
 

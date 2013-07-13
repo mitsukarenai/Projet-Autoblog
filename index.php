@@ -236,6 +236,7 @@ function svg_status($fill, $text, $back)
 	}
 
 	$svg_ok=svg_status('#008000', 'ok', '');
+	$svg_off=svg_status('#00158F', 'off', '');
 	$svg_mv=svg_status('#0000ff', 'mv', '<rect width="100%" height="100%" fill="#ffd800"/>');
 	$svg_err=svg_status('#000000', 'err', '<rect width="100%" height="100%" fill="#ff0000"/>');
 
@@ -253,6 +254,7 @@ function svg_status($fill, $text, $back)
     else /* ..sinon, lancer la procédure de contrôle */
     {
         $ini = parse_ini_file("./". escape( $_GET['check'] ) ."/vvb.ini") or die;
+	if(isset($ini['OFF'])) { die($svg_off); }
         $headers = get_headers($ini['FEED_URL']);
         
         if(!empty($headers)) 
