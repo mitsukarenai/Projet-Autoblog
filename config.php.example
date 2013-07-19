@@ -40,7 +40,7 @@
 $friends_autoblog_farm = array(
     'https://raw.github.com/mitsukarenai/xsaf-bootstrap/master/3.json',
     // 'https://www.ecirtam.net/autoblogs/?export',
-    // 'https://autoblog.suumitsu.eu/?export',
+    // 'http://autoblog.suumitsu.eu/?export',
     // 'http://streisand.hoa.ro/?export',
 );
 ?>
