@@ -2,7 +2,7 @@
 
 define('DEBUG', false);
 define('XSAF_VERSION', 3);
-define('AUTOBLOG_FILE_NAME', 'autoblog.php');
+define('AUTOBLOG_FILE_NAME', 'autoblog.php'); // useless ?
 define('ALLOW_REMOTE_DB_DL', true);
 define('ALLOW_REMOTE_MEDIA_DL', true);
 define('EXEC_TIME', 10);
@@ -114,7 +114,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 					    }
 						/* préparation à la récupération des médias distants */
 						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
-                            $remote_media=str_replace("?export", $remote_folder."?media", $xsafremote);
+                            $remote_media=str_replace("?export", $remote_folder."/?media", $xsafremote);
                             if(DEBUG)
                                 debug("Récupération de la liste des médias à $remote_media <br>");
 							$json_media_import = file_get_contents($remote_media);
