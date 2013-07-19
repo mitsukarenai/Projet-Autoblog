@@ -82,8 +82,8 @@ function serverUrl($return_subfolder = false)
     $serverport = ($_SERVER["SERVER_PORT"]=='80' || ($https && $_SERVER["SERVER_PORT"]=='443') ? '' : ':'.$_SERVER["SERVER_PORT"]);
     if($return_subfolder === true) {
         $path = pathinfo( $_SERVER['PHP_SELF'] );
-        if( $path['dirname'] != '/' )
-            $subfolder = $path['dirname'] .'/';
+        $finalslash = ( $path['dirname'] != '/' ) ? '/' : '';
+        $subfolder = $path['dirname'] . $finalslash;
     } else $subfolder = '';
     return 'http'.($https?'s':'').'://'.$_SERVER["SERVER_NAME"].$serverport.$subfolder;
 }
