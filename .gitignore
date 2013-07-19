@@ -1,6 +1,7 @@
 config.php
 .versionlock
 .xsaflock
+.updatealllock
 resources/rss.xml
 resources/rss.json
 .project
