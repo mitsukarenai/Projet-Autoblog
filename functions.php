@@ -246,6 +246,7 @@ $json[] = array(
 	'status'=>$status,
 	'response_code'=>$response_code
 	);
+$json = array_slice($json, -50, 50);
 if(file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX) === FALSE)
 	{ return FALSE; }
 	else { return TRUE; }
