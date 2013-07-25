@@ -1,4 +1,4 @@
-![logo](http://streisand.hoa.ro/resources/icon-logo.svg)
+
 
 Projet Autoblog
 ===============
@@ -16,6 +16,7 @@ Démo : [autoblog.suumitsu.eu](http://autoblog.suumitsu.eu/)
 
 Serie 0.3 par [Mitsu](https://github.com/mitsukarenai/), [Oros](https://github.com/Oros42), [Arthur Hoaro](https://github.com/ArthurHoaro).
 
+![logo](http://streisand.hoa.ro/resources/icon-logo.svg)
 Fonctionnalités majeures
 ===================
 
