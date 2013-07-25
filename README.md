@@ -1,3 +1,5 @@
+![logo](http://streisand.hoa.ro/resources/icon-logo.svg)
+
 Projet Autoblog
 ===============
 
