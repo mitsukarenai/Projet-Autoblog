@@ -1,5 +1,4 @@
 
-
 Projet Autoblog
 ===============
 
@@ -59,6 +58,6 @@ Domaine public.
 Changelog
 =====================
 
-2013-07-30
-- twitter2feed.php fixed (regex on class "avatar"; ```<fullname>```)
-2013-07-22  MILESTONE 3.0
+- 2013-07-30
+ - twitter2feed.php fixed (regex on class "avatar"; ```<fullname>```)
+- 2013-07-22  MILESTONE 3.0
