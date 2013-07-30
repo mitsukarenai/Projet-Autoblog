@@ -246,6 +246,7 @@ $json[] = array(
 	'status'=>$status,
 	'response_code'=>$response_code
 	);
+$json = array_slice($json, -50, 50);
 if(file_put_contents(RESOURCES_FOLDER.'rss.json', json_encode($json), LOCK_EX) === FALSE)
 	{ return FALSE; }
 	else { return TRUE; }
@@ -263,6 +264,7 @@ function displayXMLstatus($status, $response_code, $autoblog_url, $autoblog_titl
 	case 'remote_error':
 		return 'Autoblog "'.$autoblog_title.'" : site distant a problème serveur (code '.$response_code.')<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'available':
+		return 'Autoblog "'.$autoblog_title.'" : site distant à nouveau accessible (code '.$response_code.')<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	case 'new_autoblog_added':
 		return 'Autoblog "'.$autoblog_title.'" ajouté.<br>Autoblog : <a href="'. serverUrl(true).$autoblog_url.'">'.$autoblog_title.'</a><br>Site : <a href="'. $autoblog_sourceurl .'">'. $autoblog_sourceurl .'</a><br>RSS : <a href="'.$autoblog_sourcefeed.'">'.$autoblog_sourcefeed.'</a>';
 	}
