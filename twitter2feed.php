@@ -9,6 +9,7 @@
 //  Autoblog Project inclusion
 // ----------------------------
 if(file_exists("config.php")) require_once "config.php";
+if(file_exists("functions.php")) require_once "functions.php";
 if( !defined('API_TWITTER')) {header("HTTP/1.1 404 Not Found"); die('API_TWITTER is undefined: make it LOCAL in "config.php" if you want me to work for you.');}
 if ('API_TWITTER' === FALSE) {header("HTTP/1.1 404 Not Found"); die('Twitter support disabled in "config.php". Sorry.');}
 $api = API_TWITTER;
@@ -25,7 +26,7 @@ $exclude_reply = '@'; // if you want twitter2feed to return replies too:  $exclu
     'data-tweet-id="(?P<id>\d+)"(.*)'.
     '(data-retweet-id="(?P<retweetid>\d+)"(.*))?'.
     'data-screen-name="(?P<name>[^"]+)"(.*)'.
-    '<img class="avatar js-action-profile-avatar" src="(?P<avatar>[^"]+)" alt="(?P<fullname>[^"]+)">(.*)'.
+    '<img class="avatar js-action-profile-avatar" src="(?P<avatar>[^"]+)" alt="(?P<fullname>[^"]*)">(.*)'.
     'data-time="(?P<created>\d+)"(.*)'.
     '<p class="js-tweet-text tweet-text">(?P<message>.*)</p>'.
     '%sU', $str, $arr);
