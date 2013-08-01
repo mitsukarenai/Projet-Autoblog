@@ -10,3 +10,4 @@ autoblogs/*
 !autoblogs/autoblog.php
 docs/*
 !docs/docs.txt
+robots.txt
