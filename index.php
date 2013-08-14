@@ -830,7 +830,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 				if( API_TWITTER === 'LOCAL' )
 					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (local)<br>';
 				else
-					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.substr(API_TWITTER, 0, -2).'status">twitterbridge</a>)<br>';
+					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.serverUrl(API_TWITTER).'">bridge</a>)<br>';
 				}
                             else echo '<s>Twitter</s><br>'; ?>
                             <input type="radio" name="socialinstance" value="statusnet">
