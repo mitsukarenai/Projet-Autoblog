@@ -379,9 +379,12 @@ class VroumVroum_Blog
             {
                 $date = isset($item->published) ? (string) $item->published : (string) $item->updated;
                 $guid = !empty($item->id) ? (string)$item->id : (string)$item->link['href'];
-
+                
+                if( count($item->content->children()) > 0 ) $content = (string)$item->content->asXML();
+                else $content = (string)$item->content;
+                
                 $id = $this->insertOrUpdateArticle($guid, (string)$item->title,
-                    (string)$item->link['href'], strtotime($date), (string)$item->content);
+                    (string)$item->link['href'], strtotime($date), $content );
 
                 if ($id !== false)
                     $updated++;
