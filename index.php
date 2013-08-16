@@ -56,7 +56,7 @@ function get_link_from_datafeed($data) {
 
     // ATOM feed && RSS 1.0 /RDF && RSS 2.0
     if (!isset($xml->entry) && !isset($xml->item) && !isset($xml->channel->item))
-        die('le flux n\'a pas une syntaxe valide');
+        { die('le flux n\'a pas une syntaxe valide');}
 
     $check = substr($data, 0, 5);
     if($check !== '<?xml') {
@@ -628,7 +628,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
 
     if(empty($error)) {
         try {
-            $rssurl = DetectRedirect(escape($_POST['rssurl']));
+	    $rssurl = parse_url($_POST['rssurl']);
+	    $rssurl = $rssurl['scheme'].'://'.$rssurl['host'].$rssurl['path'].'?'.html_entity_decode($rssurl['query']);
+            $rssurl = DetectRedirect($rssurl);
 
             if(!empty($_POST['siteurl'])) {
 
@@ -642,7 +644,6 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
             }
             else {
                 // checking procedure
-
                 $datafeed = file_get_contents($rssurl);
                 if( $datafeed === false ) {
                     $error[] = 'URL "'. $rssurl .'" inaccessible.';
