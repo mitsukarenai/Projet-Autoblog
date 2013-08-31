@@ -76,6 +76,14 @@ function get_link_from_datafeed($data) {
     }
 }
 
+function get_size($doc) {
+    $symbol = array('o', 'Kio', 'Mio', 'Gio', 'Tio');
+    $size = filesize($doc);
+    $exp = floor(log($size) / log(1024));
+    $nicesize = $size / pow(1024, floor($exp));
+    return sprintf('%d %s', $nicesize, $symbol[$exp]);
+}
+
 function serverUrl($return_subfolder = false)
 {
     $https = (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS'])=='on')) || $_SERVER["SERVER_PORT"]=='443'; // HTTPS detection.
@@ -907,14 +915,21 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             foreach($subdirs as $unit)
             {
                 if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
-                    $docs[] = '<a href="'. preg_replace('~ ~', '%20', $unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>';
+                    $size = '';
+                    if ( is_file($unit) ) { $size = get_size($unit); }
+                    $docs[] = array('<a href="'. preg_replace('~ ~', '%20', $unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>', $size);
                }
             }
         }
         if(!empty( $docs )) {
             echo '<div class="pbloc"><h2>Autres documents</h2><ul>';
-            foreach( $docs as $value )
-                echo '<li>'. $value .'</li>';
+            foreach( $docs as $value ) {
+                $str = $value[0];
+                if ( !empty($value[1]) ) {
+                    $str = sprintf('%s (%s)', $value[0], $value[1]);
+                }
+                echo '<li>'. $str . '</li>';
+            }
             echo '</ul></div>';
         }
         ?>
