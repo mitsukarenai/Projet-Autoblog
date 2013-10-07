@@ -23,7 +23,7 @@ Exemples d'instances :
 
 Serie 0.3 par [Mitsu](https://github.com/mitsukarenai/), [Oros](https://github.com/Oros42), [Arthur Hoaro](https://github.com/ArthurHoaro).
 
-![logo](https://raw.github.com/mitsukarenai/Projet-Autoblog/master/resources/icon-logo.svg)
+![logo](https://raw.github.com/mitsukarenai/Projet-Autoblog/master/resources/icon-logo.png)
 Fonctionnalités majeures
 ===================
 
