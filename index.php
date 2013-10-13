@@ -14,7 +14,7 @@
      (by default, database and media transfer via XSAF is allowed)
 
     - upload all files on your server (PHP 5.3+ required)
-    - PROFIT !
+    - PROFIT!
 
 */
 
@@ -30,7 +30,7 @@ if(file_exists("config.php")){
 if(file_exists("functions.php")){
     require_once "functions.php";
 }else{
-    echo "functions.php not found !";
+    echo "functions.php not found!";
     die;
 }
 
@@ -122,7 +122,7 @@ function create_from_opml($opml) {
                 // Lighten process by checking folderExists first
                 // A CHANGER SELON ISSUE #20
                 if(folderExists($siteurl))
-                    throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
+                    throw new Exception('Erreur : l\'autoblog '. $sitename .' existe déjà.');
                     
                 $sitetype = escape($outline['text']); 
                 if ( $sitetype != 'microblog' && $sitetype != 'shaarli' && $sitetype != 'twitter' && $sitetype != 'youtube') 
@@ -252,8 +252,8 @@ function svg_status($fill, $text, $back)
 
     $oldvalue = null;
     if(file_exists($errorlog)) { $oldvalue = file_get_contents($errorlog); };
-    if(file_exists($errorlog) && filemtime($errorlog) < $expire) { unlink($errorlog); } /* errorlog périmé ? Suppression. */
-    if(file_exists($errorlog)) /* errorlog existe encore ? se contenter de lire sa taille pour avoir le statut */
+    if(file_exists($errorlog) && filemtime($errorlog) < $expire) { unlink($errorlog); } /* errorlog périmé ? Suppression. */
+    if(file_exists($errorlog)) /* errorlog existe encore ? se contenter de lire sa taille pour avoir le statut */
     {
         if(filesize($errorlog) == "0") {die($svg_ok);}
         else if(filesize($errorlog) == "1") {die($svg_mv);}
@@ -471,11 +471,11 @@ if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
 }
 
 $antibot = generate_antibot();
-$form = '<form method="POST"><input type="hidden" name="generic" value="1" />
-            <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl"><br>
-            <input placeholder="Antibot : Ecrivez '. $antibot .' en chiffre" type="text" name="number"><br>
-            <input type="hidden" name="antibot" value="'. $antibot .'" />
-            <input type="submit" value="Vérifier">
+$form = '<form method="POST"><input type="hidden" name="generic" value="1" />'."\n".'
+           <input placeholder="Adresse du flux RSS/ATOM" type="text" name="rssurl" id="rssurl"><br>
+           <input placeholder="Antibot : écrivez « '. $antibot .' » en chiffre" type="text" name="number"><br>
+           <input type="hidden" name="antibot" value="'. $antibot .'" />
+           <input type="submit" value="Vérifier">
         </form>';
 
 /**
@@ -608,7 +608,7 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
             try {
                     $headers = get_headers($rssurl, 1);
                     if (strpos($headers[0], '200') === FALSE) 
-                        throw new Exception('Flux inaccessible (compte inexistant ?)');
+                        throw new Exception('Flux inaccessible (compte inexistant ?)');
                 
                 createAutoblog($sitetype, ucfirst($socialinstance) .' - '. $socialaccount, $siteurl, $rssurl);
                 $success[] = '<iframe width="1" height="1" frameborder="0" src="'. urlToFolder( $siteurl, $rssurl ) .'/index.php"></iframe>
@@ -620,7 +620,7 @@ if( !empty($_POST['socialinstance']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLO
         }
     }
     else
-        $error[] = 'Antibot : Chiffres incorrects.';
+        $error[] = 'Antibot : chiffres incorrects.';
 }
 
 /**
@@ -630,9 +630,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
     if(empty($_POST['rssurl']))
         {$error[] = "Veuillez entrer l'adresse du flux.";}
     if(empty($_POST['number']) || empty($_POST['antibot']) )
-        {$error[] = "Vous êtes un bot ?";}
+        {$error[] = "Vous êtes un bot ?";}
     elseif(! check_antibot($_POST['number'], $_POST['antibot']))
-        {$error[] = "Antibot : Ce n'est pas le bon nombre.";}
+        {$error[] = "Antibot : ce n'est pas le bon nombre.";}
 
     if(empty($error)) {
         try {
@@ -682,9 +682,9 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
  **/
 if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE) {
     if(empty($_POST['number']) || empty($_POST['antibot']) )
-        {$error[] = "Vous êtes un bot ?";}
+        {$error[] = "Vous êtes un bot ?";}
     elseif(! check_antibot($_POST['number'], $_POST['antibot']))
-        {$error[] = "Antibot : Ce n'est pas le bon nombre.";}
+        {$error[] = "Antibot : ce n'est pas le bon nombre.";}
 
     if( empty( $error)) {
         if (is_uploaded_file($_FILES['file']['tmp_name'])) {
@@ -706,9 +706,9 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
  **/
  if( !empty($_POST['opml_link']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK) {
     if(empty($_POST['number']) || empty($_POST['antibot']) )
-        {$error[] = "Vous êtes un bot ?";}
+        {$error[] = "Vous êtes un bot ?";}
     elseif(! check_antibot($_POST['number'], $_POST['antibot']))
-        {$error[] = "Antibot : Ce n'est pas le bon nombre.";}
+        {$error[] = "Antibot : ce n'est pas le bon nombre.";}
     if( empty( $_POST['opml_url'] ))
         {$error[] = 'Le lien est incorrect.';}
 
@@ -729,10 +729,14 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 
 ?>
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-    <head>
-    <meta charset="utf-8">
+<html lang="fr" dir="ltr">
+  <head>
     <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
+    <meta charset="utf-8">
+    <meta content="initial-scale=1.0, user-scalable=yes" name="viewport" />
+    
+    <meta name="keywords"    content="autoblog,effet streisand,censure,replication" />
+    <meta name="description" content="Le Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web." />
     <link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo serverUrl(true) . '?rss';?>" />
     <link href="<?php echo RESOURCES_FOLDER; ?>autoblog.css" rel="stylesheet" type="text/css">
     <?php
@@ -740,270 +744,277 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         echo '<link href="'. RESOURCES_FOLDER .'user.css" rel="stylesheet" type="text/css">';
       }
     ?>
-    </head>
-    <body>
-        <h1><a href="<?php echo serverUrl(true); ?>">
-            PROJET AUTOBLOG
-            <?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?>
-        </a></h1>
-
-        <div class="pbloc">
-            <?php
-                if (defined('LOGO'))
-                    echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="">';
-            ?>
-            <h2>Présentation</h2>
-
-            <p>
-                Le Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web.<br/>
-                Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. <br/>
-                L'objectif premier de ce projet est de lutter contre la censure et toute sorte de pression...
-            </p>
-
-            <p>
-                Voici une liste d'autoblogs hébergés sur <i><?php echo $_SERVER['SERVER_NAME']; ?></i>
-                (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).
-            </p>
-            
-            <p>
-                <b>Autres fermes</b>
-                &rarr; <a href="https://duckduckgo.com/?q=!g%20%22Voici%20une%20liste%20d'autoblogs%20hébergés%22">Rechercher</a>
-            </p>
-        </div>
-
-        <?php if( $update_available ) { ?>
-            <div class="pbloc">
-                <h2>Mise à jour</h2>
-                <p>
-                    Une mise à jour du Projet Autoblog est disponible !<br>
-                    &rarr; <a href="https://github.com/mitsukarenai/Projet-Autoblog/archive/master.zip">Télécharger la dernière version</a><br>
-                    &rarr; <strong>Important : </strong><a href="https://github.com/mitsukarenai/Projet-Autoblog/wiki/Mettre-%C3%A0-jour">Consulter la documentation - mise à jour</a>
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if(ALLOW_NEW_AUTOBLOGS == TRUE) { ?>
-            <div class="pbloc">
-
-                <h2>Ajouter un autoblog</h2>
-
-                <?php
-                if( !empty( $error ) || !empty( $success )) {
-                    echo '<p>Message'. (count($error) ? 's' : '') .' :</p><ul>';
-                    foreach ( $error AS $value ) {
-                        echo '<li class="error">'. $value .'</li>';
-                    }
-                    foreach ( $success AS $value ) {
-                        echo '<li class="success">'. $value .'</li>';
-                    }
-                    echo '</ul>';
-                }
-
-                $button_list = '<p id="button_list">Ajouter un autoblog via : ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_LINKS)
-                    $button_list .= '<a href="#add_generic" class="button" id="button_generic" onclick="show_form(\'generic\');return false;">Flux RSS</a> ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL) {
-                    $button_list .= '<a href="#add_social" class="button" id="button_social" onclick="show_form(\'social\');return false;">Compte réseau social</a> ';
-                    $button_list .= '<a href="#add_shaarli" class="button" id="button_shaarli" onclick="show_form(\'shaarli\');return false;">Shaarli</a> ';
-                }
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE)
-                    $button_list .= '<a href="#add_opmlfile" class="button" id="button_opmlfile" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a> ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK)
-                    $button_list .= '<a href="#add_opmllink" class="button" id="button_opmllink" onclick="show_form(\'opmllink\');return false;">Lien vers OPML</a> ';
-                if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
-                    $button_list .= '<a href="#add_bookmark" class="button" id="button_bookmark" onclick="show_form(\'bookmark\');return false;">Marque page</a> ';
-                $button_list .= '</p>';
-                echo $button_list;
-
-                if(ALLOW_NEW_AUTOBLOGS_BY_LINKS == TRUE) { ?>
-                    <div class="form" id="add_generic">
-                        <h3>Ajouter un site web</h3>
-                        <p>
-                            Si vous souhaitez que <i><?php echo $_SERVER['SERVER_NAME']; ?></i> héberge un autoblog d'un site,<br>
-                            remplissez le formulaire suivant:
-                        </p>
-
-                        <?php echo $form; ?>
-                    </div>
-                <?php }
-
-                if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL == TRUE) { ?>
-                    <div class="form" id="add_social">
-                        <h3>Ajouter un compte social</h3>
-
-                        <form method="POST">
-                            <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount"><br>
-                            <?php
-                            if( API_TWITTER !== FALSE )
-				{
-				if( API_TWITTER === 'LOCAL' )
-					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (local)<br>';
-				else
-					echo '<input type="radio" name="socialinstance" value="twitter">Twitter (via <a href="'.strtok(API_TWITTER,'?').'">bridge</a>)<br>';
-				}
-                            else echo '<s>Twitter</s><br>'; ?>
-                            <input type="radio" name="socialinstance" value="statusnet">
-                            <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl"><br>
-                            <input type="radio" name="socialinstance" value="youtube">Youtube<br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
-                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
-                            <input type="submit" value="Créer">
-                        </form>
-                    </div>
-
-                    <div class="form" id="add_shaarli">
-                        <h3>Ajouter un Shaarli</h3>
-
-                        <form method="POST">
-                            <input type="hidden" name="socialinstance" value="shaarli">
-                            <input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl"><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
-                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
-                            <input type="submit" value="Créer">
-                        </form>
-                    </div>
-                <?php }
-
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE == TRUE) { ?>
-                    <div class="form" id="add_opmlfile">
-                        <h3>Ajouter par fichier OPML</h3>
-
-                        <form enctype='multipart/form-data' method='POST'>
-                            <input type='hidden' name='opml_file' value='1' />
-                            <input type='file' name='file' /><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
-                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
-                            <input type='submit' value='Importer' />
-                        </form>
-                    </div>
-
-                <?php }
-
-                if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK == TRUE) { ?>
-                    <div class="form" id="add_opmllink">
-                        <h3>Ajouter par lien OPML</h3>
-
-                        <form method="POST">
-                            <input type="hidden" name="opml_link" value="1">
-                            <input placeholder="Lien vers OPML" type="text" name="opml_url" id="opml_url" class="smallinput"><br>
-                            <input placeholder="Antibot : Ecrivez '<?php echo $antibot; ?>' en chiffres" type="text" name="number"  class="smallinput"><br>
-                            <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
-                            <input type="submit" value="Envoyer">
-                        </form>
-                    </div>
-
-                <?php }
-
-                if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>
-                    <div class="form" id="add_bookmark">
-                        <h3>Marque page</h3>
-                        <p>Pour ajouter facilement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages &rarr;
-                        <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;"
-                            href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">
-                                Projet Autoblog
-                        </a>
-                    </div>
-                <?php } ?>
-            </div>
-<?php   } ?>
-
+  </head>
+  <body>
+    <header>
+      <h1><a href="<?php echo serverUrl(true); ?>">Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></a></h1>
+    </header>
+    
+    <section id="présentation">
+      <header>
         <?php
-        $directory = DOC_FOLDER;
-        $docs = array();
-        if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
-            $subdirs = glob($directory . "*");
-            foreach($subdirs as $unit)
-            {
-                if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
-                    $size = '';
-                    if ( is_file($unit) ) { $size = get_size($unit); }
-                    $docs[] = array('<a href="'. preg_replace('~ ~', '%20', $unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>', $size);
-               }
+          if (defined('LOGO'))
+            echo '<img id="logo" src="'. RESOURCES_FOLDER . LOGO .'" alt="logo of this autoblog instance" />'."\n";
+        ?>
+        <h2>Présentation</h2>
+      </header>
+      
+      <p>Le Projet Autoblog a pour objectif de répliquer les articles d'un blog ou d'un site site web. Si l'article source est supprimé, et même si le site d'origine disparaît, les articles restent lisibles sur l'autoblog. L'objectif premier de ce projet est de lutter contre la censure et toute sorte de pression…</p>
+      
+      <p>Voici une liste d'autoblogs hébergés sur <em><?php echo $_SERVER['SERVER_NAME']; ?></em> (<a href="http://sebsauvage.net/streisand.me/fr/">plus d'infos sur le projet</a>).</p>
+            
+      <p><strong>Autres fermes</strong> &rarr; <a href="//startpage.com/do/search?query=%22Voici+une+liste+d%27autoblogs+h%C3%A9berg%C3%A9s%22">Rechercher</a></p>
+    </section>
+    <?php if( $update_available ) { ?>
+<section id="màj">
+      <header>
+        <h2>Mise à jour</h2>
+      </header>
+      
+      <p>Une mise à jour du Projet Autoblog est disponible !</p>
+      <ul>
+        <li>&rarr; <a href="https://github.com/mitsukarenai/Projet-Autoblog/archive/master.zip">télécharger la dernière version</a> ;</li>
+        <li>&rarr; <strong>important :</strong> <a href="https://github.com/mitsukarenai/Projet-Autoblog/wiki/Mettre-%C3%A0-jour">consulter la documentation — mise à jour</a>.</li>
+      </ul>
+    </section>
+    <?php } ?>
+<?php if(ALLOW_NEW_AUTOBLOGS == TRUE) { ?>
+<section id="ajouter">
+      <header>
+        <h2>Ajouter un autoblog</h2>
+      </header>
+
+      <?php
+        if( !empty( $error ) || !empty( $success )) {
+          echo '<p>Message'. (count($error) ? 's' : '') ." :</p>\n";
+          echo "      <ul>\n";
+          foreach ( $error AS $value ) {
+            echo '        <li class="error">'. $value ."</li>\n";
+          }
+          foreach ( $success AS $value ) {
+            echo '        <li class="success">'. $value ."</li>\n";
+          }
+          echo "      </ul>\n";
+          echo "      \n";
+          echo '      ';
+        }
+        
+        $button_list = '<p id="button_list">Ajouter un autoblog via :'."\n";
+        if(ALLOW_NEW_AUTOBLOGS_BY_LINKS)
+          $button_list .= '        <a href="#add_generic" class="button" id="button_generic" onclick="show_form(\'generic\');return false;">Flux RSS</a>'."\n";
+        if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL) {
+          $button_list .= '        <a href="#add_social" class="button" id="button_social" onclick="show_form(\'social\');return false;">Compte réseau social</a>'."\n";
+          $button_list .= '        <a href="#add_shaarli" class="button" id="button_shaarli" onclick="show_form(\'shaarli\');return false;">Shaarli</a>'."\n";
+        }
+        if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE)
+          $button_list .= '        <a href="#add_opmlfile" class="button" id="button_opmlfile" onclick="show_form(\'opmlfile\');return false;">Fichier OPML</a>'."\n";
+        if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK)
+          $button_list .= '        <a href="#add_opmllink" class="button" id="button_opmllink" onclick="show_form(\'opmllink\');return false;">Lien vers OPML</a>'."\n";
+        if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON)
+          $button_list .= '        <a href="#add_bookmark" class="button" id="button_bookmark" onclick="show_form(\'bookmark\');return false;">Marque page</a>'."\n";
+          $button_list .= "      </p>\n";
+          echo $button_list;
+        
+        if(ALLOW_NEW_AUTOBLOGS_BY_LINKS == TRUE) { ?>
+      <section class="form" id="add_generic">
+        <header>
+          <h3>Ajouter un site web</h3>
+        </header>
+        
+        <p>Si vous souhaitez que <em><?php echo $_SERVER['SERVER_NAME']; ?></em> héberge un autoblog d'un site, remplissez le formulaire suivant :</p>
+        
+        <?php echo $form; echo "\n"; ?>
+      </section>
+<?php }
+      if(ALLOW_NEW_AUTOBLOGS_BY_SOCIAL == TRUE) { ?>
+      <section class="form" id="add_social">
+        <header>
+          <h3>Ajouter un compte social</h3>
+        </header>
+        
+        <form method="POST">
+          <input placeholder="Identifiant du compte" type="text" name="socialaccount" id="socialaccount" /><br />
+          <?php
+            if( API_TWITTER !== FALSE ) {
+              if( API_TWITTER === 'LOCAL' )
+                echo '<input type="radio" name="socialinstance" value="twitter" />Twitter (local)<br />';
+              else
+                echo '<input type="radio" name="socialinstance" value="twitter" />Twitter (via <a href="'.strtok(API_TWITTER,'?').'">bridge</a>)<br />';
             }
+            else echo '<s>Twitter</s><br />'; ?>
+          <input type="radio" name="socialinstance" value="statusnet" />
+          <input placeholder="statusnet.personnel.com" type="text" name="statusneturl" id="statusneturl" /><br />
+          <input type="radio" name="socialinstance" value="youtube" />Youtube<br />
+          <input placeholder="Antibot : écrivez « <?php echo $antibot; ?> » en chiffres" type="text" name="number" class="smallinput" /><br />
+          <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
+          <input type="submit" value="Créer" />
+         </form>
+      </section>
+      <section class="form" id="add_shaarli">
+        <header>
+          <h3>Ajouter un Shaarli</h3>
+        </header>
+        
+        <form method="POST">
+          <input type="hidden" name="socialinstance" value="shaarli" />
+          <input placeholder="shaarli.personnel.com" type="text" name="shaarliurl" id="shaarliurl" /><br />
+          <input placeholder="Antibot : écrivez « <?php echo $antibot; ?> » en chiffres" type="text" name="number" class="smallinput" /><br />
+          <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
+          <input type="submit" value="Créer" />
+        </form>
+      </section>
+  <?php }
+     if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE == TRUE) { ?>
+      <section class="form" id="add_opmlfile">
+        <header>
+          <h3>Ajouter par fichier OPML</h3>
+        </header>
+        
+        <form enctype='multipart/form-data' method='POST'>
+          <input type='hidden' name='opml_file' value='1' />
+          <input type='file' name='file' /><br />
+          <input placeholder="Antibot : écrivez « <?php echo $antibot; ?> » en chiffres" type="text" name="number" class="smallinput" /><br />
+          <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
+          <input type='submit' value='Importer' />
+        </form>
+      </section>
+  <?php }
+     if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK == TRUE) { ?>
+      <section class="form" id="add_opmllink">
+        <header>
+          <h3>Ajouter par lien OPML</h3>
+        </header>
+        
+        <form method="POST">
+          <input type="hidden" name="opml_link" value="1" />
+          <input placeholder="Lien vers OPML" type="text" name="opml_url" id="opml_url" class="smallinput" /><br />
+          <input placeholder="Antibot : écrivez « <?php echo $antibot; ?> » en chiffres" type="text" name="number"  class="smallinput" /><br />
+          <input type="hidden" name="antibot" value="<?php echo $antibot; ?>" />
+          <input type="submit" value="Envoyer" />
+        </form>
+      </section>
+  <?php }
+     if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>
+      <section class="form" id="add_bookmark">
+        <header>
+          <h3>Marque page</h3>
+        </header>
+        
+        <p>Pour ajouter facilement un autoblog d'un site web, glissez ce bouton dans votre barre de marque-pages &rarr; <a class="bouton" onclick="alert('Glissez ce bouton dans votre barre de marque-pages (ou clic-droit > marque-page sur ce lien)');return false;" href="javascript:(function(){var%20autoblog_url=&quot;<?php echo serverUrl().$_SERVER["REQUEST_URI"]; ?>&quot;;var%20popup=window.open(&quot;&quot;,&quot;Add%20autoblog&quot;,'height=180,width=670');popup.document.writeln('<html><head></head><body><form%20action=&quot;'+autoblog_url+'&quot;%20method=&quot;GET&quot;>');popup.document.write('Url%20feed%20%20:%20<br/>');var%20feed_links=new%20Array();var%20links=document.getElementsByTagName('link');if(links.length>0){for(var%20i=0;i<links.length;i++){if(links[i].rel==&quot;alternate&quot;){popup.document.writeln('<label%20for=&quot;feed_'+i+'&quot;><input%20id=&quot;feed_'+i+'&quot;%20type=&quot;radio&quot;%20name=&quot;rssurl&quot;%20value=&quot;'+links[i].href+'&quot;/>'+links[i].title+&quot;%20(%20&quot;+links[i].href+&quot;%20)</label><br/>&quot;);}}}popup.document.writeln(&quot;<input%20id='number'%20type='hidden'%20name='number'%20value='17'>&quot;);popup.document.writeln(&quot;<input%20type='hidden'%20name='via_button'%20value='1'>&quot;);popup.document.writeln(&quot;<br/><input%20type='submit'%20value='Vérifier'%20name='Ajouter'%20>&quot;);popup.document.writeln(&quot;</form></body></html>&quot;);})();">Projet Autoblog</a>
+      </section>
+<?php } ?>
+    </section>
+<?php   } ?>
+    <?php
+      $directory = DOC_FOLDER;
+      $docs = array();
+      if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
+        $subdirs = glob($directory . "*");
+        foreach($subdirs as $unit) {
+          if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
+            $size = '';
+            if ( is_file($unit) ) { $size = get_size($unit); }
+              $docs[] = array('<a href="'. preg_replace('~ ~', '%20', $unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>', $size);
+            }
+          }
         }
         if(!empty( $docs )) {
-            echo '<div class="pbloc"><h2>Autres documents</h2><ul>';
-            foreach( $docs as $value ) {
-                $str = $value[0];
-                if ( !empty($value[1]) ) {
-                    $str = sprintf('%s (%s)', $value[0], $value[1]);
-                }
-                echo '<li>'. $str . '</li>';
+          echo '<section id="docs">
+      <header>
+        <h2>Autres documents</h2>
+      </header>
+      
+      <ul>'."\n";
+          foreach( $docs as $value ) {
+            $str = $value[0];
+            if ( !empty($value[1]) ) {
+              $str = sprintf('%s (%s)', $value[0], $value[1]);
             }
-            echo '</ul></div>';
+            echo '        <li>'. $str . "</li>\n";
+          }
+          echo '      </ul>
+    </section>'."\n";
         }
-        ?>
-
-        <div class="pbloc">
-            <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="<?php echo RESOURCES_FOLDER; ?>rss.png" alt="rss"/></a></h2>
-            
-            <div class="clear"><a href="?sitemap">sitemap</a> | <a href="?export">export<sup> JSON</sup></a> | <a href="?exportopml">export<sup> OPML</sup></a></div>
-              <div id="contentVignette">
-                <?php
-                $subdirs = glob(AUTOBLOGS_FOLDER . "*");
-                $autoblogs = array();
-                foreach($subdirs as $unit)
-                {
-                    if(is_dir($unit))
-                    {
-                        if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
-							if( file_exists(ROOT_DIR . '/' . $unit . '/vvb.ini')) {
-                            $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
-                            if($ini)
-                            {
-                                $config = new stdClass;
-                                $unit=substr($unit, 2);
-                                foreach ($ini as $key=>$value)
-                                {
-                                        $key = strtolower($key);
-                                        $config->$key = $value;
-                                }
-                                $autoblogs[$unit] = $config;
-                                unset($ini);
-                            }
-							}
-                        }
-                    }
+    ?>
+    <section id="autoblogs">
+      <header>
+        <h2>Autoblogs hébergés <a href="?rss" title="RSS des changements"><img src="<?php echo RESOURCES_FOLDER; ?>rss.png" alt="rss"/></a></h2>
+      </header>
+      
+      <nav class="clear">
+        <a href="?sitemap">sitemap</a> |
+        <a href="?export"    >export<sup>JSON</sup></a> |
+        <a href="?exportopml">export<sup>OPML</sup></a>
+      </nav>
+      
+      <ul>
+        <?php
+        $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+        $autoblogs = array();
+        foreach($subdirs as $unit) {
+          if(is_dir($unit)) {
+            if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
+              if( file_exists(ROOT_DIR . '/' . $unit . '/vvb.ini')) {
+                $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
+                if($ini) {
+                  $config = new stdClass;
+                  $unit=substr($unit, 2);
+                  foreach ($ini as $key=>$value) {
+                    $key = strtolower($key);
+                    $config->$key = $value;
+                  }
+                  $autoblogs[$unit] = $config;
+                  unset($ini);
                 }
-
-                uasort($autoblogs, "objectCmp");
-                $autoblogs_display = '';
-
-                if(!empty($autoblogs)){
-                    foreach ($autoblogs as $key => $autoblog) {
-                        $opml_link='<a href="'.$key.'/?opml">opml</a>';
-                        $autoblogs_display .= '<div class="vignette">
-                                <div class="title"><a title="'.escape($autoblog->site_title).'" href="'.$key.'/"><img width="15" height="15" alt="" src="./?icon='.escape($autoblog->site_type).'"><img width="15" height="15" alt="" src="./?check='.$key.'"> '.escape($autoblog->site_title).'</a></div>
-                                <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source: <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
-                            </div>';
+              }
+            }
+          }
+        }
+        
+        uasort($autoblogs, "objectCmp");
+        $autoblogs_display = '';
+        
+        if(!empty($autoblogs)){
+          foreach ($autoblogs as $key => $autoblog) {
+            $opml_link='<a href="'.$key.'/?opml">opml</a>';
+            $autoblogs_display .= '<li>
+          <header>
+            <a title="'.escape($autoblog->site_title).'" href="'.$key.'/">
+              <img width="15" height="15" alt="" src="./?icon='.escape($autoblog->site_type).'" />
+              <img width="15" height="15" alt="" src="./?check='.$key.'" />
+              <h3>'.escape($autoblog->site_title).'</h3>
+            </a>
+          </header>
+          <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source : <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
+        </li>';
                     }
                 }
                 echo $autoblogs_display;
                 ?>
-            </div>
-            <div class="clear"></div>
-
+            </ul>
             <?php echo "<p>".count($autoblogs)." autoblogs hébergés</p>"; ?>
-        </div>
-        Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog 0.3</a> de <a href="https://www.suumitsu.eu/">Mitsu</a>, <a href="https://www.ecirtam.net/">Oros</a> et <a href="http://hoa.ro">Arthur Hoaro</a> (Domaine Public)
-        <?php if(defined('FOOTER') && strlen(FOOTER)>0 ){ echo "<br/>".FOOTER; } ?>
-        <iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
-
-        <script type="text/javascript">
-            <?php if( !empty($_POST['generic']) && !empty($_POST['siteurl']) || empty($_POST['generic']) )
-            echo "document.getElementById('add_generic').style.display = 'none';"; ?>
-            if(document.getElementById('add_social') != null) { document.getElementById('add_social').style.display = 'none'; }
-            if(document.getElementById('add_shaarli') != null) { document.getElementById('add_shaarli').style.display = 'none'; }
-            if(document.getElementById('add_opmlfile') != null) { document.getElementById('add_opmlfile').style.display = 'none'; }
-            if(document.getElementById('add_bookmark') != null) { document.getElementById('add_bookmark').style.display = 'none'; }
-            if(document.getElementById('add_opmllink') != null) { document.getElementById('add_opmllink').style.display = 'none'; }
-            if(document.getElementById('button_list') != null) { document.getElementById('button_list').style.display = 'block'; }
-            function show_form(str){
-                document.getElementById('add_'+str).style.display = (document.getElementById('add_'+str).style.display != 'block' ? 'block' : 'none' );
-                document.getElementById('button_'+str).className = (document.getElementById('button_'+str).className != 'buttonactive' ? 'buttonactive' : 'button' );
-            }
-        </script>
-
-    </body>
+    </section>
+        
+    <footer>
+      <p>Propulsé par <a href="https://github.com/mitsukarenai/Projet-Autoblog">Projet Autoblog 0.3</a> de <a href="https://www.suumitsu.eu/">Mitsu</a>, <a href="https://www.ecirtam.net/">Oros</a> et <a href="http://hoa.ro">Arthur Hoaro</a> (Domaine Public)</p>
+      <p><?php if(defined('FOOTER') && strlen(FOOTER)>0 ){ echo FOOTER; } ?></p>
+    </footer>
+    
+    <iframe width="1" height="1" style="display:none" src="xsaf3.php"></iframe>
+    <script type="text/javascript">
+      <?php if( !empty($_POST['generic']) && !empty($_POST['siteurl']) || empty($_POST['generic']) )
+        echo "document.getElementById('add_generic').style.display = 'none';"; ?>
+        if(document.getElementById('add_social') != null) { document.getElementById('add_social').style.display = 'none'; }
+        if(document.getElementById('add_shaarli') != null) { document.getElementById('add_shaarli').style.display = 'none'; }
+        if(document.getElementById('add_opmlfile') != null) { document.getElementById('add_opmlfile').style.display = 'none'; }
+        if(document.getElementById('add_bookmark') != null) { document.getElementById('add_bookmark').style.display = 'none'; }
+        if(document.getElementById('add_opmllink') != null) { document.getElementById('add_opmllink').style.display = 'none'; }
+        if(document.getElementById('button_list') != null) { document.getElementById('button_list').style.display = 'block'; }
+        function show_form(str){
+          document.getElementById('add_'+str).style.display = (document.getElementById('add_'+str).style.display != 'block' ? 'block' : 'none' );
+          document.getElementById('button_'+str).className = (document.getElementById('button_'+str).className != 'buttonactive' ? 'buttonactive' : 'button' );
+        }
+    </script>
+  </body>
 </html>
 
