@@ -9,9 +9,9 @@ if(!defined('ROOT_DIR'))
     define('ROOT_DIR', dirname($_SERVER['SCRIPT_FILENAME']));
 }
 define('LOCAL_URI', '');
-if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
-if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
-if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
+if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', 'autoblogs/');
+if (!defined('DOC_FOLDER')) define('DOC_FOLDER', 'docs/');
+if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', 'resources/');
 if (!defined('FOLDER_MAX_LENGTH')) define('FOLDER_MAX_LENGTH', 80);
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
