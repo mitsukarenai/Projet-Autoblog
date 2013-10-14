@@ -192,44 +192,6 @@ if (isset($_GET['rss'])) {
 /**
  * SVG
  **/
-if (isset($_GET['icon']))
-{
-header('Content-type: image/svg+xml');
-function svg_base($color)
-	{
-	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15"><path d="m 11.679889,7.6290431 a 4.1668792,3.7091539 0 1 1 -8.3337586,0 4.1668792,3.7091539 0 1 1 8.3337586,0 z" style="fill:none;stroke:'.$color.';stroke-width:4;stroke-miterlimit:4" /></svg>';
-	return $svg;
-	}
-
-    $svg_twitter=svg_base('#3aaae1');
-    $svg_youtube=svg_base('#a00000');
-    $svg_statusnet=svg_base('#ff6a00');
-    $svg_shaarli=svg_base('#008000');
-    $svg_generic=svg_base('#000000');
-
-$svg_type = '';
-
-	switch ($_GET['icon']) {
-    	case "twitter":
-        	$svg_type = $svg_twitter;
-        	break;
-    	case "microblog":
-        	$svg_type = $svg_statusnet;
-        	break;
-    	case "youtube":
-        	$svg_type = $svg_youtube;
-        	break;
-    	case "shaarli":
-        	$svg_type = $svg_shaarli;
-        	break;
-    	case "generic":
-        	$svg_type = $svg_generic;
-        	break;
-	}
-
-die($svg_type);
-}
-
 if (isset($_GET['check']))
 {
     header('Content-type: image/svg+xml');
@@ -980,7 +942,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
             $autoblogs_display .= '<li>
           <header>
             <a title="'.escape($autoblog->site_title).'" href="'.$key.'/">
-              <img width="15" height="15" alt="" src="./?icon='.escape($autoblog->site_type).'" />
+              <img width="15" height="15" alt="" src="'.RESOURCES_FOLDER.'icon-'.escape($autoblog->site_type).'.svg" />
               <img width="15" height="15" alt="" src="./?check='.$key.'" />
               <h3>'.escape($autoblog->site_title).'</h3>
             </a>
