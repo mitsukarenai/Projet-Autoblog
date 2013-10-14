@@ -65,7 +65,11 @@ Domaine public.
 
 Changelog
 =====================
-
+- 2013-10-14  MILESTONE 0.3.1
+ - code semantics
+ - "docs" filesize
+ - robots.txt
+ - bugfixes
 - 2013-07-30
  - twitter2feed.php fixed (regex on class "avatar"; ```<fullname>```)
-- 2013-07-22  MILESTONE 3.0
+- 2013-07-22  MILESTONE 0.3
