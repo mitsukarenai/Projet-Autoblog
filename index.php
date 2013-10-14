@@ -209,7 +209,7 @@ function svg_status($fill, $text, $back)
 	$svg_ok=svg_status('#008000', 'ok', '');
 	$svg_mv=svg_status('#0000ff', 'mv', '<rect width="100%" height="100%" fill="#ffd800"/>');
 	$svg_err=svg_status('#000000', 'err', '<rect width="100%" height="100%" fill="#ff0000"/>');
-
+	
     $errorlog="./".escape( $_GET['check'] ) ."/error.log";
 
     $oldvalue = null;
@@ -265,8 +265,8 @@ if (isset($_GET['export'])) {
 
     foreach($subdirs as $unit) {
         if(is_dir($unit)) {
-            $unit=substr($unit, 2);
             $ini = parse_ini_file($unit.'/vvb.ini');
+            $unit=substr($unit, 2);
             $config = new stdClass;
 
             foreach ($ini as $key=>$value) {
@@ -331,7 +331,7 @@ if (isset($_GET['exportopml'])) // OPML
 
     foreach($subdirs as $unit) {
         if(is_dir($unit)) {
-            $unit=substr($unit, 2);
+            $unit=substr($unit, 2); 
             $ini = parse_ini_file($unit.'/vvb.ini');
             $config = new stdClass;
 
@@ -366,7 +366,7 @@ if (isset($_GET['sitemap']))
     $subdirs = glob(AUTOBLOGS_FOLDER . "*");
     foreach($subdirs as $unit) {
         if(is_dir($unit)) {
-            $unit=substr($unit, 2);
+            $unit=substr($unit, 2); 
             echo "<url>\n <loc>".$proto.$_SERVER['SERVER_NAME'].substr($_SERVER['PHP_SELF'], 0, -9)."$unit/"."</loc>\n";
             echo ' <lastmod>'.date('c', filemtime($unit))."</lastmod>\n";
             echo " <changefreq>hourly</changefreq>\n</url>\n\n";
@@ -825,7 +825,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           <input type="submit" value="Créer" />
         </form>
       </section>
-  <?php }
+<?php }
      if(ALLOW_NEW_AUTOBLOGS_BY_OPML_FILE == TRUE) { ?>
       <section class="form" id="add_opmlfile">
         <header>
@@ -840,7 +840,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           <input type='submit' value='Importer' />
         </form>
       </section>
-  <?php }
+<?php }
      if(ALLOW_NEW_AUTOBLOGS_BY_OPML_LINK == TRUE) { ?>
       <section class="form" id="add_opmllink">
         <header>
@@ -855,7 +855,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           <input type="submit" value="Envoyer" />
         </form>
       </section>
-  <?php }
+<?php }
      if(ALLOW_NEW_AUTOBLOGS_BY_BUTTON == TRUE) { ?>
       <section class="form" id="add_bookmark">
         <header>
@@ -866,37 +866,59 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
       </section>
 <?php } ?>
     </section>
-<?php   } ?>
-    <?php
-      $directory = DOC_FOLDER;
-      $docs = array();
-      if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
-        $subdirs = glob($directory . "*");
-        foreach($subdirs as $unit) {
-          if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
-            $size = '';
-            if ( is_file($unit) ) { $size = get_size($unit); }
+<?php   }
+      $fichierCache = 'docs.cache';
+      // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
+      // on lance la génération de la page et on la stoke dans un fichier
+      if (@filemtime($fichierCache)<time()-(DOCS_CACHE_DURATION)) {
+        // on démarre la bufferisation : rien n'est envoyé au navigateur
+        ob_start();
+
+        $directory = DOC_FOLDER;
+        $docs = array();
+        if( is_dir($directory) && !file_exists($directory . '.disabled') ) {
+          $subdirs = glob($directory . "*");
+          foreach($subdirs as $unit) {
+            if(!is_dir($unit) || file_exists( $unit . '/index.html' ) || file_exists( $unit . '/index.htm' ) || file_exists( $unit . '/index.php' ) ) {
+              $size = '';
+              if ( is_file($unit) ) { $size = get_size($unit); }
               $docs[] = array('<a href="'. preg_replace('~ ~', '%20', $unit) . '">'. substr($unit, (strrpos($unit, '/')) + 1 ) .'</a>', $size);
             }
           }
-        }
-        if(!empty( $docs )) {
-          echo '<section id="docs">
+          if(!empty( $docs )) {
+            echo '    <section id="docs">
       <header>
         <h2>Autres documents</h2>
       </header>
       
       <ul>'."\n";
-          foreach( $docs as $value ) {
-            $str = $value[0];
-            if ( !empty($value[1]) ) {
-              $str = sprintf('%s (%s)', $value[0], $value[1]);
+
+            foreach( $docs as $value ) {
+              $str = $value[0];
+              if ( !empty($value[1]) ) {
+                $str = sprintf('%s (%s)', $value[0], $value[1]);
+              }
+              echo '        <li>'. $str . "</li>\n";
             }
-            echo '        <li>'. $str . "</li>\n";
-          }
-          echo '      </ul>
+            
+            echo '      </ul>
     </section>'."\n";
+          }
+        } 
+        // on recuperre le contenu du buffer
+        $contenuCache = ob_get_contents();
+        ob_end_flush(); // on termine la bufferisation
+        $fd = fopen("$fichierCache", "w"); // on ouvre le fichier cache
+        if ($fd) {
+          fwrite($fd,$contenuCache); // on écrit le contenu du buffer dans le fichier cache
+          fclose($fd);
         }
+      // sinon le fichier cache existe déjà, on ne génère pas la page
+      // et on envoie le fichier statique à la place
+      } else {
+        readfile($fichierCache); // affichage du contenu du fichier
+        echo '    <!-- Section « documents » (présente uniquement si non vide) servie par le cache -->'."\n"; // et un petit message
+      }
     ?>
     <section id="autoblogs">
       <header>
@@ -909,37 +931,44 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         <a href="?exportopml">export<sup>OPML</sup></a>
       </nav>
       
-      <ul>
-        <?php
-        $subdirs = glob(AUTOBLOGS_FOLDER . "*");
-        $autoblogs = array();
-        foreach($subdirs as $unit) {
-          if(is_dir($unit)) {
-            if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
-              if( file_exists(ROOT_DIR . '/' . $unit . '/vvb.ini')) {
-                $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
-                if($ini) {
-                  $config = new stdClass;
-                  $unit=substr($unit, 2);
-                  foreach ($ini as $key=>$value) {
-                    $key = strtolower($key);
-                    $config->$key = $value;
+      <?php
+        $fichierCache = 'autoblogs.cache';
+        // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
+        // on lance la génération de la page et on la stoke dans un fichier
+        if (@filemtime($fichierCache)<time()-(AUTOBLOGS_CACHE_DURATION)) {
+          // on démarre la bufferisation : rien n'est envoyé au navigateur
+          ob_start();
+          
+	  echo '<ul>
+        ';
+          $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+          $autoblogs = array();
+          foreach($subdirs as $unit) {
+            if(is_dir($unit)) {
+              if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {
+                if( file_exists(ROOT_DIR . '/' . $unit . '/vvb.ini')) {
+                  $ini = parse_ini_file(ROOT_DIR . '/' . $unit . '/vvb.ini');
+                  if($ini) {
+                    $config = new stdClass;
+                    foreach ($ini as $key=>$value) {
+                      $key = strtolower($key);
+                      $config->$key = $value;
+                    }
+                    $autoblogs[$unit] = $config;
+                    unset($ini);
                   }
-                  $autoblogs[$unit] = $config;
-                  unset($ini);
                 }
               }
             }
           }
-        }
-        
-        uasort($autoblogs, "objectCmp");
-        $autoblogs_display = '';
-        
-        if(!empty($autoblogs)){
-          foreach ($autoblogs as $key => $autoblog) {
-            $opml_link='<a href="'.$key.'/?opml">opml</a>';
-            $autoblogs_display .= '<li>
+          
+          uasort($autoblogs, "objectCmp");
+          $autoblogs_display = '';
+          
+          if(!empty($autoblogs)){
+            foreach ($autoblogs as $key => $autoblog) {
+              $opml_link='<a href="'.$key.'/?opml">opml</a>';
+              $autoblogs_display .= '<li>
           <header>
             <a title="'.escape($autoblog->site_title).'" href="'.$key.'/">
               <img width="15" height="15" alt="" src="'.RESOURCES_FOLDER.'icon-'.escape($autoblog->site_type).'.svg" />
@@ -949,12 +978,30 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           </header>
           <div class="source">config <sup><a href="'.$key.'/vvb.ini">ini</a> '.$opml_link.'</sup> | '.escape($autoblog->site_type).' source : <a href="'.escape($autoblog->site_url).'">'.escape($autoblog->site_url).'</a></div>
         </li>';
-                    }
-                }
-                echo $autoblogs_display;
-                ?>
-            </ul>
-            <?php echo "<p>".count($autoblogs)." autoblogs hébergés</p>"; ?>
+            }
+          }
+          echo $autoblogs_display;
+          
+	  echo '
+      </ul>
+      <p>'.count($autoblogs).' autoblogs hébergés</p>';
+          
+          // on recuperre le contenu du buffer
+          $contenuCache = ob_get_contents();
+          ob_end_flush(); // on termine la bufferisation
+          $fd = fopen("$fichierCache", "w"); // on ouvre le fichier cache
+          if ($fd) {
+            fwrite($fd,$contenuCache); // on écrit le contenu du buffer dans le fichier cache
+            fclose($fd);
+          }
+        // sinon le fichier cache existe déjà, on ne génère pas la page
+        // et on envoie le fichier statique à la place
+        } else {
+          echo '<!-- Début du cache -->'."\n".'      '; // un message de début
+          readfile($fichierCache); // affichage du contenu du fichier
+          echo "\n".'      <!-- Fin du cache -->'."\n"; // et un petit message
+        }
+      ?>
     </section>
         
     <footer>
