@@ -870,23 +870,20 @@ else
     }
 
     $max = $vvb->countArticles();
-    if ($max > $config->articles_per_page)
-    {
-        echo "\n".'    <nav>'."\n";
+    if ($max > $config->articles_per_page) {
+      echo "\n".'    <nav>'."\n";
+      if ($page > 1)
+        echo '      <a rel="prev" href="'.$vvb->getLocalURL($page - 1).'">&larr; '.__('Newer').'</a>'."\n";
 
-        if ($page > 1)
-            echo '      <a href="'.$vvb->getLocalURL($page - 1).'">&larr; '.__('Newer').'</a>'."\n";
+      $last = ceil($max / $config->articles_per_page);
+      for ($i = 1; $i <= $last; $i++) {
+        echo '      '.($i == $page ? '<strong>'.$i.'</strong>' : '<a href="'.$vvb->getLocalURL($i).'">'.$i.'</a>')."\n";
+      }
 
-        $last = ceil($max / $config->articles_per_page);
-        for ($i = 1; $i <= $last; $i++)
-        {
-            echo '      <a href="'.$vvb->getLocalURL($i).'">'.($i == $page ? '<strong>'.$i.'</strong>' : $i).'</a>'."\n";
-        }
+      if ($page < $last)
+        echo '      <a rel="next" href="'.$vvb->getLocalURL($page + 1).'">'.__('Older').' &rarr;</a>'."\n";
 
-        if ($page < $last)
-            echo '      <a href="'.$vvb->getLocalURL($page + 1).'">'.__('Older').' &rarr;</a>'."\n";
-
-        echo '    </nav>';
+      echo '    </nav>';
     }
 }
 
