@@ -13,6 +13,9 @@
 // define( 'HEAD_TITLE', '');
 // define( 'FOOTER', 'D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.');
 
+// define( 'DOCS_CACHE_DURATION', 1800);
+// define( 'AUTOBLOGS_CACHE_DURATION', 1800);
+
 // define( 'ALLOW_FULL_UPDATE', TRUE );
 // define( 'ALLOW_CHECK_UPDATE', TRUE );
 
