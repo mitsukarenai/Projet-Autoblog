@@ -16,6 +16,9 @@ if (!defined('FOLDER_MAX_LENGTH')) define('FOLDER_MAX_LENGTH', 80);
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
+if( !defined('DOCS_CACHE_DURATION')) define( 'DOCS_CACHE_DURATION', 1800 );
+if( !defined('AUTOBLOGS_CACHE_DURATION')) define( 'AUTOBLOGS_CACHE_DURATION', 1800 ); 
+
 if( !defined('ALLOW_FULL_UPDATE')) define( 'ALLOW_FULL_UPDATE', TRUE );
 if( !defined('ALLOW_CHECK_UPDATE')) define( 'ALLOW_CHECK_UPDATE', TRUE );
 
