@@ -7,25 +7,27 @@ define('ALLOW_REMOTE_DB_DL', true);
 define('ALLOW_REMOTE_MEDIA_DL', true);
 define('EXEC_TIME', 10);
 
+date_default_timezone_set('UTC');
+
 header("HTTP/1.0 403 Forbidden");   /* Uncivilized method to prevent bot indexing, huh :) */
 header('X-Robots-Tag: noindex');    /* more civilized method, but bots may not all take into account */
 //header('Content-type: text/plain');
 
-$expire = time() -7200 ; 
+$expire = time() -7200 ;
 $lockfile = ".xsaflock";  /* defaut delay: 7200 (2 hours) */
 
 if (file_exists($lockfile) && filemtime($lockfile) > $expire) {
   		echo "too early";
   		die;
-} 
+}
 else {
     if( file_exists($lockfile) )
         unlink($lockfile);
-        
+
     if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
     	echo "Merci d'ajouter des droits d'écriture sur le dossier.";
 		die;
-	}	
+	}
 }
 
 define('ROOT_DIR', __DIR__);
@@ -57,7 +59,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 		echo "\n*Traitement $xsafremote en maximum $max_exec_time secondes";
 
 	$max_exec_time+=time()-1; // -1 car l'import prend environ 1 seconde
-	
+
 	/* détection de ferme autoblog  */
 	$json_import = file_get_contents($xsafremote);
 	if(!empty($json_import)) {
@@ -73,7 +75,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 
 		$get_remote_db = ($json_import['meta']['xsaf-db_transfer'] == "true") ? true : false;
 		$get_remote_media = ($json_import['meta']['xsaf-media_transfer'] == "true") ? true : false;
-		
+
 		if(!empty($json_import['autoblogs'])) {
 		 	foreach ($json_import['autoblogs'] as $remote_folder => $value) {
 		 		if(DEBUG) debug('remote = '. $remote_folder);
@@ -90,7 +92,7 @@ function xsafimport($xsafremote, $max_exec_time) {
 				/* TOO SLOW
 				$xml = simplexml_load_file($rssurl); // quick feed check
 				// ATOM feed && RSS 1.0 /RDF && RSS 2.0
-				$result = (!isset($xml->entry) && !isset($xml->item) && !isset($xml->channel->item)) ? false : true;	*/			
+				$result = (!isset($xml->entry) && !isset($xml->item) && !isset($xml->channel->item)) ? false : true;	*/
 				$result = true;
 
 				/* autoblog */
@@ -109,8 +111,8 @@ function xsafimport($xsafremote, $max_exec_time) {
 						/* ============================================================================================================================================================================== */
 						/* récupération de la DB distante */
 						if($get_remote_db == true && ALLOW_REMOTE_DB_DL ) {
-					        $remote_db = str_replace("?export", $remote_folder."/articles.db", $xsafremote); 
-					        copy($remote_db, './'. $foldername .'/articles.db');         
+					        $remote_db = str_replace("?export", $remote_folder."/articles.db", $xsafremote);
+					        copy($remote_db, './'. $foldername .'/articles.db');
 					    }
 						/* préparation à la récupération des médias distants */
 						if($get_remote_media == true && ALLOW_REMOTE_MEDIA_DL ) {
@@ -144,19 +146,19 @@ function xsafimport($xsafremote, $max_exec_time) {
 				if(time() >= $max_exec_time) {
 					if( DEBUG )
 						echo "<p>Time out !</p>";
-					break;				
+					break;
 				}
 			}
-		} 
+		}
 		else {
 			if( DEBUG )
 				echo "Format JSON incorrect.";
 			return false;
 		}
 	}
-	return;	
+	return;
 }
-	
+
 if( DEBUG ) echo '<html><body>';
 if( ALLOW_NEW_AUTOBLOGS and ALLOW_NEW_AUTOBLOGS_BY_XSAF && !empty($friends_autoblog_farm) ) {
 	foreach( $friends_autoblog_farm AS $value ) {
