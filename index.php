@@ -376,36 +376,47 @@ if (isset($_GET['sitemap']))
  * Update ALL autblogs (except .disabled)
  * This action can be very slow and consume CPU if you have a lot of autoblogs
  **/
-if( isset($_GET['updateall']) && ALLOW_FULL_UPDATE) {
-    $max_exec_time=time()+4; // scipt have 4 seconds to update autoblogs
-    $expire = time() - 84600 ; // 23h30 en secondes
-    $lockfile = ".updatealllock";
-    $lockfile_contents = array();
-    if (file_exists($lockfile)){
-        $lockfile_contents = file_get_contents($lockfile);
-        if( !isset($lockfile_contents[0]) || $lockfile_contents[0] != "a") { // détection d'une serialisation
-            if( filemtime($lockfile) > $expire){
-                echo "too early";
-                die;
-            }else{
-                // need update of all autoblogs
-                unlink($lockfile);
+if( isset($_GET['updateall']) ) {
+    if( !isset( $_GET['force']) ) {
+        $max_exec_time=time()+4; // scipt have 4 seconds to update autoblogs
+        $expire = time() - 5 ; // 5 seconds
+        $lockfile = ".updatealllock";
+        $lockfile_contents = array();
+        if (file_exists($lockfile)){
+            $lockfile_contents = file_get_contents($lockfile);
+            if( !isset($lockfile_contents[0]) || $lockfile_contents[0] != "a") { // détection d'une serialisation
+                if( filemtime($lockfile) > $expire){
+                    echo "too early";
+                    die;
+                }else{
+                    // need update of all autoblogs
+                    unlink($lockfile);
+                }
             }
+            // else we need to update some autoblogs
         }
-        // else we need to update some autoblogs
-    } 
-    if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
-        echo "Merci d'ajouter des droits d'écriture sur le fichier.";
+        if( file_put_contents($lockfile, date(DATE_RFC822)) ===FALSE) {
+            echo "Merci d'ajouter des droits d'écriture sur le fichier.";
+            die;
+        }
+
+        if(!empty($lockfile_contents)) {
+            $subdirs = unserialize($lockfile_contents);
+            unset($lockfile_contents);
+        }else{
+            $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+        }
+    }
+    elseif (ALLOW_FULL_UPDATE) {
+        $subdirs = glob(AUTOBLOGS_FOLDER . "*");
+        $max_exec_time=time() * 2; // workaround to disable max exec time
+    }
+    else {
+        echo "You're not allowed to force full update.";
         die;
     }
-
-    if(!empty($lockfile_contents)) {
-        $subdirs = unserialize($lockfile_contents);
-        unset($lockfile_contents);
-    }else{
-        $subdirs = glob(AUTOBLOGS_FOLDER . "*");
-    }    
     $todo_subdirs = $subdirs;
+
     foreach($subdirs as $key => $unit) {
         if(is_dir($unit)) {
             if( !file_exists(ROOT_DIR . '/' . $unit . '/.disabled')) {

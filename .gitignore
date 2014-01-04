@@ -11,3 +11,4 @@ autoblogs/*
 docs/*
 !docs/docs.txt
 robots.txt
+.idea
