@@ -377,10 +377,10 @@ if (isset($_GET['sitemap']))
  * This action can be very slow and consume CPU if you have a lot of autoblogs
  **/
 if( isset($_GET['updateall']) ) {
+    $lockfile = ".updatealllock";
     if( !isset( $_GET['force']) ) {
         $max_exec_time=time()+4; // scipt have 4 seconds to update autoblogs
         $expire = time() - 5 ; // 5 seconds
-        $lockfile = ".updatealllock";
         $lockfile_contents = array();
         if (file_exists($lockfile)){
             $lockfile_contents = file_get_contents($lockfile);
