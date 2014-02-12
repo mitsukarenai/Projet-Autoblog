@@ -65,6 +65,13 @@ Domaine public.
 
 Changelog
 =====================
+- 2014-02-12  MILESTONE 0.3.2
+ - separate type icons
+ - cache added
+ - pagination fixes
+ - SVG fixes
+ - fix date() warnings
+ - bugfixes
 - 2013-10-14  MILESTONE 0.3.1
  - code semantics
  - "docs" filesize
