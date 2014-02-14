@@ -606,6 +606,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
     if(empty($error)) {
         try {
 	    $rssurl = parse_url($_POST['rssurl']);
+	    if(!isset($rssurl['query'])) $rssurl['query'] = '';
 	    $rssurl = $rssurl['scheme'].'://'.$rssurl['host'].$rssurl['path'].'?'.html_entity_decode($rssurl['query']);
             $rssurl = DetectRedirect($rssurl);
 
