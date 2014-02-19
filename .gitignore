@@ -12,3 +12,4 @@ docs/*
 !docs/docs.txt
 robots.txt
 .idea
+cache_*

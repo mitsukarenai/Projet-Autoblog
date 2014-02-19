@@ -880,7 +880,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 <?php } ?>
     </section>
 <?php   }
-      $fichierCache = 'docs.cache';
+      $fichierCache = 'cache_docs';
       // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
       // on lance la génération de la page et on la stoke dans un fichier
       if (@filemtime($fichierCache)<time()-(DOCS_CACHE_DURATION)) {
@@ -941,7 +941,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
       </nav>
       
       <?php
-        $fichierCache = 'autoblogs.cache';
+        $fichierCache = 'cache_autoblogs';
         // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
         // on lance la génération de la page et on la stoke dans un fichier
         if (@filemtime($fichierCache)<time()-(AUTOBLOGS_CACHE_DURATION)) {
