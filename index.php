@@ -921,11 +921,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         // on recuperre le contenu du buffer
         $contenuCache = ob_get_contents();
         ob_end_flush(); // on termine la bufferisation
-        $fd = fopen("$fichierCache", "w"); // on ouvre le fichier cache
-        if ($fd) {
-          fwrite($fd,$contenuCache); // on écrit le contenu du buffer dans le fichier cache
-          fclose($fd);
-        }
+        file_put_contents("$fichierCache",$contenuCache, LOCK_EX); // on écrit le contenu du buffer dans le fichier cache
       // sinon le fichier cache existe déjà, on ne génère pas la page
       // et on envoie le fichier statique à la place
       } else {
@@ -1002,11 +998,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           // on recuperre le contenu du buffer
           $contenuCache = ob_get_contents();
           ob_end_flush(); // on termine la bufferisation
-          $fd = fopen("$fichierCache", "w"); // on ouvre le fichier cache
-          if ($fd) {
-            fwrite($fd,$contenuCache); // on écrit le contenu du buffer dans le fichier cache
-            fclose($fd);
-          }
+          file_put_contents("$fichierCache",$contenuCache, LOCK_EX); // on écrit le contenu du buffer dans le fichier cache
         // sinon le fichier cache existe déjà, on ne génère pas la page
         // et on envoie le fichier statique à la place
         } else {
