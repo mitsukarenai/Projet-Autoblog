@@ -920,8 +920,9 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
         } 
         // on recuperre le contenu du buffer
         $contenuCache = ob_get_contents();
-        ob_end_flush(); // on termine la bufferisation
+        ob_end_clean(); // on termine la bufferisation
         file_put_contents("$fichierCache",$contenuCache, LOCK_EX); // on écrit le contenu du buffer dans le fichier cache
+	echo $contenuCache; // et on sort
       // sinon le fichier cache existe déjà, on ne génère pas la page
       // et on envoie le fichier statique à la place
       } else {
@@ -997,8 +998,9 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           
           // on recuperre le contenu du buffer
           $contenuCache = ob_get_contents();
-          ob_end_flush(); // on termine la bufferisation
+          ob_end_clean(); // on termine la bufferisation
           file_put_contents("$fichierCache",$contenuCache, LOCK_EX); // on écrit le contenu du buffer dans le fichier cache
+	echo $contenuCache; // et on sort
         // sinon le fichier cache existe déjà, on ne génère pas la page
         // et on envoie le fichier statique à la place
         } else {
