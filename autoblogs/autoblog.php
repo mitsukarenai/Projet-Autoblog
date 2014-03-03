@@ -758,7 +758,7 @@ switch($site_type) {
 echo '<!DOCTYPE html>
 <html lang="fr" dir="ltr">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" charset="utf-8" />
     <title>'.escape($config->site_title).'</title>
     <link rel="canonical" href="'.escape($config->site_url).'">
     <link rel="alternate" type="application/atom+xml" title="'.__('ATOM Feed').'" href="?feed">
