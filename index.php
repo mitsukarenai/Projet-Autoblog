@@ -702,8 +702,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 <html lang="fr" dir="ltr">
   <head>
     <title>Projet Autoblog<?php if(strlen(HEAD_TITLE)>0) echo " | " . HEAD_TITLE; ?></title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" charset="utf-8" />
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" charset="utf-8" />
     <meta content="initial-scale=1.0, user-scalable=yes" name="viewport" />
     
     <meta name="keywords"    content="autoblog,effet streisand,censure,replication" />
