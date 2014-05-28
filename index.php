@@ -187,38 +187,31 @@ if (isset($_GET['rss'])) {
 /**
  * SVG
  **/
-if (isset($_GET['check']))
+function check( $folder )
 {
-    header('Content-type: image/svg+xml');
     $randomtime=rand(86400, 259200); /* intervalle de mise à jour: de 1 à 3 jours  (pour éviter que le statut de tous les autoblogs soit rafraichi en bloc et bouffe le CPU) */
     $expire=time() -$randomtime ;
 
     /* SVG minimalistes */
 
-function svg_status($fill, $text, $back)
-	{
-	$svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="15" height="15">'.$back.'<text style="font-size:10px;font-weight:bold;text-anchor:middle;font-family:Arial;fill:'.$fill.';"><tspan x="8" y="14">'.$text.'</tspan></text></svg>';
-	return $svg;
-	}
-
-	$svg_ok=svg_status('#008000', 'ok', '');
-	$svg_mv=svg_status('#0000ff', 'mv', '<rect width="100%" height="100%" fill="#ffd800"/>');
-	$svg_err=svg_status('#000000', 'err', '<rect width="100%" height="100%" fill="#ff0000"/>');
+	$svg_ok = RESOURCES_FOLDER . 'icon-ok.svg';
+    $svg_mv = RESOURCES_FOLDER . 'icon-mv.svg';
+    $svg_err = RESOURCES_FOLDER . 'icon-err.svg';
 	
-    $errorlog="./".escape( $_GET['check'] ) ."/error.log";
+    $errorlog= './' . $folder . '/error.log';
 
     $oldvalue = null;
     if(file_exists($errorlog)) { $oldvalue = file_get_contents($errorlog); };
     if(file_exists($errorlog) && filemtime($errorlog) < $expire) { unlink($errorlog); } /* errorlog périmé ? Suppression. */
     if(file_exists($errorlog)) /* errorlog existe encore ? se contenter de lire sa taille pour avoir le statut */
     {
-        if(filesize($errorlog) == "0") {die($svg_ok);}
-        else if(filesize($errorlog) == "1") {die($svg_mv);}
-        else {die($svg_err);}
+        if(filesize($errorlog) == "0") { return $svg_ok; }
+        else if(filesize($errorlog) == "1") { return $svg_mv; }
+        else { return $svg_err; }
     }
     else /* ..sinon, lancer la procédure de contrôle */
     {
-        $ini = parse_ini_file("./". escape( $_GET['check'] ) ."/vvb.ini") or die;
+        $ini = parse_ini_file("./". $folder ."/vvb.ini") or die;
         $headers = get_headers($ini['FEED_URL']);
         
         if(!empty($headers)) 
@@ -228,26 +221,26 @@ function svg_status($fill, $text, $back)
         /* le flux est indisponible (typiquement: erreur DNS ou possible censure) - à vérifier */
         if(empty($headers) || $headers === FALSE || (!empty($code) && ($code[1] == '500' || $code[1] == '404'))) {
             if( $oldvalue !== null && $oldvalue != '..' ) {
-				updateXML('unavailable', 'nxdomain', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
+				updateXML('unavailable', 'nxdomain', $folder, $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '..');
-            die($svg_err);
+            return $svg_err;
         }
         /* code retour 200: flux disponible */
         if($code[1] == "200") {
             if( $oldvalue !== null && $oldvalue != '' ) {
-				updateXML('available', '200', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
+				updateXML('available', '200', $folder, $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '');
-            die($svg_ok);
+            return $svg_ok;
         }
         /* autre code retour: un truc a changé (redirection, changement de CMS, .. bref vvb.ini doit être corrigé) */
         else {
             if( $oldvalue !== null && $oldvalue != '.' ) {
-				updateXML('moved', '3xx', escape($_GET['check']), $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
+				updateXML('moved', '3xx', $folder, $ini['SITE_TITLE'], $ini['SITE_URL'], $ini['FEED_URL']);
             }
             file_put_contents($errorlog, '.');
-            die($svg_mv);
+            return $svg_mv;
         }
     }
 }
@@ -984,7 +977,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           <header>
             <a title="'.escape($autoblog->site_title).'" href="'.$key.'/">
               <img width="15" height="15" alt="" src="'.RESOURCES_FOLDER.'icon-'.escape($autoblog->site_type).'.svg" />
-              <img width="15" height="15" alt="" src="./?check='.$key.'" />
+              <img width="15" height="15" alt="" src="'. check($key) .'" />
               <h3>'.escape($autoblog->site_title).'</h3>
             </a>
           </header>
