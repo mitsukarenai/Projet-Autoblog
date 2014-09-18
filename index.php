@@ -34,8 +34,21 @@ if(file_exists("functions.php")){
     die;
 }
 
+function file_get_contents_ua($url) {
+	$stream = stream_context_create(
+		array(
+			'http' => array(
+				'method' => 'GET',
+				'timeout' => 10,
+				'header' => "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:20.0; Autoblogs; +https://github.com/mitsukarenai/Projet-Autoblog/) Gecko/20100101 Firefox/20.0\r\n",
+			)
+		)
+	);
+	return file_get_contents($url, false, $stream);
+}
+
 function get_title_from_feed($url) {
-    return get_title_from_datafeed(file_get_contents($url));
+    return get_title_from_datafeed(file_get_contents_ua($url));
 }
 
 function get_title_from_datafeed($data) {
@@ -47,7 +60,7 @@ function get_title_from_datafeed($data) {
 }
 
 function get_link_from_feed($url) {
-    return get_link_from_datafeed(file_get_contents($url));
+    return get_link_from_datafeed(file_get_contents_ua($url));
 }
 
 function get_link_from_datafeed($data) {
@@ -481,7 +494,7 @@ if(!empty($_GET['via_button']) && $_GET['number'] === '17' && ALLOW_NEW_AUTOBLOG
         else {
             try {
                 $rssurl = DetectRedirect(escape($_GET['rssurl']));
-                $datafeed = file_get_contents($rssurl);
+                $datafeed = file_get_contents_ua($rssurl);
                 if( $datafeed !== false ) {
                     $siteurl = get_link_from_datafeed($datafeed);
                     $sitename = get_title_from_datafeed($datafeed);
@@ -615,7 +628,7 @@ if( !empty($_POST['generic']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY_L
             }
             else {
                 // checking procedure
-                $datafeed = file_get_contents($rssurl);
+                $datafeed = file_get_contents_ua($rssurl);
                 if( $datafeed === false ) {
                     $error[] = 'URL "'. $rssurl .'" inaccessible.';
                 }
