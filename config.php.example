@@ -9,7 +9,7 @@
  * https://github.com/mitsukarenai/Projet-Autoblog/wiki/Configuration
  **/
 
-// define( 'LOGO', 'icon-logo.svg' );
+// define( 'LOGO', 'icon-logo.png' );
 // define( 'HEAD_TITLE', '');
 // define( 'FOOTER', 'D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.');
 

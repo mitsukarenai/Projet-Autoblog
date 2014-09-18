@@ -34,7 +34,7 @@ if( !defined('ALLOW_NEW_AUTOBLOGS_BY_XSAF')) define( 'ALLOW_NEW_AUTOBLOGS_BY_XSA
 // More about TwitterBridge : https://github.com/mitsukarenai/twitterbridge
 if( !defined('API_TWITTER')) define( 'API_TWITTER', 'LOCAL' );
 
-if( !defined('LOGO')) define( 'LOGO', 'icon-logo.svg' );
+if( !defined('LOGO')) define( 'LOGO', 'icon-logo.png' );
 if( !defined('HEAD_TITLE')) define( 'HEAD_TITLE', '');
 if( !defined('FOOTER')) define( 'FOOTER', 'D\'après les premières versions de <a href="http://sebsauvage.net">SebSauvage</a> et <a href="http://bohwaz.net/">Bohwaz</a>.');
 
