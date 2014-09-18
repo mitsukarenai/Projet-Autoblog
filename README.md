@@ -65,6 +65,13 @@ Domaine public.
 
 Changelog
 =====================
+- 2014-09-18 MILESTONE 0.3.3
+ - Drop support of twitter2feed - use [RSS Bridge](https://github.com/sebsauvage/rss-bridge) instead
+ - Switch licence to CC-0
+ - Add 'reset cache' button
+ - Remove cache when an autoblog is added
+ - Set .png as default logo
+ - Add user-agent at autoblog creation
 - 2014-02-12  MILESTONE 0.3.2
  - separate type icons
  - cache added
