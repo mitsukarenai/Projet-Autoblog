@@ -6,7 +6,7 @@
         Mitsu https://www.suumitsu.eu/
         Oros https://www.ecirtam.net/
         Arthur Hoaro http://hoa.ro
-    License: Public Domain
+    License: CC-0 - https://creativecommons.org/publicdomain/zero/1.0/
 
     Instructions:
      (by default, autoblog creation is allowed: you can set this to "FALSE" in config.php)
