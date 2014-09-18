@@ -703,6 +703,18 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
     }
 }
 
+/**
+ * RESET CACHE
+ **/
+ if( !empty($_GET['reset_cache']) ) {
+ 	if( $_GET['reset_cache'] == 'docs' ) {
+ 		unlink(DOCS_CACHE_FILENAME);
+ 	}
+ 	if( $_GET['reset_cache'] == 'autoblogs' ) {
+ 		unlink(AUTOBLOGS_CACHE_FILENAME);
+ 	}
+ }
+
 ?>
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
@@ -886,7 +898,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
 <?php } ?>
     </section>
 <?php   }
-      $fichierCache = 'cache_docs';
+      $fichierCache = DOCS_CACHE_FILENAME;
       // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
       // on lance la génération de la page et on la stoke dans un fichier
       if (@filemtime($fichierCache)<time()-(DOCS_CACHE_DURATION)) {
@@ -906,6 +918,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           }
           if(!empty( $docs )) {
             echo '    <section id="docs">
+            <p class="cache_link"><a href="?reset_cache=docs">Regénérer le cache</a></p>
       <header>
         <h2>Autres documents</h2>
       </header>
@@ -950,7 +963,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
       </nav>
       
       <?php
-        $fichierCache = 'cache_autoblogs';
+        $fichierCache = AUTOBLOGS_CACHE_FILENAME;
         // si la page n'existe pas dans le cache ou si elle a expiré (durée paramétrable)
         // on lance la génération de la page et on la stoke dans un fichier
         if (@filemtime($fichierCache)<time()-(AUTOBLOGS_CACHE_DURATION)) {
@@ -1002,6 +1015,7 @@ if( !empty($_POST['opml_file']) && ALLOW_NEW_AUTOBLOGS && ALLOW_NEW_AUTOBLOGS_BY
           
 	  echo '
       </ul>
+      <p class="cache_link"><a href="?reset_cache=autoblogs">Regénérer le cache</a></p>
       <p>'.count($autoblogs).' autoblogs hébergés</p>';
           
           // on recuperre le contenu du buffer

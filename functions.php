@@ -17,7 +17,9 @@ date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'fr');
 
 if( !defined('DOCS_CACHE_DURATION')) define( 'DOCS_CACHE_DURATION', 1800 );
+if( !defined('DOCS_CACHE_FILENAME')) define( 'DOCS_CACHE_FILENAME', 'cache_docs' );
 if( !defined('AUTOBLOGS_CACHE_DURATION')) define( 'AUTOBLOGS_CACHE_DURATION', 1800 ); 
+if( !defined('AUTOBLOGS_CACHE_FILENAME')) define( 'AUTOBLOGS_CACHE_FILENAME', 'cache_autoblogs' );
 
 if( !defined('ALLOW_FULL_UPDATE')) define( 'ALLOW_FULL_UPDATE', TRUE );
 if( !defined('ALLOW_CHECK_UPDATE')) define( 'ALLOW_CHECK_UPDATE', TRUE );
@@ -136,6 +138,7 @@ UPDATE_TIMEOUT="'. getTimeout( $type ) .'"') )
     	throw new Exception('Impossible de créer le répertoire.');
 
     updateXML('new_autoblog_added', 'new', $foldername, $sitename, $siteurl, $rssurl);
+    unlink(AUTOBLOGS_CACHE_FILENAME);
 }
 
 function getArticlesPerPage( $type ) {

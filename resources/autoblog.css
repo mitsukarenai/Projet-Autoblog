@@ -48,3 +48,10 @@ section#autoblogs > ul > li .source a:hover {color:darkred; text-decoration:none
     #logo { max-width: 250px; }
     input[type="text"]{width:15em;} 
 }
+.cache_link {
+    float:right;
+}
+.cache_link a {
+    font-weight:normal;
+    color: #CCC;
+}
