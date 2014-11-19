@@ -19,6 +19,7 @@ Exemples d'instances :
 - [tcit.fr](http://www.tcit.fr/streisand/)
 - [kaelsitoo.fr](http://kaelsitoo.fr/autoblog/)
 - [autoblog.postblue.info](http://autoblog.postblue.info/)
+- [arche.depotoi.re](http://arche.depotoi.re/)
 
 
 Serie 0.3 par [Mitsu](https://github.com/mitsukarenai/), [Oros](https://github.com/Oros42), [Arthur Hoaro](https://github.com/ArthurHoaro).
