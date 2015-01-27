@@ -15,8 +15,6 @@ Exemples d'instances :
 - [streisand.hoa.ro](http://streisand.hoa.ro/)
 - [ecirtam.net](https://ecirtam.net/autoblogs/)
 - [autoblog.ohax.fr](http://autoblog.ohax.fr/)
-- [flamby.aldarone.fr](http://flamby.aldarone.fr/)
-- [tcit.fr](http://www.tcit.fr/streisand/)
 - [kaelsitoo.fr](http://kaelsitoo.fr/autoblog/)
 - [autoblog.postblue.info](http://autoblog.postblue.info/)
 - [arche.depotoi.re](http://arche.depotoi.re/)
