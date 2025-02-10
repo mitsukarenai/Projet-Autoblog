@@ -10,7 +10,7 @@ if(!defined('ROOT_DIR'))
 }
 define('LOCAL_URI', '');
 if (!defined('AUTOBLOGS_FOLDER')) define('AUTOBLOGS_FOLDER', './autoblogs/');
-if (!defined('DOC_FOLDER')) define('DOC_FOLDER', './docs/');
+if (!defined('DOC_FOLDER')) define('DOC_FOLDER', '../streisand/');
 if (!defined('RESOURCES_FOLDER')) define('RESOURCES_FOLDER', './resources/');
 if (!defined('FOLDER_MAX_LENGTH')) define('FOLDER_MAX_LENGTH', 80);
 date_default_timezone_set('Europe/Paris');

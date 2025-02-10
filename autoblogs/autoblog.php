@@ -104,8 +104,8 @@ class VroumVroum_Feed_Exception extends Exception
     }
 }
 
-error_reporting(E_ALL);
-
+//error_reporting(E_ALL);
+error_reporting(0);
 function exception_error_handler($errno, $errstr, $errfile, $errline )
 {
     // For @ ignored errors
@@ -150,6 +150,7 @@ class VroumVroum_Config
     public $articles_per_page = 10;
     public $update_interval = 3600;
     public $update_timeout = 10;
+    public $disabled = false;
 
     public function __construct()
     {
@@ -173,18 +174,49 @@ class VroumVroum_Config
                 $this->$key = (bool) $value;
         }
 
-        // Check that all required values are filled
-        $check = array('site_type', 'site_title', 'site_url', 'feed_url', 'update_timeout', 'update_interval', 'articles_per_page');
-        foreach ($check as $c)
-        {
-            if (!trim($this->$c))
-                throw new VroumVroum_User_Exception("Missing or empty configuration value '".$c."' which is required!");
+        if(empty($this->feed_url)) {
+            $this->disabled = true;
+        }
+
+        if(!$this->disabled) {
+            // Check that all required values are filled
+            $check = array('site_type', 'site_title', 'site_url', 'feed_url', 'update_timeout', 'update_interval', 'articles_per_page');
+            foreach ($check as $c)
+            {
+                if (!trim($this->$c))
+                    throw new VroumVroum_User_Exception("Missing or empty configuration value '".$c."' which is required!");
+            }
         }
 
     }
 
     public function __set($key, $value)
     {
+        return;
+    }
+
+    public function setDisabled()
+    {
+        $res = $this->articles->query('SELECT success FROM update_log ORDER BY date DESC LIMIT 10;');
+        $haveSuccess = true;
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $haveSuccess &= $row;
+        }
+        if ($haveSuccess) {
+            $res = $this->articles->query('SELECT date FROM update_log ORDER BY date DESC LIMIT 1;');
+            $haveSuccess = $res + 63115200 < time(); //31557600 = 1 year
+        }
+        if (!$haveSuccess) {
+            if (defined('MAIL_ADMIN')) {
+                $title = sprintf("Autoblogs : %s", $this->site_title);
+                $msg = sprintf("%s is down!\n%s\n%s\n%s", $this->site_title, $this->site_url, $this->feed_url, ROOT_DIR);
+                mail(MAIL_ADMIN, $title, $msg);
+            }
+            $f = file_get_contents(CONFIG_FILE);
+            if (strpos($f, 'DISABLED="1"') === false) {
+                file_put_contents(CONFIG_FILE, $f."\nDISABLED=\"1\"");
+            }
+        }
         return;
     }
 }
@@ -298,14 +330,21 @@ class VroumVroum_Blog
                 return false;
             }
 
-            $id = $exists['id'];
+//            $id = $exists['id'];
 
             if ($content != $exists['content'])
                 $content = $this->mirrorMediasForArticle($content, $url);
-
+/*
             $this->articles->exec('UPDATE articles SET title=\''.$this->articles->escapeString($title).'\',
                 url=\''.$this->articles->escapeString($url).'\', content=\''.$this->articles->escapeString($content).'\',
                 date=\''.(int)$date.'\' WHERE id = \''.(int)$id.'\';');
+*/
+	$uri = self::toURI($title);
+	 $this->articles->exec('INSERT INTO articles (id, feed_id, title, uri, url, date, content) VALUES (NULL,
+                \''.$this->articles->escapeString($feed_id).'\', \'[Update] '.$this->articles->escapeString($title).'\',
+                \''.$this->articles->escapeString($uri).'\', \''.$this->articles->escapeString($url).'\',
+                \''.(int)$date.'\', \''.$this->articles->escapeString($content).'\');');
+            $id = $this->articles->lastInsertRowId();
 
             $title = self::removeHTML($title);
             $content = self::removeHTML($content);
@@ -317,6 +356,9 @@ class VroumVroum_Blog
 
     public function mustUpdate()
     {
+        if ($this->config->disabled) {
+            return false;
+        }
         if (isset($_GET['update']))
             return true;
 
@@ -348,8 +390,9 @@ class VroumVroum_Blog
 
     public function update()
     {
-        if (!$this->mustUpdate())
+        if (!$this->mustUpdate() || $this->config->disabled) {
             return false;
+        }
 
         try {
             $body = file_get_contents($this->config->feed_url, false, $this->_getStreamContext());
@@ -357,6 +400,7 @@ class VroumVroum_Blog
         catch (ErrorException $e)
         {
             $this->log_update(false, $e->getMessage() . "\n\n" . (!empty($http_response_header) ? implode("\n", $http_response_header) : ''));
+            $this->config->setDisabled();
             throw new VroumVroum_Feed_Exception("Can't retrieve feed: ".$e->getMessage());
         }
 
@@ -367,6 +411,7 @@ class VroumVroum_Blog
         {
             $errors = VroumVroum_Feed_Exception::getXMLErrorsAsString(libxml_get_errors());
             $this->log_update(false, implode("\n", $errors) . "\n\n" . $body);
+            $this->config->setDisabled();
             throw new VroumVroum_Feed_Exception("Feed is invalid - XML error: ".implode(" - ", $errors));
         }
 
@@ -434,14 +479,24 @@ class VroumVroum_Blog
     }
     
     public function updateXsaf() {
-        if($this->mustUpdateXsaf()) {
+        if($this->mustUpdateXsaf() && !$this->config->disabled) {
     	    $json = json_decode(file_get_contents('import.json'), true);
     		$count = count($json['files']);
     		file_put_contents('import.lock', $count); /* one-process locking */
     		$remoteurl = $json['url'];
     		if (!file_exists('media'))  { 
-                mkdir('media'); 
-            }
+                    mkdir('media'); 
+                }
+                if(!file_exists('media/.htaccess')){
+                    file_put_contents('media/.htaccess', 
+                    "Options -ExecCGI
+RemoveHandler .php .phtml .php3 .php4 .php5 .html .htm .js
+RemoveType .php .phtml .php3 .php4 .php5 .html .htm .js
+php_flag engine off
+AddType text/plain .php .phtml .php3 .php4 .php5 .html .htm .js
+");
+                }
+
     		$time = time();
     		$maxtime = $time + 3;   /* max exec time: 3 seconds */
             
@@ -522,6 +577,15 @@ class VroumVroum_Blog
         if (!file_exists(MEDIA_DIR))
         {
             mkdir(MEDIA_DIR);
+        }
+        if(!file_exists(MEDIA_DIR.'/.htaccess')){
+            file_put_contents(MEDIA_DIR.'/.htaccess', 
+            "Options -ExecCGI
+RemoveHandler .php .phtml .php3 .php4 .php5 .html .htm .js
+RemoveType .php .phtml .php3 .php4 .php5 .html .htm .js
+php_flag engine off
+AddType text/plain .php .phtml .php3 .php4 .php5 .html .htm .js
+");
         }
 
         $schemes = array('http', 'https');
@@ -731,7 +795,8 @@ switch($site_type) {
       body > article { background-color:white;padding: 12px 10px 33px;border:1px solid #aaa;max-width:70em;margin:0 auto;box-shadow:0px 5px 7px #aaa; }
       body > article .source { font-size: 0.8em; color: #666; }
       body > footer { margin-top:1em;text-align:center; font-size: small; color:#333; clear: both; }
-      .content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}';
+      .content {font-size:0.9em;overflow: hidden;text-overflow: ellipsis;}';
+	//.content {font-size:0.9em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}';
         break;
     case 'shaarli':
         $css .= "\n".'      /* shaarli style */
@@ -775,7 +840,9 @@ echo '
       <h1><a href="../../" style="font-size:0.8em;">PROJET AUTOBLOG'. (strlen(HEAD_TITLE) > 0 ? ' ~ '. HEAD_TITLE : '') .'</a></h1>
       <hr />
       <h1><a href="./">'.escape($config->site_title).'</a></h1>';
-       
+        if ($config->disabled) {
+          echo "Archivé";
+        }
        if (!empty($config->site_description))
          echo '
       <p>'.$config->site_description.'</p>
