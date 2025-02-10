@@ -976,11 +976,15 @@ function escape_content($str)
 function display_article($article)
 {
     global $vvb, $config;
+    $dateTime = new DateTime();
+    $dateTime->setTimestamp($article['date']); 
+    $formattedDate = $dateTime->format(__(DATE_ATOM));
+
     echo '
     <article>
       <header>
         <h2><a href="'.$vvb->getLocalURL($article).'">'.escape($article['title']).'</a></h2>
-        '.strftime(__('_date_format'), $article['date']).'
+        '.$formattedDate.'
       </header>
       <div class="content">'.escape_content($article['content']).'</div>
       <footer class="source"><p>'.__('Source:').' <a href="'.escape($article['url']).'">'.escape($article['url']).'</a></p></footer>
